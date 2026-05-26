@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BelongsToMany, Column, DataType, DeletedAt, Model, Table, } from 'sequelize-typescript';
+import { RolePermission } from 'src/intermediary-tables/role-permission.entity';
 import { UserRoles } from 'src/intermediary-tables/user-roles.entity';
+import { Permission } from 'src/permission/entities/permission.entity';
 import { User } from 'src/users/entities/user.entity';
 
 interface TableCreationAttrs {
@@ -30,4 +32,7 @@ export class Role extends Model<Role, TableCreationAttrs> {
   // Связь многие ко многим с пользователями
   @BelongsToMany(() => User, () => UserRoles)
   users: User[];
+  
+  @BelongsToMany(() => Permission, () => RolePermission)
+  permissions: Permission[];
 }

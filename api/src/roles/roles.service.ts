@@ -158,4 +158,14 @@ export class RolesService {
         throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
+
+  async count() {
+    try {
+      return (await this.repository.findAndCountAll()).count;
+    } catch (error) {
+        const msg = `Ошибка подсчете ролей. ${error.message}`;
+        console.log(msg);
+        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
 }

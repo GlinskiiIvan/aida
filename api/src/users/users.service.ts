@@ -243,4 +243,14 @@ export class UsersService {
         throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
+
+  async count() {
+    try {
+      return (await this.repository.findAndCountAll()).count;
+    } catch (error) {
+        const msg = `Ошибка подсчете пользователей. ${error.message}`;
+        console.log(msg);
+        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
 }

@@ -32,6 +32,7 @@ import { InstanceImageModule } from './instance-image/instance-image.module';
 import { InstanceImage } from './instance-image/entities/instance-image.entity';
 import { IngestionModule } from './ingestion/ingestion.module';
 import { InferenceModule } from './inference/inference.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { InferenceModule } from './inference/inference.module';
         serveRoot: '/storage',
       },
     ),
+    SeedModule,
     UsersModule,
     RolesModule,
     AuthModule,

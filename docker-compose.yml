@@ -1,0 +1,46 @@
+services:
+  api:
+    container_name: mri_system-api
+    build:
+      context: ./api
+    env_file:
+      - ./api/.development.env
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    ports:
+      - 6100:3000
+      - 9229:9229
+    command: pnpm run start:dev
+    depends_on:
+      - postgres
+    restart: always
+  front:
+    container_name: mri_system-front
+    build:
+      context: ./front
+    env_file:
+      - ./front/.development.env
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    ports:
+      - 5173:5173
+      - 9228:9228
+    command: pnpm run start:dev
+    restart: always
+  postgres:
+    container_name: mri_system-postgres
+    image: postgres:16
+    env_file:
+      - ./api/.development.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5435:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:

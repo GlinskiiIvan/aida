@@ -1,0 +1,20 @@
+.header {
+    align-self: stretch;
+    .icon {
+        width: 100px;
+        height: 100px;
+    }
+
+    .content {
+        .title {
+            font-size: var(--fs-2xl);
+            font-weight: var(--fw-medium);
+            color: var(--text-primary);
+        }
+        .desc {
+            font-size: var(--fs-md);
+            font-weight: var(--fw-regular);
+            color: var(--text-secondary);
+        }
+    }
+}

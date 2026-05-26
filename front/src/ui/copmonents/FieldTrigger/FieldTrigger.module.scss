@@ -1,0 +1,146 @@
+@use '@/ui/mixins.scss' as *;
+
+$status-colors: (
+    default: (
+        default: (
+            border: var(--border-primary),
+        ),
+        hover: (
+            border: var(--border-strong),
+        ),
+        focus: (
+            shadow: var(--box-shadow-normal),
+            border: var(--border-accent),
+        ),
+    ),
+    success: (
+        default: (
+            border: var(--border-success),
+        ),
+        hover: (
+            border: var(--border-success-strong),
+        ),
+        focus: (
+            shadow: var(--box-shadow-success),
+            border: var(--border-success),
+        ),
+    ),
+    warning: (
+        default: (
+            border: var(--border-warning),
+        ),
+        hover: (
+            border: var(--border-warning-strong),
+        ),
+        focus: (
+            shadow: var(--box-shadow-warning),
+            border: var(--border-warning),
+        ),
+    ),
+    danger: (
+        default: (
+            border: var(--border-danger),
+        ),
+        hover: (
+            border: var(--border-danger-strong),
+        ),
+        focus: (
+            shadow: var(--box-shadow-danger),
+            border: var(--border-danger),
+        ),
+    ),
+    info: (
+        default: (
+            border: var(--border-accent),
+        ),
+        hover: (
+            border: var(--border-accent-strong),
+        ),
+        focus: (
+            shadow: var(--box-shadow-accent),
+            border: var(--border-accent),
+        ),
+    ),
+);
+
+@mixin wrapper-styles($status) {
+    $curentStatus: map-get($status-colors, $status);
+    $defaultColors: map-get($curentStatus, default);
+    $focusColors: map-get($curentStatus, focus);
+
+    $shadow: map-get($focusColors, shadow);
+    $border: map-get($focusColors, border);
+
+    border-color: map-get($defaultColors, border);
+
+    &:focus-within {
+        @include focus-state($shadow, $border);
+    }
+};
+
+
+@mixin wrapper-hover-styles($status) {
+    $curentStatus: map-get($status-colors, $status);
+    $hoverColors: map-get($curentStatus, hover);
+
+    border-color: map-get($hoverColors, border);
+};
+
+.wrapper {
+    cursor: pointer;
+    
+    padding: var(--space-sm) var(--space-md);
+
+    background-color: transparent;
+    border: var(--border-width-sm) solid var(--border-primary);
+    border-radius: var(--radius-lg);
+
+    color: var(--text-tertiary);
+    font-size: var(--fs-md);
+
+    svg {
+        color: var(--text-tertiary);
+    }
+
+    transition: 
+        color var(--duration-normal) ease,
+        border-color var(--duration-normal) ease,
+        box-shadow var(--duration-slow) ease,
+        background-color var(--duration-slow) ease;
+
+    &.default { @include wrapper-styles(default); }
+    &.success { @include wrapper-styles(success); }
+    &.warning { @include wrapper-styles(warning); }
+    &.danger { @include wrapper-styles(danger); }
+    &.info { @include wrapper-styles(info); }
+
+    &:hover {
+        color: var(--text-secondary);
+
+        &.default { @include wrapper-hover-styles(default); }
+        &.success { @include wrapper-hover-styles(success); }
+        &.warning { @include wrapper-hover-styles(warning); }
+        &.danger { @include wrapper-hover-styles(danger); }
+        &.info { @include wrapper-hover-styles(info); }
+    }
+
+    &.disabled {
+        @include disabled-state();
+    }
+}
+
+:global(.form-field:hover) {
+    .wrapper {
+        color: var(--text-secondary);
+
+        &.default { @include wrapper-hover-styles(default); }
+        &.success { @include wrapper-hover-styles(success); }
+        &.warning { @include wrapper-hover-styles(warning); }
+        &.danger { @include wrapper-hover-styles(danger); }
+        &.info { @include wrapper-hover-styles(info); }
+
+        &.disabled {
+            @include disabled-state();
+        }
+    }
+}

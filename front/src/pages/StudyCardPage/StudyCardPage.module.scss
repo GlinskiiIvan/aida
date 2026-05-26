@@ -1,0 +1,102 @@
+@use '@/ui/mixins.scss' as *;
+
+.predictionWorkspace {
+    width: 100%;
+    max-height: 500px;
+
+    .runs {
+        max-width: 30%;
+    }
+    .viewer {
+        max-width: 70%;
+        max-height: inherit;
+        height: 100%;
+        .wrapper {
+            max-height: inherit;
+            overflow: hidden;
+            height: 100%;
+            .sidebar {
+                width: 100%;
+                max-width: 20%;
+                max-height: inherit;
+                overflow: auto;
+                padding: 5px;
+                padding-bottom: calc(var(--space-xl) - 5px);
+                .image {
+                    transition: border var(--duration-normal) ease;
+                    &.active {
+                        border: 2px solid var(--border-accent);
+                    }
+                }
+                .imageBtn {
+                    cursor: pointer;
+                    &:focus-visible {
+                        @include focus-state();
+                    }
+                }
+            }
+            .content {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                max-width: 80%;
+                max-height: inherit;
+                .overlay {
+                    position: absolute;
+                    border: 3px solid var(--color-overlay);
+                    top: var(--top-overlay);
+                    left: var(--left-overlay);
+                    width: var(--width-overlay);
+                    height: var(--height-overlay);
+                    
+                    display: flex;
+                    align-items: flex-start; /* вверх */
+                    justify-content: flex-start;
+
+                    pointer-events: none; /* чтобы не мешал кликам */
+
+                    span {
+                        position: absolute;
+                        top: calc(var(--space-lg) - 2*var(--space-lg)); /* выводим над боксом */
+                        left: 0;
+
+                        white-space: nowrap; /* в одну строку */
+                        font-size: var(--fs-sm);
+                        color: var(--color-overlay);
+                        background: rgba(0,0,0,0.4); /* чтобы читалось */
+                        padding: var(--space-2xs) var(--space-xs);
+                        border-radius: var(--border-width-lg);
+                    }
+                }
+                .btnPrev, .btnNext {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: var(--bg-accent);
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    padding: var(--space-sm);
+                    border-radius: 100%;
+                    cursor: pointer;
+                    transition: background-color var(--duration-normal) ease;
+                    &:hover {
+                        background-color: var(--bg-accent-strong);
+                    }
+                }
+                .btnPrev {
+                    left: var(--space-md);
+                    .arrow {
+                        transform: rotateZ(90deg);
+                    }
+                }
+                .btnNext {
+                    right: var(--space-md);
+                    .arrow {
+                        transform: rotateZ(-90deg);
+                    }
+                }
+            }
+        }
+    }
+}

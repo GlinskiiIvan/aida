@@ -1,0 +1,35 @@
+.wrapper {    
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-slow) linear;
+
+    background: rgba(var(--bg-primary), .5);
+    backdrop-filter: blur(5px);
+
+    &.open {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .modal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        max-width: 500px;
+        max-height: 80vh;
+
+        overflow: hidden;
+
+        .body {
+            padding: 5px;
+            overflow: auto;
+            height: 100%;
+        }
+    }
+}

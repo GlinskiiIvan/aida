@@ -1,0 +1,18 @@
+.wrapper {
+    background-color: var(--bg-secondary);
+    border: var(--border-width-sm) solid var(--border-primary);
+    border-radius: var(--radius-lg);
+
+    width: var(--width-block);
+
+    padding: var(--space-md);
+    
+    .header {
+        font-size: var(--fs-lg);
+
+        .title {
+            color: var(--text-primary);
+            font-weight: var(--fw-medium);
+        }
+    }
+}

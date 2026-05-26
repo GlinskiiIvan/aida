@@ -1,0 +1,8 @@
+{
+  "name": "@packages/store",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "dependencies": {
+    "@packages/ui-kit": "*"
+  }
+}

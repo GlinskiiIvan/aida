@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  position: relative;
+  min-height: 100vh;
+}
+
+.outlet {
+  flex: 1;
+  // overflow-x: hidden;
+}

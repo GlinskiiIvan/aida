@@ -1,0 +1,91 @@
+/* ===== FULL CSS RESET ===== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  outline: none;}
+
+/* remove default typography */
+html,
+body {
+  /* height: 100%; */
+}
+
+body {
+  line-height: normal;
+}
+
+/* media elements */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* lists */
+ol,
+ul {
+  list-style: none;
+}
+
+/* quotes */
+blockquote,
+q {
+  quotes: none;
+}
+
+blockquote::before,
+blockquote::after,
+q::before,
+q::after {
+  content: "";
+}
+
+/* tables */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* forms */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* links */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+/* remove default fieldset styles */
+fieldset {
+  border: none;
+}
+
+/* root for React apps */
+#root {
+  height: 100%;
+}

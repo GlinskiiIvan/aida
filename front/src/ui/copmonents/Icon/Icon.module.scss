@@ -1,0 +1,10 @@
+.iconWrapper {
+    font-size: var(--fs-icon);
+    color: var(--color-icon);
+
+    flex: 0 0 auto;
+    width: var(--fs-icon);
+    height: var(--fs-icon);
+    min-width: var(--fs-icon);
+    min-height: var(--fs-icon);
+}

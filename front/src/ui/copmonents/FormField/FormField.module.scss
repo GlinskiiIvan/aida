@@ -1,0 +1,36 @@
+$label-position: (
+    column: (direction: column, justify-content: flex-start, align-items: stretch, pd-left: 16px),
+    row: (direction: row, justify-content: flex-start, align-items: center, pd-left: 0),
+    column-reverse: (direction: column-reverse, justify-content: flex-end, align-items: stretch, pd-left: 16px),
+    row-reverse: (direction: row-reverse, justify-content: flex-end, align-items: center, pd-left: 0),
+);
+
+@mixin label-direction($position) {
+    $values: map-get($label-position, $position);
+
+    flex-direction: map-get($values, direction);
+    align-items: map-get($values, align-items);
+    justify-content: map-get($values, justify-content);
+
+    .labelText {
+        padding-left: map-get($values, pd-left);
+    }
+}
+
+.wrapper {
+    .label {
+        display: flex;
+        gap: var(--space-sm);
+
+        cursor: pointer;
+
+        &.column { @include label-direction(column); }
+        &.row { @include label-direction(row); }
+        &.column-reverse { @include label-direction(column-reverse); }
+        &.row-reverse { @include label-direction(row-reverse); }
+    }
+
+    .msgBox {
+        padding-left: 16px;
+    }
+}

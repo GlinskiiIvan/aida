@@ -1,0 +1,10 @@
+.wrapper {
+    border: var(--border-width-sm) solid var(--border-color-badge);
+    border-radius: var(--radius-lg);
+
+    padding: var(--space-sm);
+
+    font-size: var(--fs-badge);
+    line-height: var(--lh-sm);
+    color: var(--text-primary);
+}

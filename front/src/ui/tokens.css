@@ -1,0 +1,228 @@
+:root {
+    /* =========================================================
+                                COLORS
+    ========================================================= */
+
+    /* ---------------------------------------------------------
+                            PRIMITIVE COLORS
+    --------------------------------------------------------- */
+
+    /* ---------------- DANGER ---------------- */
+    --danger-50: #F2EBEB;   
+    --danger-200: #FABBBB;   
+    --danger-400: #F75B5B;   
+    --danger-500: #F73E3E;   
+    --danger-600: #E51717;   
+    --danger-700: #D90B0B;   
+
+    /* ---------------- SUCCESS ---------------- */
+    --success-200: #ADF8D2;       
+    --success-400: #45E595;       
+    --success-500: #17E57E;       
+    --success-700: #117C46;       
+
+    /* ---------------- WARNING ---------------- */
+    --warning-200: #F7D3A1;  
+    --warning-400: #F2A130;  
+    --warning-500: #E58F17;  
+    --warning-700: #985C0A;  
+
+    /* ---------------- GRAY ---------------- */
+    --gray-50: #E6EFF0;     
+    --gray-100: #EBF5F5;     
+    --gray-200: #DBE6E6;     
+    --gray-400: #B8C2C2;     
+    --gray-500: #9da6a6;     
+    --gray-700: #455050;     
+
+    /* ---------------- ACCENT ---------------- */
+    --accent-50: #DAF2F2;   
+    --accent-400: #17DFE5;   
+    --accent-500: #21BFC4;   
+    --accent-600: #1EAEB2;   
+
+    /* ---------------- WHITE BASE ---------------- */
+    --white: #FFFFFF;
+
+    /* ---------------------------------------------------------
+                            SEMANTIC COLORS
+    --------------------------------------------------------- */
+
+    /* ---------------- TEXT ---------------- */
+    
+    /* Hierarchy */
+    --text-primary: var(--gray-700);
+    --text-secondary: var(--gray-500);
+    --text-tertiary: var(--gray-400);
+    --text-disabled: var(--gray-400);
+
+    /* Inverse */
+    --text-inverse: var(--white);
+
+    /* Accent */
+    --text-accent: var(--accent-600);
+
+    /* Status */
+    --text-danger: var(--danger-700);
+    --text-success: var(--success-700);
+    --text-warning: var(--warning-700);
+
+    /* ---------------- BACKGROUND ---------------- */
+
+    /* Hierarchy */
+    --bg-primary: var(--gray-50);
+    --bg-secondary: var(--gray-100);
+    --bg-tertiary: var(--gray-400);
+    --bg-disabled: var(--gray-200);
+    --bg-white: var(--white);
+
+    /* Accent */
+    --bg-accent-subtle: var(--accent-50);
+    --bg-accent-soft: var(--accent-400);
+    --bg-accent: var(--accent-500);
+    --bg-accent-strong: var(--accent-600);
+
+    /* Status */  
+    --bg-danger-subtle: var(--danger-50) ;
+    --bg-danger-soft: var(--danger-200);
+    --bg-danger: var(--danger-400);
+    --bg-danger-strong: var(--danger-500);
+    
+    /* --bg-success-subtle: var(--); */
+    --bg-success-soft: var(--success-200);
+    --bg-success: var(--success-400);
+    /* --bg-success-strong: var(--); */
+    
+    /* --bg-warning-subtle: var(--); */
+    --bg-warning-soft: var(--warning-200);
+    --bg-warning: var(--warning-400);
+    /* --bg-warning-strong: var(--); */
+
+    /* ---------------- BORDER ---------------- */
+
+    /* Hierarchy */
+    --border-primary: var(--gray-400);
+    --border-disabled: var(--gray-400);
+    --border-strong: var(--gray-500);
+
+    /* Accent */
+    --border-accent: var(--accent-500);
+    --border-accent-strong: var(--accent-600);
+
+    /* Status */  
+    --border-danger: var(--danger-400);
+    --border-danger-strong: var(--danger-700);
+    
+    --border-success: var(--success-400);
+    --border-success-strong: var(--success-700);
+    
+    --border-warning: var(--warning-400);
+    --border-warning-strong: var(--warning-700);
+
+    /* ---------------- INTERACTION ---------------- */
+
+    /* Focus */
+
+    --focus-accent: var(--accent-400);
+    --focus-danger: var(--danger-600);
+    --focus-success: var(--success-500);
+    --focus-warning: var(--warning-500);
+
+    /* =========================================================
+                            FOCUS
+    ========================================================= */
+
+    /* ---------------- SHADOW ---------------- */
+
+    --box-shadow-normal: 0 0 7px 2px var(--focus-accent);
+    --box-shadow-success: 0 0 7px 2px var(--focus-success);
+    --box-shadow-warning: 0 0 7px 2px var(--focus-warning);
+    --box-shadow-danger: 0 0 7px 2px var(--focus-danger);
+    --box-shadow-accent: 0 0 7px 2px var(--focus-accent);
+    --box-shadow-destructive: 0 0 7px 2px var(--focus-danger);
+
+    /* =========================================================
+                            TYPOGRAPHY
+    ========================================================= */
+
+    /* ---------------- FONT SIZE ---------------- */
+    --fs-xs: 0.75rem;  /* 12 */
+    --fs-sm: 0.875rem; /* 14 */
+    --fs-md: 1rem;     /* 16 */
+    --fs-lg: 1.125rem; /* 18 */
+    --fs-xl: 1.5rem;   /* 24 */
+    --fs-2xl: 2rem;   /* 32 */
+
+    /* ---------------- FONT WEIGHT ---------------- */
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+
+    /* ---------------- LINE HEIGHT---------------- */
+    --lh-sm: 1;
+    --lh-md: 1.2;
+    --lh-lg: 1.3;
+    --lh-xl: 1.5;
+
+    /* =========================================================
+                            SPACING
+    ========================================================= */
+
+    /* ---------------- SPACE ---------------- */
+
+    --space-2xs: 0.125em; /* 2 */
+    --space-xs: 0.25em;   /* 4 */
+    --space-sm: 0.5em;    /* 8 */
+    --space-md: 1em;      /* 16 */
+    --space-lg: 1.5em;    /* 24 */
+    --space-xl: 2em;      /* 32 */
+    --space-2xl: 3em;     /* 48 */
+
+    /* =========================================================
+                        BORDERS
+   ========================================================= */
+
+   /* ---------------- WIDTH ---------------- */
+
+    --border-width-sm: 1px;
+    --border-width-md: 2px;
+    --border-width-lg: 3px;
+
+
+
+    /* =========================================================
+                        RADIUS
+   ========================================================= */
+
+    --radius-2xs: 2px;
+    --radius-xs: 4px;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-2xl: 24px;
+
+    --radius-pill: 9999px;
+    --radius-circle: 50%;
+
+    /* =========================================================
+                        MOTION
+   ========================================================= */
+
+   /* ---------------- SCALE ---------------- */
+
+    --press-scale-sm: 0.98;
+    --press-scale-md: 0.96;
+    --press-scale-lg: 0.94;
+
+    /* ---------------- DURATION ---------------- */
+
+    --duration-fast: 100ms;
+    --duration-normal: 150ms;
+    --duration-slow: 300ms;
+    --duration-slower: 500ms;
+
+    /* ---------------- FN ---------------- */
+
+    --ease-standard: ease;
+} 

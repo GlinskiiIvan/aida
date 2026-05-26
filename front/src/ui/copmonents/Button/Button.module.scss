@@ -1,0 +1,109 @@
+@use '@/ui/mixins.scss' as *;
+
+$button-intent-colors: (
+    normal: (
+        primary: (
+            default: (bg: var(--bg-accent), text: var(--text-inverse), border: var(--border-accent)),
+            disabled: (bg: var(--bg-disabled), text: var(--text-disabled), border: transparent),
+            hover:(bg: var(--bg-accent-strong), border: var(--border-accent-strong)),
+        ),
+        secondary: (
+            default: (bg: transparent, text: var(--text-accent), border: var(--border-accent)),
+            disabled: (bg: transparent, text: var(--text-disabled), border: var(--border-disabled)),
+            hover: (bg: var(--bg-accent-subtle), border: var(--border-accent-strong)),
+        ),
+        ghost: (
+            default: (bg: transparent, text: var(--text-accent), border: transparent),
+            disabled: (bg: transparent, text: var(--text-disabled), border: transparent),
+            hover: (bg: var(--bg-accent-subtle), border: transparent),
+        ),
+    ),
+    destructive: (
+        primary: (
+            default: (bg: var(--bg-danger), text: var(--text-inverse), border: var(--border-danger)),
+            disabled: (bg: var(--bg-disabled), text: var(--text-disabled), border: transparent),
+            hover: (bg: var(--bg-danger-strong), border: var(--border-danger-strong)),
+        ),
+        secondary: (
+            default: (bg: transparent, text: var(--text-danger), border: var(--border-danger)),
+            disabled: (bg: transparent, text: var(--text-disabled), border: var(--border-disabled)),
+            hover: (bg: var(--bg-danger-subtle), border: var(--border-danger)),
+        ),
+        ghost: (
+            default: (bg: transparent, text: var(--text-danger), border: transparent),
+            disabled: (bg: transparent, text: var(--text-disabled), border: transparent),
+            hover: (bg: var(--bg-danger-subtle), border: transparent),
+        ),
+    )
+);
+
+$button-focus-colors: (
+    normal: (shadow: var(--box-shadow-normal), border: var(--border-accent)),
+    destructive: (shadow: var(--box-shadow-destructive), border: var(--border-danger))
+);
+
+@mixin button-styles($intent, $variant, $state) {
+    $selectedVariant: map-get(map-get($button-intent-colors, $intent), $variant);
+    $StaticColors: map-get($selectedVariant, $state);
+    $HoverColors: map-get($selectedVariant, hover);
+    $FocusColors: map-get($button-focus-colors, $intent);
+
+    background-color: map-get($StaticColors, bg);
+    color: map-get($StaticColors, text);
+    border: var(--border-width-sm) solid map-get($StaticColors, border);
+
+    &:hover {
+        background-color: map-get($HoverColors, bg);
+        border: var(--border-width-sm) solid map-get($HoverColors, border);
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: map-get($FocusColors, shadow);
+        @include focus-state(
+            map-get($FocusColors, shadow), 
+            map-get($FocusColors, border)
+        );
+    }
+    
+}
+
+.wrapper {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    font-size: var(--fs-button);
+    cursor: pointer;
+    border-radius: var(--radius-lg);
+    transition: 
+        transform var(--duration-normal) ease, 
+        box-shadow var(--duration-slow) ease, 
+        background-color var(--duration-normal) ease, 
+        border-color var(--duration-normal) ease;
+
+    &:active {
+        transform: scale(var(--press-scale-md));
+    }
+
+    &.disabled {
+        pointer-events: none;
+    }
+
+    &.normal.primary.default { @include button-styles(normal, primary, default); }
+    &.normal.secondary.default { @include button-styles(normal, secondary, default); }
+    &.normal.ghost.default { @include button-styles(normal, ghost, default); }
+
+    &.normal.primary.disabled { @include button-styles(normal, primary, disabled); }
+    &.normal.secondary.disabled { @include button-styles(normal, secondary, disabled); }
+    &.normal.ghost.disabled { @include button-styles(normal, ghost, disabled); }
+
+    &.destructive.primary.default { @include button-styles(destructive, primary, default); }
+    &.destructive.secondary.default { @include button-styles(destructive, secondary, default); }
+    &.destructive.ghost.default { @include button-styles(destructive, ghost, default); }
+
+    &.destructive.primary.disabled { @include button-styles(destructive, primary, disabled); }
+    &.destructive.secondary.disabled { @include button-styles(destructive, secondary, disabled); }
+    &.destructive.ghost.disabled { @include button-styles(destructive, ghost, disabled); }
+}

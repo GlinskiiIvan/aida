@@ -1,0 +1,40 @@
+@use '@/ui/mixins.scss' as *;
+
+.wrapper {
+    box-shadow: 0 0 7px 2px transparent;
+    border: var(--border-width-sm) solid transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+
+    cursor: pointer;
+
+    transition: 
+        transform var(--duration-normal) ease,
+        border-color var(--duration-normal) ease,
+        box-shadow var(--duration-slow) ease;
+
+    .icon {
+        color: var(--text-tertiary);
+        transition: color var(--duration-normal) ease;
+    }
+
+    &:hover {
+       .icon {
+        color: var(--text-secondary);
+       }
+    }
+
+    &:active {
+        transform: scale(var(--press-scale-md));
+    }
+
+    &:focus-visible {
+        @include focus-state();
+    }
+
+    &:disabled {
+        .icon {
+            color: var(--text-disabled);
+        }
+    }
+}

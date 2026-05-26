@@ -1,0 +1,35 @@
+@use '@/ui/mixins.scss' as *;
+
+.fieldLayot {
+    label {
+        .wrapper {            
+            .input {
+                width: 100%;
+                pointer-events: auto;
+                z-index: 1;
+
+                color: var(--text-primary);
+
+                &::placeholder {
+                    color: var(--text-tertiary);
+                }
+
+                &:disabled {
+                    color: var(--text-disabled);
+                }
+            }
+
+            .actionIcon {
+                opacity: 0;
+                pointer-events: auto;
+                z-index: 2;
+                transition: 
+                    opacity var(--duration-slow) ease;
+
+                &.visible {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,4 @@
+/// Вычисление оптического расстояния для лейбла
+@function optical-gap($font-size, $line-height, $gap) {
+  @return $gap - (($line-height * $font-size - $font-size) / 2);
+}

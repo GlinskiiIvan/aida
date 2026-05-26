@@ -1,0 +1,237 @@
+:root {
+    /* =========================================================
+                                COLORS
+    ========================================================= */
+
+    /* ---------------------------------------------------------
+                            PRIMITIVE COLORS
+    --------------------------------------------------------- */
+
+    /* ---------------- DANGER ---------------- */
+    --danger-50: #F2EBEB;   
+    --danger-200: #FABBBB;   
+    --danger-400: #F75B5B;   
+    --danger-500: #F73E3E;   
+    --danger-600: #E51717;   
+    --danger-700: #D90B0B;   
+
+    /* ---------------- SUCCESS ---------------- */
+    --success-200: #ADF8D2;       
+    --success-400: #45E595;       
+    --success-500: #17E57E;       
+    --success-700: #117C46;       
+
+    /* ---------------- WARNING ---------------- */
+    --warning-200: #F7D3A1;  
+    --warning-400: #F2A130;  
+    --warning-500: #E58F17;  
+    --warning-700: #985C0A;  
+
+    /* ---------------- GRAY ---------------- */
+    --gray-50: #E6EFF0;     
+    --gray-100: #EBF5F5;     
+    --gray-200: #DBE6E6;     
+    --gray-400: #B8C2C2;     
+    --gray-500: #9da6a6;     
+    --gray-700: #455050;     
+
+    /* ---------------- ACCENT ---------------- */
+    --accent-50: #DAF2F2;   
+    --accent-400: #17DFE5;   
+    --accent-500: #21BFC4;   
+    --accent-600: #1EAEB2;   
+
+    /* ---------------- WHITE BASE ---------------- */
+    --white: #FFFFFF;
+
+    /* ---------------------------------------------------------
+                            SEMANTIC COLORS
+    --------------------------------------------------------- */
+
+    /* ---------------- TEXT ---------------- */
+
+    /* Hierarchy */
+    --text-primary: var(--gray-700);
+    --text-secondary: var(--gray-500);
+    --text-tertiary: var(--gray-400);
+    --text-disabled: var(--gray-400);
+
+    /* Inverse */
+    --text-inverse: var(--white);
+
+    /* Accent */
+    --text-accent: var(--accent-600);
+
+    /* Status */
+    --text-danger: var(--danger-700);
+    --text-success: var(--success-700);
+    --text-warning: var(--warning-700);
+
+    /* ---------------- BACKGROUND ---------------- */
+
+    /* Hierarchy */
+    --bg-primary: var(--gray-50);
+    --bg-secondary: var(--gray-100);
+    --bg-tertiary: var(--gray-400);
+    --bg-disabled: var(--gray-200);
+    --bg-white: var(--white);
+
+    /* Accent */
+    --bg-accent-subtle: var(--accent-50);
+    --bg-accent-soft: var(--accent-400);
+    --bg-accent: var(--accent-500);
+    --bg-accent-strong: var(--accent-600);
+
+    /* Status */  
+    --bg-danger-subtle: var(--danger-50) ;
+    --bg-danger-soft: var(--danger-200);
+    --bg-danger: var(--danger-400);
+    --bg-danger-strong: var(--danger-500);
+    
+    /* --bg-success-subtle: var(--); */
+    --bg-success-soft: var(--success-200);
+    --bg-success: var(--success-400);
+    /* --bg-success-strong: var(--); */
+    
+    /* --bg-warning-subtle: var(--); */
+    --bg-warning-soft: var(--warning-200);
+    --bg-warning: var(--warning-400);
+    /* --bg-warning-strong: var(--); */
+
+    /* ---------------- BORDER ---------------- */
+
+    /* Hierarchy */
+    --border-primary: var(--gray-400);
+    --border-disabled: var(--gray-400);
+    --border-strong: var(--gray-500);
+
+    /* Accent */
+    --border-accent: var(--accent-500);
+    --border-accent-strong: var(--accent-600);
+
+    /* Status */  
+    --border-danger: var(--danger-400);
+    --border-danger-strong: var(--danger-700);
+    
+    --border-success: var(--success-400);
+    --border-success-strong: var(--success-700);
+    
+    --border-warning: var(--warning-400);
+    --border-warning-strong: var(--warning-700);
+
+    /* ---------------- INTERACTION ---------------- */
+
+    /* Focus */
+
+    --focus-accent: var(--accent-400);
+    --focus-danger: var(--danger-600);
+    --focus-success: var(--success-500);
+    --focus-warning: var(--warning-500);
+
+    /* =========================================================
+                            TYPOGRAPHY
+    ========================================================= */
+
+    /* ---------------- FONT SIZE ---------------- */
+    --fs-xs: 12; 
+    --fs-sm: 14; 
+    --fs-md: 16; 
+    --fs-lg: 18; 
+    --fs-xl: 24; 
+
+    /* ---------------- FONT WEIGHT ---------------- */
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+
+    /* =========================================================
+                            SPACING
+    ========================================================= */
+
+    /* ---------------- GAP ---------------- */
+
+    --gap-2xs: 2;
+    --gap-xs: 4;
+    --gap-sm: 8;
+    --gap-md: 16;
+    --gap-lg: 24;
+    --gap-xl: 32;
+    --gap-2xl: 48;
+} 
+
+:old {
+    /* primitive */
+    --danger-1: #F75B5B;
+    --danger-2: #D90B0B;
+    --ok-1: #117C46;
+    --warning-1: #985C0A;
+    --gray-1: #B8C2C2;
+    --gray-2: #9DA6A6;
+
+    /* text */
+    --text-main: #455050;
+    --text-second: var(--gray-2);
+    --text-tertiary: var(--gray-1);
+    --text-disabled: var(--gray-1);
+    --text-white: #FFFFFF;
+    --text-danger: var(--danger-2);
+    --text-ok: var(--ok-1);
+    --text-warning: var(--warning-1);
+
+    /* background */
+    --bg-main: #E6EFF0;
+    --bg-second: #EBF5F5;
+    --bg-tertiary: var(--gray-1);
+    --bg-disabled: #DBE6E6;
+    --bg-hover-acent-tint: #DAF2F2;
+    --bg-hover-acent: #1EAEB2;
+    --bg-hover-danger: #F73E3E;
+    --bg-danget-light: #FABBBB;
+    --bg-danger-dark: var(--danger-1);
+    --bg-hover-danger-tint: #F2EBEB;
+    --bg-ok-light: #ADF8D2;
+    --bg-warning-light: #F7D3A1;
+    --bg-white: #FFFFFF;
+
+    /* border */
+    --border--default: var(--gray-1);
+    --border--disabled: var(--gray-1);
+    --border--danger: var(--danger-1);
+    --border--ok: #45E595;
+    --border--warning: #F2A130;
+    --border--hover: var(--gray-2);
+    --border--hover-acent: #1EAEB2;
+    --border--hover-danger: var(--danger-2);
+    --border--hover-ok: var(--ok-1);
+    --border--hover-warning: var(--warning-1);
+
+    /* focus */
+    --focus-acent: #17DFE5;
+    --focus-danger: #E51717;
+    --focus-ok: #17E57E;
+    --focus-warning: #E58F17;
+
+    /* acent */
+    --acent: #21BFC4;
+
+    /* font-size */
+    --fs-xs: 12; 
+    --fs-sm: 14; 
+    --fs-md: 16; 
+    --fs-lg: 18; 
+    --fs-xl: 24; 
+
+    /* weight */
+    --w-regular: 400;
+    --w-medium: 500;
+    --w-semibold: 600;
+
+    /* gap */
+    --gap-2xs: 2;
+    --gap-xs: 4;
+    --gap-sm: 8;
+    --gap-md: 16;
+    --gap-lg: 24;
+    --gap-xl: 32;
+    --gap-2xl: 48;
+}

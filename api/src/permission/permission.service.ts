@@ -140,4 +140,14 @@ export class PermissionService {
         throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
+
+  async count() {
+    try {
+      return (await this.repository.findAndCountAll()).count;
+    } catch (error) {
+        const msg = `Ошибка подсчете разрешений. ${error.message}`;
+        console.log(msg);
+        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
 }

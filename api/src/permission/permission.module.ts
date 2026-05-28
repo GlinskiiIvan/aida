@@ -10,5 +10,6 @@ import { Permission } from './entities/permission.entity';
   imports: [
     SequelizeModule.forFeature([Permission])
   ],
+  exports: [PermissionService]
 })
 export class PermissionModule {}

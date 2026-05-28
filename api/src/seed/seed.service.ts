@@ -6,6 +6,7 @@ import { UsersService } from 'src/users/users.service';
 import permissionsJson from './data/permissions.json';
 import { InjectModel } from '@nestjs/sequelize';
 import { Permission } from 'src/permission/entities/permission.entity';
+import { rolePermissionsSeed } from './seed.config';
 
 @Injectable()
 export class SeedService implements OnModuleInit {
@@ -21,6 +22,7 @@ export class SeedService implements OnModuleInit {
     await this.seedPermissions();
     await this.seedRoles();
     await this.seedAdmin();
+    await this.seedRolesAddPermissions();
   }
 
   private async seedRoles() {
@@ -62,5 +64,24 @@ export class SeedService implements OnModuleInit {
     if(count > 0) return;
 
     await this.permissionRepository.bulkCreate(permissionsJson);
+  }
+
+  private async seedRolesAddPermissions() {
+    for (const [roleName, perms] of Object.entries(rolePermissionsSeed)) {
+      const role = await this.rolesService.findOneByValue(roleName);
+
+      let permissionEntities = [];
+
+      if(perms.includes("*")) {
+        permissionEntities = await this.permissionRepository.findAll();
+      } else {
+        for (const element of perms) {
+          const perm = await this.permissionService.findOneByValue(element);
+          permissionEntities.push(perm);
+        }
+      }
+
+      await role.$set('permissions', permissionEntities);
+    }
   }
 }

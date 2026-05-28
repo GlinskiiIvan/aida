@@ -9,14 +9,18 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { PERMISSIONS_KEY } from 'src/decorators/permissions.decorator';
+import { RolesService } from 'src/roles/roles.service';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(
+    private reflector: Reflector,
+    private roleService: RolesService,
+  ) {}
 
-  canActivate(
+  async canActivate(
     context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  ): Promise<boolean> {
     try {
       const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
         PERMISSIONS_KEY,
@@ -28,12 +32,27 @@ export class PermissionsGuard implements CanActivate {
 
       const req = context.switchToHttp().getRequest();
 
-      if (
-        !req.user ||
-        !req.user.roles.some((role) => requiredPermissions.includes(role.value))
-      ) {
+      if(!req.user || !req.user.roles) {
         throw new ForbiddenException({ message: 'Нет доступа' });
       }
+
+      const roles = req.user.roles;
+      const permissionsArrays = await Promise.all(
+        roles.map(role => this.roleService.findAllPermissions(role.id)),
+      );
+
+      const userPermissions = permissionsArrays
+        .flat()
+        .map(p => p.value);
+
+      const hasAccess = requiredPermissions.every(p =>
+        userPermissions.includes(p),
+      );
+
+      if (!hasAccess) {
+        throw new ForbiddenException('Нет доступа');
+      }
+
       return true;
     } catch (error) {
       throw new ForbiddenException({ message: 'Нет доступа' });

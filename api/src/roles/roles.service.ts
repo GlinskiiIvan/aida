@@ -6,6 +6,7 @@ import { Role } from './entities/role.entity';
 import { User } from 'src/users/entities/user.entity';
 import { FindOptions, Includeable } from 'sequelize';
 import { buildOrder, buildResultData, buildWhere, FindAllServiceParams } from 'src/utils';
+import { Permission } from 'src/permission/entities/permission.entity';
 
 @Injectable()
 export class RolesService {
@@ -16,6 +17,11 @@ export class RolesService {
   private includeUsers: Includeable = {
     model: User,
     as: 'users',
+  }
+
+  private includePermissions: Includeable = {
+    model: Permission,
+    as: 'permisstions'
   }
 
   async create(dto: CreateRoleDto) {
@@ -66,6 +72,18 @@ export class RolesService {
       const msg = `Ошибка при получении всех ролей. ${error.message}`;
       console.log(msg);
       throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async findAllPermissions(roleId: number) {
+    try {
+      return this.findOneOrThrow(roleId, {
+        include: [this.includePermissions]
+      });
+    } catch (error) {
+        const msg = `Ошибка при получении разрешений роли по id. ${error.message}`;
+        console.log(msg);
+        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 

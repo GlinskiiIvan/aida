@@ -20,7 +20,9 @@ import {
 } from '@nestjs/swagger';
 import { Role } from './entities/role.entity';
 import { Roles } from 'src/decorators/roles.decorator';
+import { Permissions } from 'src/decorators/permissions.decorator';
 import { RolesGuard } from 'src/guards/roles.guard';
+import { PermissionsGuard } from 'src/guards/permissions.guard';
 import { User } from 'src/users/entities/user.entity';
 import { FindAllQueryDto } from 'src/utils/dto/findAllQuery.dto';
 import { buildFindAllParams } from 'src/utils';
@@ -33,8 +35,10 @@ export class RolesController {
 
   @ApiOperation({ summary: 'Создание роли' })
   @ApiResponse({ status: 200, type: Role })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  // @Roles('admin')
+  @Permissions('roles:create')
+  // @UseGuards(RolesGuard)
+  @UseGuards(PermissionsGuard)
   @Post()
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.rolesService.create(createRoleDto);

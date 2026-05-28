@@ -1,19 +1,18 @@
-FROM node:24.10.0-alpine3.22
+FROM node:24-slim
 
 WORKDIR /app
 
 RUN corepack enable
+RUN corepack prepare pnpm@9.12.0 --activate
 
-ENV PNPM_ENABLE_BUILD_CHECKS=false
-ENV PNPM_CONFIG_STRICT_DEP_BUILDS=false
-ENV PNPM_CONFIG_IGNORE_SCRIPTS=false
+ENV PNPM_FETCH_TIMEOUT=600000
+ENV PNPM_FETCH_RETRIES=10
 
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
 COPY .npmrc ./
 
-RUN pnpm fetch
-RUN pnpm install --prefer-offline --no-frozen-lockfile --unsafe-perm --force
+RUN pnpm install --no-frozen-lockfile
 
 COPY . .
 
-CMD ["pnpm", "run", "start:dev"]
+CMD ["pnpm", "run", "dev"]

@@ -21,7 +21,7 @@ export class RolesService {
 
   private includePermissions: Includeable = {
     model: Permission,
-    as: 'permisstions'
+    as: 'permissions'
   }
 
   async create(dto: CreateRoleDto) {
@@ -77,9 +77,11 @@ export class RolesService {
 
   async findAllPermissions(roleId: number) {
     try {
-      return this.findOneOrThrow(roleId, {
+      const role = await this.findOneOrThrow(roleId, {
         include: [this.includePermissions]
       });
+
+      return role.permissions;
     } catch (error) {
         const msg = `Ошибка при получении разрешений роли по id. ${error.message}`;
         console.log(msg);

@@ -21,8 +21,8 @@ import {
 import { User } from './entities/user.entity';
 import { UserRoleDto } from './dto/user-role.dto';
 import { UserBanDto } from './dto/user-ban.dto';
-import { Roles } from 'src/decorators/roles.decorator';
-import { RolesGuard } from 'src/guards/roles.guard';
+import { Permissions } from 'src/decorators/permissions.decorator';
+import { PermissionsGuard } from 'src/guards/permissions.guard';
 import { Role } from 'src/roles/entities/role.entity';
 import { PredictionRun } from 'src/prediction-run/entities/prediction-run.entity';
 import { FindAllQueryDto } from 'src/utils/dto/findAllQuery.dto';
@@ -36,8 +36,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Создание пользователя' })
   @ApiResponse({ status: 200, type: User })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:create')
+  @UseGuards(PermissionsGuard)
   @Post()
   create(@Body() dto: CreateUserDto) {
     return this.usersService.create(dto);
@@ -45,8 +45,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Выдача роли пользователю' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:update')
+  @UseGuards(PermissionsGuard)
   @Post('/role/add')
   addRole(@Body() userRoleDto: UserRoleDto) {
     return this.usersService.addRole(userRoleDto);
@@ -54,8 +54,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Получение всех пользователей' })
   @ApiResponse({ status: 200, type: [User] })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:read')
+  @UseGuards(PermissionsGuard)
   @Get()
   findAll(@Query() query: FindAllQueryDto) {
     const params = buildFindAllParams(query);
@@ -64,8 +64,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Получение пользователя по id' })
   @ApiResponse({ status: 200, type: User })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:read')
+  @UseGuards(PermissionsGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
@@ -73,8 +73,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Получение всех ролей пользователя по id' })
   @ApiResponse({ status: 200, type: [Role] })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:read')
+  @UseGuards(PermissionsGuard)
   @Get(':id/roles')
   findAllRoles(@Param('id') id: string) {
     return this.usersService.findAllRoles(+id);
@@ -82,8 +82,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Получение всех запусков предсказаний пользователя по id' })
   @ApiResponse({ status: 200, type: [PredictionRun] })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:read')
+  @UseGuards(PermissionsGuard)
   @Get(':id/runs')
   findAllRuns(@Param('id') id: string) {
     return this.usersService.findAllRuns(+id);
@@ -91,8 +91,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Бан пользователя' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:update')
+  @UseGuards(PermissionsGuard)
   @Patch('/ban')
   ban(@Body() userBanDto: UserBanDto) {
     return this.usersService.ban(userBanDto);
@@ -100,8 +100,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Обновление пользователя' })
   @ApiResponse({ status: 200, type: User })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:update')
+  @UseGuards(PermissionsGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.usersService.update(+id, dto);
@@ -109,8 +109,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Снятие бана с пользователя' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:update')
+  @UseGuards(PermissionsGuard)
   @Patch(':id/unban')
   unban(@Param('id') id: string) {
     return this.usersService.unban(+id);
@@ -118,8 +118,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Восстановление пользователя после мягкого удаления' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:delete')
+  @UseGuards(PermissionsGuard)
   @Patch(':id/restore')
   restore(@Param('id') id: string) {
     return this.usersService.restore(+id);
@@ -127,8 +127,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Удаление роли у пользователя' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:update')
+  @UseGuards(PermissionsGuard)
   @Delete('/role/remove')
   removeRole(@Body() userRoleDto: UserRoleDto) {
     return this.usersService.removeRole(userRoleDto);
@@ -136,8 +136,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Мягкое удаление пользователя' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:delete')
+  @UseGuards(PermissionsGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
@@ -145,8 +145,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Жесткое удаление пользователя' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('user:delete')
+  @UseGuards(PermissionsGuard)
   @Delete(':id/force')
   forceRemove(@Param('id') id: string) {
     return this.usersService.forceRemove(+id);

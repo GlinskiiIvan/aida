@@ -19,9 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Role } from './entities/role.entity';
-import { Roles } from 'src/decorators/roles.decorator';
 import { Permissions } from 'src/decorators/permissions.decorator';
-import { RolesGuard } from 'src/guards/roles.guard';
 import { PermissionsGuard } from 'src/guards/permissions.guard';
 import { User } from 'src/users/entities/user.entity';
 import { FindAllQueryDto } from 'src/utils/dto/findAllQuery.dto';
@@ -35,10 +33,8 @@ export class RolesController {
 
   @ApiOperation({ summary: 'Создание роли' })
   @ApiResponse({ status: 200, type: Role })
-  @Roles('admin')
-  // @Permissions('roles:create')
-  @UseGuards(RolesGuard)
-  // @UseGuards(PermissionsGuard)
+  @Permissions('role:create')
+  @UseGuards(PermissionsGuard)
   @Post()
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.rolesService.create(createRoleDto);
@@ -46,8 +42,8 @@ export class RolesController {
 
   @ApiOperation({ summary: 'Получение всех ролей' })
   @ApiResponse({ status: 200, type: [Role] })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('role:read')
+  @UseGuards(PermissionsGuard)
   @Get()
   findAll(@Query() query: FindAllQueryDto) {
     const params = buildFindAllParams(query);
@@ -56,8 +52,8 @@ export class RolesController {
 
   @ApiOperation({ summary: 'Получение роли по id' })
   @ApiResponse({ status: 200, type: Role })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('role:read')
+  @UseGuards(PermissionsGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.rolesService.findOne(+id);
@@ -65,8 +61,8 @@ export class RolesController {
 
   @ApiOperation({ summary: 'Получение всех пользователей роли по id' })
   @ApiResponse({ status: 200, type: [User] })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('role:read')
+  @UseGuards(PermissionsGuard)
   @Get(':id/users')
   findAllUsers(@Param('id') id: string) {
     return this.rolesService.findAllUsers(+id);
@@ -74,8 +70,8 @@ export class RolesController {
 
   @ApiOperation({ summary: 'Обновление роли' })
   @ApiResponse({ status: 200, type: Role })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('role:update')
+  @UseGuards(PermissionsGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.rolesService.update(+id, updateRoleDto);
@@ -83,8 +79,8 @@ export class RolesController {
 
   @ApiOperation({ summary: 'Восстановление роли после мягкого удаления' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('role:delete')
+  @UseGuards(PermissionsGuard)
   @Patch(':id/restore')
   restore(@Param('id') id: string) {
     return this.rolesService.restore(+id);
@@ -92,8 +88,8 @@ export class RolesController {
 
   @ApiOperation({ summary: 'Мягкое удаление роли' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('role:delete')
+  @UseGuards(PermissionsGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.rolesService.remove(+id);
@@ -101,8 +97,8 @@ export class RolesController {
 
   @ApiOperation({ summary: 'Жесткое удаление роли' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('role:delete')
+  @UseGuards(PermissionsGuard)
   @Delete(':id/force')
   forceRemove(@Param('id') id: string) {
     return this.rolesService.forceRemove(+id);

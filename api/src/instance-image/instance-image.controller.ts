@@ -3,8 +3,8 @@ import { InstanceImageService } from './instance-image.service';
 import { CreateInstanceImageDto } from './dto/create-instance-image.dto';
 import { UpdateInstanceImageDto } from './dto/update-instance-image.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/roles.decorator';
-import { RolesGuard } from 'src/guards/roles.guard';
+import { Permissions } from 'src/decorators/permissions.decorator';
+import { PermissionsGuard } from 'src/guards/permissions.guard';
 import { InstanceImage } from './entities/instance-image.entity';
 import { Prediction } from 'src/prediction/entities/prediction.entity';
 
@@ -16,8 +16,8 @@ export class InstanceImageController {
 
   @ApiOperation({ summary: 'Создание инстанса изображения' })
   @ApiResponse({ status: 200, type: InstanceImage })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('instance-image:create')
+  @UseGuards(PermissionsGuard)
   @Post()
   create(@Body() createInstanceImageDto: CreateInstanceImageDto) {
     return this.instanceImageService.create(createInstanceImageDto);
@@ -25,8 +25,8 @@ export class InstanceImageController {
 
   @ApiOperation({ summary: 'Получение всех инстансов изображений' })
   @ApiResponse({ status: 200, type: [InstanceImage] })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('instance-image:read')
+  @UseGuards(PermissionsGuard)
   @Get()
   findAll() {
     return this.instanceImageService.findAll();
@@ -34,8 +34,8 @@ export class InstanceImageController {
 
   @ApiOperation({ summary: 'Получение инстанса изображения по id' })
   @ApiResponse({ status: 200, type: InstanceImage })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('instance-image:read')
+  @UseGuards(PermissionsGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.instanceImageService.findOne(+id);
@@ -43,8 +43,8 @@ export class InstanceImageController {
 
   @ApiOperation({ summary: 'Получение всех предсказаний инстанса изображения' })
   @ApiResponse({ status: 200, type: [Prediction] })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('instance-image:read')
+  @UseGuards(PermissionsGuard)
   @Get(':id')
   findAllPredictions(@Param('id') id: string) {
     return this.instanceImageService.findAllPredictions(+id);
@@ -52,8 +52,8 @@ export class InstanceImageController {
 
   @ApiOperation({ summary: 'Обновление инстанса изображения' })
   @ApiResponse({ status: 200, type: InstanceImage })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('instance-image:update')
+  @UseGuards(PermissionsGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateInstanceImageDto: UpdateInstanceImageDto) {
     return this.instanceImageService.update(+id, updateInstanceImageDto);
@@ -61,8 +61,8 @@ export class InstanceImageController {
 
   @ApiOperation({ summary: 'Восстановление инстанса изображения после мягкого удаления' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('instance-image:delete')
+  @UseGuards(PermissionsGuard)
   @Patch(':id/restore')
   restore(@Param('id') id: string) {
     return this.instanceImageService.restore(+id);
@@ -70,8 +70,8 @@ export class InstanceImageController {
 
   @ApiOperation({ summary: 'Мягкое удаление инстанса изображения' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('instance-image:delete')
+  @UseGuards(PermissionsGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.instanceImageService.remove(+id);
@@ -79,8 +79,8 @@ export class InstanceImageController {
 
   @ApiOperation({ summary: 'Жесткое удаление инстанса изображения' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('instance-image:delete')
+  @UseGuards(PermissionsGuard)
   @Delete(':id/force')
   forceRemove(@Param('id') id: string) {
     return this.instanceImageService.forceRemove(+id);

@@ -5,9 +5,9 @@ import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { FindAllQueryDto } from 'src/utils/dto/findAllQuery.dto';
 import { buildFindAllParams } from 'src/utils';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/roles.decorator';
 import { Permission } from './entities/permission.entity';
-import { RolesGuard } from 'src/guards/roles.guard';
+import { Permissions } from 'src/decorators/permissions.decorator';
+import { PermissionsGuard } from 'src/guards/permissions.guard';
 
 @ApiBearerAuth('token')
 @ApiTags('Разрешение')
@@ -17,8 +17,8 @@ export class PermissionController {
 
   @ApiOperation({ summary: 'Создание разрешения' })
   @ApiResponse({ status: 200, type: Permission })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('permission:create')
+  @UseGuards(PermissionsGuard)
   @Post()
   create(@Body() createPermissionDto: CreatePermissionDto) {
     return this.permissionService.create(createPermissionDto);
@@ -26,8 +26,8 @@ export class PermissionController {
 
   @ApiOperation({ summary: 'Получение всех разрешений' })
   @ApiResponse({ status: 200, type: [Permission] })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('permission:read')
+  @UseGuards(PermissionsGuard)
   @Get()
   findAll(@Query() query: FindAllQueryDto) {
     const params = buildFindAllParams(query);
@@ -36,8 +36,8 @@ export class PermissionController {
 
   @ApiOperation({ summary: 'Получение разрешения по id' })
   @ApiResponse({ status: 200, type: Permission })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('permission:read')
+  @UseGuards(PermissionsGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.permissionService.findOne(+id);
@@ -45,8 +45,8 @@ export class PermissionController {
 
   @ApiOperation({ summary: 'Обновление разрешения' })
   @ApiResponse({ status: 200, type: Permission })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('permission:update')
+  @UseGuards(PermissionsGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePermissionDto: UpdatePermissionDto) {
     return this.permissionService.update(+id, updatePermissionDto);
@@ -54,8 +54,8 @@ export class PermissionController {
 
   @ApiOperation({ summary: 'Мягкое удаление разрешения' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @Permissions('permission:delete')
+  @UseGuards(PermissionsGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.permissionService.remove(+id);

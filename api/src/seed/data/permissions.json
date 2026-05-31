@@ -4,11 +4,13 @@
   { "value": "doctor:update", "description": "Редактирование врачей" },
   { "value": "doctor:delete", "description": "Удаление врачей" },
 
+  { "value": "inference:run", "description": "Создание инференсов" },
   { "value": "inference:create", "description": "Создание инференсов" },
   { "value": "inference:read", "description": "Просмотр инференсов" },
   { "value": "inference:update", "description": "Редактирование инференсов" },
   { "value": "inference:delete", "description": "Удаление инференсов" },
 
+  { "value": "ingestion:upload", "description": "Создание загрузок" },
   { "value": "ingestion:create", "description": "Создание загрузок" },
   { "value": "ingestion:read", "description": "Просмотр загрузок" },
   { "value": "ingestion:update", "description": "Редактирование загрузок" },

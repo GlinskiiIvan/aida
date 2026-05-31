@@ -39,10 +39,10 @@
   { "value": "prediction-run:update", "description": "Редактирование запусков предсказаний" },
   { "value": "prediction-run:delete", "description": "Удаление запусков предсказаний" },
 
-  { "value": "roles:create", "description": "Создание ролей" },
-  { "value": "roles:read", "description": "Просмотр ролей" },
-  { "value": "roles:update", "description": "Редактирование ролей" },
-  { "value": "roles:delete", "description": "Удаление ролей" },
+  { "value": "role:create", "description": "Создание ролей" },
+  { "value": "role:read", "description": "Просмотр ролей" },
+  { "value": "role:update", "description": "Редактирование ролей" },
+  { "value": "role:delete", "description": "Удаление ролей" },
 
   { "value": "series:create", "description": "Создание серий" },
   { "value": "series:read", "description": "Просмотр серий" },
@@ -54,8 +54,8 @@
   { "value": "study:update", "description": "Редактирование исследований" },
   { "value": "study:delete", "description": "Удаление исследований" },
 
-  { "value": "users:create", "description": "Создание пользователей" },
-  { "value": "users:read", "description": "Просмотр пользователей" },
-  { "value": "users:update", "description": "Редактирование пользователей" },
-  { "value": "users:delete", "description": "Удаление пользователей" }
+  { "value": "user:create", "description": "Создание пользователей" },
+  { "value": "user:read", "description": "Просмотр пользователей" },
+  { "value": "user:update", "description": "Редактирование пользователей" },
+  { "value": "user:delete", "description": "Удаление пользователей" }
 ]

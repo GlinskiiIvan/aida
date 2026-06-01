@@ -21,7 +21,6 @@ export class StudyController {
   @ApiOperation({ summary: 'Создание исследования' })
   @ApiResponse({ status: 200, type: Study })
   @Permissions('study:create')
-  @UseGuards(PermissionsGuard)
   @Post()
   create(@Body() dto: CreateStudyDto) {
     return this.studyService.create(dto);
@@ -30,7 +29,6 @@ export class StudyController {
   @ApiOperation({ summary: 'Получение всех исследований' })
   @ApiResponse({ status: 200, type: [Study] })
   @Permissions('study:read')
-  @UseGuards(PermissionsGuard)
   @Get()
   findAll(@Query() query: FindAllQueryDto) {
     const params = buildFindAllParams(query);
@@ -40,7 +38,6 @@ export class StudyController {
   @ApiOperation({ summary: 'Получение исследования по id' })
   @ApiResponse({ status: 200, type: Study })
   @Permissions('study:read')
-  @UseGuards(PermissionsGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.studyService.findOne(+id);
@@ -49,7 +46,6 @@ export class StudyController {
   @ApiOperation({ summary: 'Получение всех серий исследования по id' })
   @ApiResponse({ status: 200, type: [Series] })
   @Permissions('study:read')
-  @UseGuards(PermissionsGuard)
   @Get(':id/series')
   findAllSeries(@Param('id') id: string) {
     return this.studyService.findAllSeries(+id);
@@ -58,7 +54,6 @@ export class StudyController {
   @ApiOperation({ summary: 'Получение всех запусков предсказаний исследования по id' })
   @ApiResponse({ status: 200, type: [PredictionRun] })
   @Permissions('study:read')
-  @UseGuards(PermissionsGuard)
   @Get(':id/runs')
   findAllRuns(@Param('id') id: string, @Query() query: FindAllQueryDto) {
     const params = buildFindAllParams(query);
@@ -68,7 +63,6 @@ export class StudyController {
   @ApiOperation({ summary: 'Получение всех изображений исследования по id' })
   @ApiResponse({ status: 200, type: [InstanceImage] })
   @Permissions('study:read')
-  @UseGuards(PermissionsGuard)
   @Get(':id/images')
   findAllImages(@Param('id') id: string, @Query() query: FindAllQueryDto) {
     const params = buildFindAllParams(query);
@@ -78,7 +72,6 @@ export class StudyController {
   @ApiOperation({ summary: 'Обновление исследования' })
   @ApiResponse({ status: 200, type: Study })
   @Permissions('study:update')
-  @UseGuards(PermissionsGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateStudyDto) {
     return this.studyService.update(+id, dto);
@@ -87,7 +80,6 @@ export class StudyController {
   @ApiOperation({ summary: 'Восстановление исследования после мягкого удаления' })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions('study:delete')
-  @UseGuards(PermissionsGuard)
   @Patch(':id/restore')
   restore(@Param('id') id: string) {
     return this.studyService.restore(+id);
@@ -96,7 +88,6 @@ export class StudyController {
   @ApiOperation({ summary: 'Мягкое удаление исследования' })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions('study:delete')
-  @UseGuards(PermissionsGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.studyService.remove(+id);
@@ -105,7 +96,6 @@ export class StudyController {
   @ApiOperation({ summary: 'Жесткое удаление исследования' })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions('study:delete')
-  @UseGuards(PermissionsGuard)
   @Delete(':id/force')
   forceRemove(@Param('id') id: string) {
     return this.studyService.forceRemove(+id);

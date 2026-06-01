@@ -19,7 +19,6 @@ export class PatientController {
   @ApiOperation({ summary: 'Создание пациента' })
   @ApiResponse({ status: 200, type: Patient })
   @Permissions('patient:create')
-  @UseGuards(PermissionsGuard)
   @Post()
   create(@Body() dto: CreatePatientDto) {
     return this.patientService.create(dto);
@@ -28,7 +27,6 @@ export class PatientController {
   @ApiOperation({ summary: 'Получение всех пациентов' })
   @ApiResponse({ status: 200, type: [Patient] })
   @Permissions('patient:read')
-  @UseGuards(PermissionsGuard)
   @Get()
   findAll(@Query() query: FindAllQueryDto) {
     const params = buildFindAllParams(query);
@@ -38,7 +36,6 @@ export class PatientController {
   @ApiOperation({ summary: 'Получение пациента по id' })
   @ApiResponse({ status: 200, type: Patient })
   @Permissions('patient:read')
-  @UseGuards(PermissionsGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.patientService.findOne(+id);
@@ -47,7 +44,6 @@ export class PatientController {
   @ApiOperation({ summary: 'Получение всех исследований пациента по id' })
   @ApiResponse({ status: 200, type: [Study] })
   @Permissions('patient:read')
-  @UseGuards(PermissionsGuard)
   @Get(':id/studies')
   findAllStudies(@Param('id') id: string, @Query() query: FindAllQueryDto) {
     const params = buildFindAllParams(query);
@@ -57,7 +53,6 @@ export class PatientController {
   @ApiOperation({ summary: 'Обновление пациента' })
   @ApiResponse({ status: 200, type: Patient })
   @Permissions('patient:update')
-  @UseGuards(PermissionsGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdatePatientDto) {
     return this.patientService.update(+id, dto);
@@ -66,7 +61,6 @@ export class PatientController {
   @ApiOperation({ summary: 'Восстановление пациента по id после мягкого удаления' })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions('patient:delete')
-  @UseGuards(PermissionsGuard)
   @Patch(':id/restore')
   restore(@Param('id') id: string) {
     return this.patientService.restore(+id);
@@ -75,7 +69,6 @@ export class PatientController {
   @ApiOperation({ summary: 'Мягкое удаление пациента по id' })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions('patient:delete')
-  @UseGuards(PermissionsGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.patientService.remove(+id);
@@ -84,7 +77,6 @@ export class PatientController {
   @ApiOperation({ summary: 'Жесткое удаление пациента по id' })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions('patient:delete')
-  @UseGuards(PermissionsGuard)
   @Delete(':id/force')
   forceRemove(@Param('id') id: string) {
     return this.patientService.forceRemove(+id);

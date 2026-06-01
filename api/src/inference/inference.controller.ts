@@ -14,7 +14,6 @@ export class InferenceController {
   @ApiOperation({ summary: 'Запуск предсказания исследования' })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions('inference:run')
-  @UseGuards(PermissionsGuard)
   @Post('predict/:studyId')
   predict(@Param('studyId') studyId: string, @Body() dto: PredictionRunDto, @Request() req) {
     return this.inferenceService.predict(+studyId, +req.user.id, dto);

@@ -15,7 +15,6 @@ import { RolesService } from 'src/roles/roles.service';
 export class PermissionsGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private roleService: RolesService,
   ) {}
 
   async canActivate(
@@ -36,15 +35,9 @@ export class PermissionsGuard implements CanActivate {
         throw new ForbiddenException({ message: 'Нет доступа' });
       }
 
-      const roles = req.user.roles;
-      const permissionsArrays = await Promise.all(
-        roles.map(role => this.roleService.findAllPermissions(role.id)),
-      );
-
-      const userPermissions = permissionsArrays
-        .flat()
-        .map(p => p.value);
-
+      const userPermissions = req.user.permissions;
+      console.log('userPermissions', userPermissions);
+      
       const hasAccess = requiredPermissions.every(p =>
         userPermissions.includes(p),
       );

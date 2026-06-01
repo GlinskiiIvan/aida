@@ -17,7 +17,6 @@ export class DoctorController {
   @ApiOperation({ summary: 'Создание доктора' })
   @ApiResponse({ status: 200, type: Doctor })
   @Permissions('doctor:create')
-  @UseGuards(PermissionsGuard)
   @Post()
   create(@Body() dto: CreateDoctorDto) {
     return this.doctorService.create(dto);
@@ -26,7 +25,6 @@ export class DoctorController {
   @ApiOperation({ summary: 'Получение всех докторов' })
   @ApiResponse({ status: 200, type: [Doctor] })
   @Permissions('doctor:read')
-  @UseGuards(PermissionsGuard)
   @Get()
   findAll() {
     return this.doctorService.findAll();
@@ -35,16 +33,13 @@ export class DoctorController {
   @ApiOperation({ summary: 'Получение доктора по id' })
   @ApiResponse({ status: 200, type: Doctor })
   @Permissions('doctor:read')
-  @UseGuards(PermissionsGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.doctorService.findOne(+id);
   }
-
   @ApiOperation({ summary: 'Получение всех пациентов доктора по id' })
   @ApiResponse({ status: 200, type: [Patient] })
   @Permissions('doctor:read')
-  @UseGuards(PermissionsGuard)
   @Get(':id/patients')
   findAllPatients(@Param('id') id: string) {
     return this.doctorService.findAllPatients(+id);
@@ -53,7 +48,6 @@ export class DoctorController {
   @ApiOperation({ summary: 'Обновление доктора по id' })
   @ApiResponse({ status: 200, type: Doctor })
   @Permissions('doctor:update')
-  @UseGuards(PermissionsGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateDoctorDto) {
     return this.doctorService.update(+id, dto);
@@ -62,7 +56,6 @@ export class DoctorController {
   @ApiOperation({ summary: 'Востановление доктора по id после мягкого удаления' })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions('doctor:delete')
-  @UseGuards(PermissionsGuard)
   @Patch(':id/restore')
   restore(@Param('id') id: string) {
     return this.doctorService.restore(+id);
@@ -71,7 +64,6 @@ export class DoctorController {
   @ApiOperation({ summary: 'Мягкое удаление доктора по id' })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions('doctor:delete')
-  @UseGuards(PermissionsGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.doctorService.remove(+id);
@@ -80,7 +72,6 @@ export class DoctorController {
   @ApiOperation({ summary: 'Жесткое удаление доктора по id' })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions('doctor:delete')
-  @UseGuards(PermissionsGuard)
   @Delete(':id/force')
   forceRemove(@Param('id') id: string) {
     return this.doctorService.forceRemove(+id);

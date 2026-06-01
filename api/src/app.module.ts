@@ -36,6 +36,7 @@ import { SeedModule } from './seed/seed.module';
 import { PermissionModule } from './permission/permission.module';
 import { Permission } from './permission/entities/permission.entity';
 import { RolePermission } from './intermediary-tables/role-permission.entity';
+import { PermissionsGuard } from './guards/permissions.guard';
 
 @Module({
   imports: [
@@ -102,6 +103,10 @@ import { RolePermission } from './intermediary-tables/role-permission.entity';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard,
     },
     AppService,
   ],

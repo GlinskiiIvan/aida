@@ -33,7 +33,6 @@ export class IngestionController {
       },
   })
   @Permissions('ingestion:upload')
-  @UseGuards(PermissionsGuard)
   @UseInterceptors(FileInterceptor('dicomZip'))
   @Post('/upload/study')
   processStudy(@Body() dto: UploadStudyDto, @UploadedFile() dicomZip) {

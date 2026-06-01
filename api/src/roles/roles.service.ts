@@ -7,6 +7,7 @@ import { User } from 'src/users/entities/user.entity';
 import { FindOptions, Includeable } from 'sequelize';
 import { buildOrder, buildResultData, buildWhere, FindAllServiceParams } from 'src/utils';
 import { Permission } from 'src/permission/entities/permission.entity';
+import { UpdatePermissionsDto } from './dto/update-permissions.dto';
 
 @Injectable()
 export class RolesService {
@@ -138,6 +139,18 @@ export class RolesService {
         returning: true,
       });
       return updatedRows[0];
+    } catch (error) {
+        const msg = `Ошибка при обновлении роли. ${error.message}`;
+        console.log(msg);
+        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async updatePermissions(role_id: number, dto: UpdatePermissionsDto) {
+    try {
+      const role = await this.findOneOrThrow(role_id);
+      await role.$set('permissions', dto.permissions);
+      return true;
     } catch (error) {
         const msg = `Ошибка при обновлении роли. ${error.message}`;
         console.log(msg);

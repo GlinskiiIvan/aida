@@ -24,6 +24,7 @@ import { PermissionsGuard } from 'src/guards/permissions.guard';
 import { User } from 'src/users/entities/user.entity';
 import { FindAllQueryDto } from 'src/utils/dto/findAllQuery.dto';
 import { buildFindAllParams } from 'src/utils';
+import { UpdatePermissionsDto } from './dto/update-permissions.dto';
 
 @ApiBearerAuth('token')
 @ApiTags('Роли')
@@ -70,6 +71,14 @@ export class RolesController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.rolesService.update(+id, updateRoleDto);
+  }
+
+  @ApiOperation({ summary: 'Обновление разрешений роли' })
+  @ApiResponse({ status: 200, type: Boolean })
+  @Permissions('role:update')
+  @Patch(':id/permissions')
+  updatePermissions(@Param('id') id: string, @Body() dto: UpdatePermissionsDto) {
+    return this.rolesService.updatePermissions(+id, dto);
   }
 
   @ApiOperation({ summary: 'Восстановление роли после мягкого удаления' })

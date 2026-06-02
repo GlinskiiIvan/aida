@@ -22,7 +22,8 @@ export class RolesService {
 
   private includePermissions: Includeable = {
     model: Permission,
-    as: 'permissions'
+    as: 'permissions',
+    attributes: ['id', 'value', 'description'],
   }
 
   async create(dto: CreateRoleDto) {

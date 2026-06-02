@@ -1,7 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Page } from '../../ui/copmonents';
-import UserTable from './User'
+import UserTable from './User';
+import RoleTable from './Role';
 
 const AdminPage = () => {
     const {t} = useTranslation();
@@ -11,8 +12,8 @@ const AdminPage = () => {
             title={t('pages.admin.title')}
             description={t('pages.admin.description')} >
 
-            <UserTable />
-
+            {/* <UserTable /> */}
+            <RoleTable />
         </Page>
     );
 };

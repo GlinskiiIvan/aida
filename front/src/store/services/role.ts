@@ -1,6 +1,7 @@
 import {buildFindAllParams, type FindAllParams} from "../utils";
 import type { ResponseFindAll } from '../interfaces';
 import { api } from '../api/api';
+import type { Permission } from "./permission";
 
 export interface CreateRoleDto {
     readonly value: string;
@@ -8,22 +9,18 @@ export interface CreateRoleDto {
 }
 
 export interface UpdateRoleDto extends Partial<CreateRoleDto> {
-    id: number;
+    readonly id: number;
 }
 
 export interface UpdatePermissions {
-    id: number;
-    permissions: number[];
+    readonly id: number;
+    readonly permissions: number[];
 }
 
 export type Role = {
-    id: number,
-    value: string,
-    description: string,
-    permissions: {
-        id: number,
-        value: string,
-    }[]
+    readonly id: number,
+    readonly value: string,
+    readonly description: string,
 }
 
 export const roleApi = api.injectEndpoints({
@@ -55,6 +52,26 @@ export const roleApi = api.injectEndpoints({
                 result
                     ? [
                         ...result.data.map(({ id }) => ({ type: 'roles' as const, id })),
+                        { type: 'roles', id: 'LIST' },
+                    ]
+                    : [{ type: 'roles', id: 'LIST' }],
+        }),
+
+        findAllRolePermissions: builder.query<Permission[], number>({
+            query: (id: number) => `roles/${id}/permissions`,
+            serializeQueryArgs: ({ endpointName }) => {
+                return endpointName;
+            },
+            merge: (newItems) => {
+                return newItems;
+            },
+            forceRefetch({ currentArg, previousArg }) {
+                return currentArg !== previousArg;
+            },
+            providesTags: (result) =>
+                result
+                    ? [
+                        ...result.map(({ id }) => ({ type: 'roles' as const, id })),
                         { type: 'roles', id: 'LIST' },
                     ]
                     : [{ type: 'roles', id: 'LIST' }],
@@ -113,11 +130,13 @@ export const roleApi = api.injectEndpoints({
 
 export const {
     useFindAllRolesQuery,
+    useFindAllRolePermissionsQuery,
     useFindOneRoleQuery,
     useLazyFindAllRolesQuery,
     useLazyFindOneRoleQuery,
+    useLazyFindAllRolePermissionsQuery,
     useCreateRoleMutation,
     useUpdateRoleMutation,
     useUpdatePermissionsMutation,
-    roleemoveRoleMutation,
+    useRemoveRoleMutation,
 } = roleApi; 

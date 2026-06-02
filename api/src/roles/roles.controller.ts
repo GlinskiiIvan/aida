@@ -25,6 +25,7 @@ import { User } from 'src/users/entities/user.entity';
 import { FindAllQueryDto } from 'src/utils/dto/findAllQuery.dto';
 import { buildFindAllParams } from 'src/utils';
 import { UpdatePermissionsDto } from './dto/update-permissions.dto';
+import { Permission } from 'src/permission/entities/permission.entity';
 
 @ApiBearerAuth('token')
 @ApiTags('Роли')
@@ -63,6 +64,14 @@ export class RolesController {
   @Get(':id/users')
   findAllUsers(@Param('id') id: string) {
     return this.rolesService.findAllUsers(+id);
+  }
+
+  @ApiOperation({ summary: 'Получение всех разрешений роли по id' })
+  @ApiResponse({ status: 200, type: [Permission] })
+  @Permissions('role:read')
+  @Get(':id/permissions')
+  findAllPermissions(@Param('id') id: string) {
+    return this.rolesService.findAllPermissions(+id);
   }
 
   @ApiOperation({ summary: 'Обновление роли' })

@@ -51,7 +51,8 @@
 
         &.open {
             opacity: 1;
-            max-height: 300px;
+            max-height: 250px;
+            overflow: auto;
         }
 
         .option {

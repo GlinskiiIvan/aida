@@ -7,27 +7,39 @@ import type { IconPath } from '../Icon';
 import clsx from 'clsx';
 import Icon from '../Icon';
 import { useTranslation } from 'react-i18next';
+import Badge from '../Badge';
 
-interface SelectProps<T> extends React.ComponentProps<'div'> {
+type SingeSelect<T> = {
+    multiple?: false;
+    value: T | undefined;
+    onChangeValue: (value: T | undefined) => void;
+}
+
+type MultipleSelect<T> = {
+    multiple: true;
+    value: T[];
+    onChangeValue: (value: T[]) => void;
+}
+
+type SelectProps<T> = {
     label?: string;
     placeholder?: string;
     validation?: ValidationInfo;
     disabled?: boolean;
 
     options: T[];
-    value: T | undefined;
-    onChangeValue: (value: T | undefined) => void;
 
     getKey?: (item: T) => React.Key;
     getValue?: (item: T) => React.ReactNode;
 
     decorativeIcon?: IconPath;
-}
+} & React.ComponentProps<'div'> & (SingeSelect<T> | MultipleSelect<T>)
 
 const Select = <T,>({
     options = [],
     getKey,
     getValue,
+    multiple,
     value,
     placeholder = '',
     onChangeValue,
@@ -54,27 +66,36 @@ const Select = <T,>({
     const isObject = (item: unknown) => (item !== undefined) && (typeof item === 'object');
     const isGetters = (getValue !== undefined) && (getKey !== undefined);
 
-    const valueIsObject = isObject(value) && isGetters;
-
     const onClickTrigger = React.useCallback(() => {
         setIsOpen(prev => !prev);
     }, [setIsOpen])
 
     const onChangeValueHandler = (item: T) => {
-        if(value === item) {
-            onChangeValue(undefined);
+        if(multiple) {
+            if(value.includes(item)) {
+                onChangeValue(value.filter(el => getKey?.(el) !== getKey?.(item)));
+            } else {
+                onChangeValue([...value, item]);
+            }
         } else {
-            onChangeValue(item);
+            if(value === item) {
+                onChangeValue(undefined);
+            } else {
+                onChangeValue(item);
+            }
+            setIsOpen(false);
         }
-        setIsOpen(false);
     }
 
     React.useEffect(() => {
         if(!isOpen) return;
 
         const handleClickOutside = (e: MouseEvent) => {
-            if(e.target !== selectRef.current) {
-                onClickTrigger();
+            if (
+                selectRef.current &&
+                !selectRef.current.contains(e.target as Node)
+            ) {
+                setIsOpen(false);
             }
         }
 
@@ -95,6 +116,26 @@ const Select = <T,>({
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [onClickTrigger, isOpen]);
 
+    const Placeholder = () => <span className={styles.placeholder}>{placeholder || t('ui.placeholder.select.default')}</span>;
+    const SingeValue = () => <>
+        {!multiple && (
+            value === undefined
+                ? <Placeholder />
+                : isObject(value)
+                ? getValue?.(value as T)
+                : (value as React.ReactNode)
+        )}
+    </>;
+    const MultipleValue = () => <>
+        {(multiple) && (
+            value.length === 0
+            ? (<span className={styles.placeholder}>{placeholder || t('ui.placeholder.select.default')}</span>)
+            : value.map(el => (
+                <Badge key={getKey?.(el)} status={'default'} size={'xs'} text={isObject(el) ? getValue?.(el)?.toString() : (el as React.ReactNode)?.toString()} />
+            ))
+        )}
+    </>;
+
     return (
         <FormField 
             {...props} className={classesLayout} ref={selectRef}
@@ -104,12 +145,8 @@ const Select = <T,>({
                 <FieldTrigger disabled={disabled} status={validation?.status || 'default'} className={classesWrapper} >
                     {decorativeIcon && <Icon name={decorativeIcon} />}
                     <button className={styles.trigger} onClick={onClickTrigger} >
-                        {value === undefined
-                            ? (<span className={styles.placeholder}>{placeholder || t('ui.placeholder.select.default')}</span>)
-                            : valueIsObject
-                            ? getValue(value as T)
-                            : (value as React.ReactNode) }
-
+                        <SingeValue />
+                        <MultipleValue />
                     </button>
                     <Icon className={styles.arrow} name='ARROWDOWN' />
                 </FieldTrigger>
@@ -126,7 +163,10 @@ const Select = <T,>({
                             key = item as string | number;
                         }
 
-                        const selected = valueIsObject ? (key === getKey(value as T)) : key === value;
+                        let selected = multiple
+                            ? value.some(el => isObject(el) ? (key === getKey?.(el)) : (key === el))
+                            : isObject(value) ? (key === getKey?.(value)) : (key === value);
+                        
 
                         const classesOption = clsx({[styles.selected]: selected}, styles.option);
 

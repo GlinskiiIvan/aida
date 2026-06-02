@@ -61,7 +61,7 @@ export const userApi = api.injectEndpoints({
 
         createUser: builder.mutation<User, CreateUserDto>({
             query: (body) => ({
-                url: 'users',
+                url: 'auth/registration',
                 method: 'POST',
                 body
             }),

@@ -112,7 +112,7 @@ const UserPage = () => {
                     createMutation: createMutation,
                     updateMutation: updateMutation,
                     removeMutation: removeMutation,
-                    limit: 6,
+                    limit: 15,
                 }}
                 record={{
                     body: (

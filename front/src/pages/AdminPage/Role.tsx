@@ -172,14 +172,18 @@ const rolePage = () => {
                     fillFormWithRecordData,
                     clearFieldsRecordHandler,
                     modalActions: <>
-                        <Button variant='secondary' intent='normal' icon='ADD' onClick={openUpdateRolePermissionsModalHandler} >{t('pages.admin.tables.role.updatePermissions')}</Button>
+                        <Button 
+                            variant='secondary' intent='normal' icon='EDIT' 
+                            onClick={openUpdateRolePermissionsModalHandler} >
+                                {t('pages.admin.tables.role.editPermissions')}
+                        </Button>
                     </>
                 }} >
 
             </ManagedTable>
 
             <Modal 
-                title={t(`emums.action.edit`)}
+                title={`${t(`enums.action.edit`)} ${t('entities.permission.pluralCases.genitive').toLocaleLowerCase()}`}
                 options={updateRolePermissionsModal}
                 footer={
                     <Stack direction='row' gap='sm' justify='flex-end' align='center'>
@@ -190,7 +194,7 @@ const rolePage = () => {
                     {allPermissionsData.isSuccess && (
                         <Select<Permission>
                             multiple dropdownMode='sticky'
-                            label='Test multiple select'
+                            label={t('entities.role.fields.permissions')}
                             options={allPermissionsData.data.data} value={rolePermissions} onChangeValue={setRolePermissions} 
                             getKey={(T) => T.id} getValue={(T) => T.value} />
                     )}

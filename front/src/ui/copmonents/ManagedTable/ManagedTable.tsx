@@ -568,6 +568,7 @@ const ManagedTable = <T extends Record<string, unknown>,>({
                     <Stack 
                         style={{flexWrap: 'wrap'}}
                         direction='row' gap='sm' justify='flex-end' align='center'>
+                        {record?.modalActions}
                         <Button
                             variant='primary'
                             icon={contextAction === 'add' ? 'ADD' : 'EDIT'} 
@@ -575,9 +576,6 @@ const ManagedTable = <T extends Record<string, unknown>,>({
                             onClick={actionHandler}>
                             {t('actions.save')}
                         </Button>
-
-                        {record?.modalActions}
-
                         {((canRemoveRecord) && (context === Context.UPDATE)) && (
                             // <IconButton icon={{name: 'REMOVE'}} onClick={removeModal.open} />
                             <Button

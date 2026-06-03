@@ -59,15 +59,6 @@ export const roleApi = api.injectEndpoints({
 
         findAllRolePermissions: builder.query<Permission[], number>({
             query: (id: number) => `roles/${id}/permissions`,
-            serializeQueryArgs: ({ endpointName }) => {
-                return endpointName;
-            },
-            merge: (newItems) => {
-                return newItems;
-            },
-            forceRefetch({ currentArg, previousArg }) {
-                return currentArg !== previousArg;
-            },
             providesTags: (result) =>
                 result
                     ? [

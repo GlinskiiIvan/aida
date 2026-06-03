@@ -19,7 +19,7 @@ const rolePage = () => {
     const updateMutation = roleApi.useUpdateRoleMutation();
     const removeMutation = roleApi.useRemoveRoleMutation();
 
-    const updateRolePermissionsMutation = roleApi.useUpdatePermissionsMutation();
+    const [updateRolePermissionsTrigger, updateRolePermissionsData] = roleApi.useUpdatePermissionsMutation();
 
     const [allRolePermissionsTrigger, allRolePermissionsData] = roleApi.useLazyFindAllRolePermissionsQuery();
     const [allPermissionsTrigger, allPermissionsData] = permissionApi.useLazyFindAllPermissionsQuery();
@@ -92,15 +92,26 @@ const rolePage = () => {
     }
 
     React.useEffect(() => {
-        if(allRolePermissionsData.isSuccess && allRolePermissionsData.data.length > 0) {
-            setRolePermissions(allRolePermissionsData.data);
+        if(allRolePermissionsData.isSuccess) {
+            setRolePermissions(allRolePermissionsData.data ?? []);
         }
-    }, [allRolePermissionsData.fulfilledTimeStamp, allRolePermissionsData.data?.length])
+    }, [allRolePermissionsData.fulfilledTimeStamp, allRolePermissionsData.isSuccess])
 
     const updateRolePermissionsHandler = () => {
-
+        if(oneData) {
+            updateRolePermissionsTrigger({
+                id: oneData.id,
+                permissions: rolePermissions.map(el => el.id)
+            })
+        }
         updateRolePermissionsModal.close();
     }
+
+    React.useEffect(() => {
+        if(!updateRolePermissionsModal.show) {
+            setRolePermissions([]);
+        }
+    }, [updateRolePermissionsModal.show])
 
     const [rolePermissions, setRolePermissions] = React.useState<Permission[]>([]);
 

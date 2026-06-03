@@ -397,6 +397,10 @@ export default {
     file: 'Файл',
     dicomZip: 'DICOM архив (.zip)',
     predictionRunning: "Запуск предсказания",
+    language: 'Язык',
+    russian: 'Русский',
+    english: 'Английский',
+    kazakh: 'Казахский',
   },
 
   enums: {

@@ -16,6 +16,8 @@ import {LoginPage} from '../../pages';
 import { useTranslation } from 'react-i18next';
 import { setLogoutHandler } from '../../store/http';
 import AdminPage from '../../pages/AdminPage';
+import { useModal } from '../../ui/copmonents/Modal/useModal';
+import Settings from '../../ui/app/Settings';
 
 const AppRouter: React.FC = () => {
     const {t} = useTranslation();
@@ -72,26 +74,29 @@ const AppRouter: React.FC = () => {
         }
     ];
 
+    const settingsModal = useModal('settingsModal');
+    
     return (
         <Routes>
             <Route path={ROUTES.Login} element={ <LoginPage /> } />
             <Route path={ROUTES.Main} element={
                 <RequireAuth>
                     <MainLayout sidebar={{
-                    items: sidebatItems,
-                    organization: {
-                        logo: logo,
-                        name: 'Gl-CO',
-                        to: ROUTES.Main
-                    },
-                    profile: {
-                        name: userData?.email,
-                        photo: userPhoto,
-                        role: userData?.roles?.map(role => role.value).join(', '),
-                        logout: logoutHandler,
-                    },
-                    openSettings: () => alert('Settings!')
-                }} />
+                        items: sidebatItems,
+                        organization: {
+                            logo: logo,
+                            name: 'Gl-CO',
+                            to: ROUTES.Main
+                        },
+                        profile: {
+                            name: userData?.email,
+                            photo: userPhoto,
+                            role: userData?.roles?.map(role => role.value).join(', '),
+                            logout: logoutHandler,
+                        },
+                        openSettings: settingsModal.open
+                    }} />
+                    <Settings options={settingsModal} />
                 </RequireAuth>
                 
             }>

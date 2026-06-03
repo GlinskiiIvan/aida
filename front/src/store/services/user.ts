@@ -1,6 +1,7 @@
 import {buildFindAllParams, type FindAllParams} from "../utils";
 import type { ResponseFindAll } from '../interfaces';
 import { api } from '../api/api';
+import type { Role } from "./role";
 
 export interface CreateUserDto {
     readonly email: string;
@@ -9,6 +10,11 @@ export interface CreateUserDto {
 
 export interface UpdateUserDto extends Partial<CreateUserDto> {
     id: number;
+}
+
+export interface UpdateRolesDto{
+    readonly id: number;
+    readonly roles: number[];
 }
 
 export type User = {
@@ -59,6 +65,17 @@ export const userApi = api.injectEndpoints({
             query: (id: number) => `users/${id}`,
         }),
 
+        findAllUserRoles: builder.query<Role[], number>({
+            query: (id: number) => `users/${id}/roles`,
+            providesTags: (result) =>
+                result
+                    ? [
+                        ...result.map(({ id }) => ({ type: 'users' as const, id })),
+                        { type: 'users', id: 'LIST' },
+                    ]
+                    : [{ type: 'users', id: 'LIST' }],
+        }),
+
         createUser: builder.mutation<User, CreateUserDto>({
             query: (body) => ({
                 url: 'auth/registration',
@@ -73,6 +90,18 @@ export const userApi = api.injectEndpoints({
                 const { id, ...body } = data
                 return {
                     url: `users/${id}`,
+                    method: 'PATCH',
+                    body,
+                }
+            },
+            invalidatesTags: [{type: 'users', id: 'LIST'}],
+        }),
+
+        updateRoles: builder.mutation<Boolean, UpdateRolesDto>({
+            query(data) {
+                const { id, ...body } = data
+                return {
+                    url: `users/${id}/roles`,
                     method: 'PATCH',
                     body,
                 }
@@ -101,5 +130,6 @@ export const {
     useLazyFindOneUserQuery,
     useCreateUserMutation,
     useUpdateUserMutation,
+    useUpdateRolesMutation,
     useRemoveUserMutation,
 } = userApi; 

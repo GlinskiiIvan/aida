@@ -1,21 +1,28 @@
 import React from 'react';
-import { ManagedTable, Page, Select, Stack, TextField, type ColumnTable, type SelectItem } from '../../ui/copmonents';
+import { Button, ManagedTable, Modal, Page, Select, Stack, TextField, type ColumnTable, type SelectItem } from '../../ui/copmonents';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../routes';
 
 import { roleApi } from '../../store/services/role';
+import { useModal } from '../../ui/copmonents/Modal/useModal';
+import { permissionApi, type Permission } from '../../store/services/permission';
 
 const rolePage = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     
     const allDataQuery = roleApi.useLazyFindAllRolesQuery();
+    const allRolePermissionsQuery = roleApi.useLazyFindAllRolePermissionsQuery();
     const oneDataQuery = roleApi.useLazyFindOneRoleQuery();
 
     const createMutation = roleApi.useCreateRoleMutation();
     const updateMutation = roleApi.useUpdateRoleMutation();
     const removeMutation = roleApi.useRemoveRoleMutation();
+
+    const updateRolePermissionsMutation = roleApi.useUpdatePermissionsMutation();
+
+    const [allPermissionsTrigger, allPermissionsData] = permissionApi.useLazyFindAllPermissionsQuery();
 
     const allData = allDataQuery[1]?.data?.data || [];
     const oneData = oneDataQuery[1]?.data;
@@ -74,6 +81,20 @@ const rolePage = () => {
     }
     // ACTIONS END ///////////////////////////////////////////////////////////////////
     
+    const updateRolePermissionsModal = useModal('updateRolePermissionsModal');
+
+    const openUpdateRolePermissionsModalHandler = () => {
+        allPermissionsTrigger({});
+        updateRolePermissionsModal.open();
+    }
+
+    const updateRolePermissionsHandler = () => {
+
+        updateRolePermissionsModal.close();
+    }
+
+    const [rolePermissions, setRolePermissions] = React.useState<Permission[]>([]);
+
     return (
         <>
             <ManagedTable
@@ -130,9 +151,30 @@ const rolePage = () => {
                     canSubmitRecord,
                     fillFormWithRecordData,
                     clearFieldsRecordHandler,
+                    modalActions: <>
+                        <Button variant='secondary' intent='normal' icon='ADD' onClick={openUpdateRolePermissionsModalHandler} >{t('pages.admin.tables.role.updatePermissions')}</Button>
+                    </>
                 }} >
 
             </ManagedTable>
+
+            <Modal 
+                title={t(`emums.action.edit`)}
+                options={updateRolePermissionsModal}
+                footer={
+                    <Stack direction='row' gap='sm' justify='flex-end' align='center'>
+                        <Button variant='primary' intent='normal' icon='CHECK' onClick={updateRolePermissionsHandler} >{t('actions.confirm')}</Button>
+                        <Button variant='primary' intent='destructive' icon='CLOSE' onClick={() => updateRolePermissionsModal.close()} >{t('actions.cancel')}</Button>
+                    </Stack>
+                } >
+                    {allPermissionsData.isSuccess && (
+                        <Select<Permission>
+                            multiple
+                            label='Test multiple select'
+                            options={allPermissionsData.data.data} value={rolePermissions} onChangeValue={setRolePermissions} 
+                            getKey={(T) => T.id} getValue={(T) => T.value} />
+                    )}
+            </Modal>
         </>
     );
 };

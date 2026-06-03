@@ -15,7 +15,13 @@ export default {
     },
     admin: {
       title: 'Admin panel',
-      description: 'This page provides user and role management.'
+      description: 'This page provides user and role management.',
+
+      tables: {
+        role: {
+          updatePermissions: 'Update permissions',
+        },
+      },
     },
     patients: {
       title: 'List of all patients',

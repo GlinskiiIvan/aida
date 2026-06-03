@@ -571,7 +571,7 @@ const ManagedTable = <T extends Record<string, unknown>,>({
                         {record?.modalActions}
                         <Button
                             variant='primary'
-                            icon={contextAction === 'add' ? 'ADD' : 'EDIT'} 
+                            icon={'CHECK'} 
                             disabled={!record?.canSubmitRecord} 
                             onClick={actionHandler}>
                             {t('actions.save')}

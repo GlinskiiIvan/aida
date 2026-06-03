@@ -9,11 +9,15 @@
                 align-items: center;
                 justify-content: start;
                 width: 100%;
+                overflow: auto;
 
                 color: var(--text-primary);
 
                 .placeholder {
                     color: var(--text-tertiary);
+                }
+                &::-webkit-scrollbar {
+                    display: none; /* Chrome, Safari */
                 }
             }
             .arrow {

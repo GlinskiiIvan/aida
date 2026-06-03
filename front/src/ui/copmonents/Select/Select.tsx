@@ -78,7 +78,7 @@ const Select = <T,>({
 
     const onChangeValueHandler = (item: T) => {
         if(multiple) {
-            if(value.includes(item)) {
+            if(value.some(el => getKey?.(el) === getKey?.(item))) {
                 onChangeValue(value.filter(el => getKey?.(el) !== getKey?.(item)));
             } else {
                 onChangeValue([...value, item]);

@@ -13,7 +13,6 @@ const rolePage = () => {
     const navigate = useNavigate();
     
     const allDataQuery = roleApi.useLazyFindAllRolesQuery();
-    const allRolePermissionsQuery = roleApi.useLazyFindAllRolePermissionsQuery();
     const oneDataQuery = roleApi.useLazyFindOneRoleQuery();
 
     const createMutation = roleApi.useCreateRoleMutation();
@@ -22,6 +21,7 @@ const rolePage = () => {
 
     const updateRolePermissionsMutation = roleApi.useUpdatePermissionsMutation();
 
+    const [allRolePermissionsTrigger, allRolePermissionsData] = roleApi.useLazyFindAllRolePermissionsQuery();
     const [allPermissionsTrigger, allPermissionsData] = permissionApi.useLazyFindAllPermissionsQuery();
 
     const allData = allDataQuery[1]?.data?.data || [];
@@ -84,9 +84,18 @@ const rolePage = () => {
     const updateRolePermissionsModal = useModal('updateRolePermissionsModal');
 
     const openUpdateRolePermissionsModalHandler = () => {
-        allPermissionsTrigger({});
+        if(oneData) {
+            allPermissionsTrigger({});
+            allRolePermissionsTrigger(oneData.id);
+        }
         updateRolePermissionsModal.open();
     }
+
+    React.useEffect(() => {
+        if(allRolePermissionsData.isSuccess && allRolePermissionsData.data.length > 0) {
+            setRolePermissions(allRolePermissionsData.data);
+        }
+    }, [allRolePermissionsData.fulfilledTimeStamp, allRolePermissionsData.data?.length])
 
     const updateRolePermissionsHandler = () => {
 

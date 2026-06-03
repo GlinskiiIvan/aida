@@ -55,6 +55,10 @@ const Select = <T,>({
     className,
     ...props
 }: SelectProps<T>) => {
+    console.log('options', options);
+    console.log('value', value);
+    
+    
     const {t} = useTranslation();
     
     const selectRef = React.useRef<HTMLDivElement>(null);

@@ -11,7 +11,7 @@ import { PermissionsGuard } from 'src/guards/permissions.guard';
 
 @ApiBearerAuth('token')
 @ApiTags('Разрешение')
-@Controller('permission')
+@Controller('permissions')
 export class PermissionController {
   constructor(private readonly permissionService: PermissionService) {}
 

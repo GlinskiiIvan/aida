@@ -12,7 +12,7 @@ const AdminPage = () => {
             title={t('pages.admin.title')}
             description={t('pages.admin.description')} >
 
-            {/* <UserTable /> */}
+            <UserTable />
             <RoleTable />
         </Page>
     );

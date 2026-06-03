@@ -27,6 +27,7 @@ import { Role } from 'src/roles/entities/role.entity';
 import { PredictionRun } from 'src/prediction-run/entities/prediction-run.entity';
 import { FindAllQueryDto } from 'src/utils/dto/findAllQuery.dto';
 import { buildFindAllParams } from 'src/utils';
+import { UpdateRolesDto } from './dto/update-roles.dto';
 
 @ApiBearerAuth('token')
 @ApiTags('Пользователи')
@@ -97,6 +98,14 @@ export class UsersController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.usersService.update(+id, dto);
+  }
+
+  @ApiOperation({ summary: 'Обновление ролей пользователя' })
+  @ApiResponse({ status: 200, type: Boolean })
+  @Permissions('user:update')
+  @Patch(':id/roles')
+  updateRoles(@Param('id') id: string, @Body() dto: UpdateRolesDto) {
+    return this.usersService.updateRoles(+id, dto);
   }
 
   @ApiOperation({ summary: 'Снятие бана с пользователя' })

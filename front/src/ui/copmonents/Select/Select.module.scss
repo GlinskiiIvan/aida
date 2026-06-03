@@ -9,11 +9,15 @@
                 align-items: center;
                 justify-content: start;
                 width: 100%;
+                overflow: auto;
 
                 color: var(--text-primary);
 
                 .placeholder {
                     color: var(--text-tertiary);
+                }
+                &::-webkit-scrollbar {
+                    display: none; /* Chrome, Safari */
                 }
             }
             .arrow {
@@ -28,7 +32,7 @@
     }
 
     .list {
-        position: absolute;
+        position: var(--select-dropdown-mode);
         left: 0;
         top: calc(100% + var(--space-xs));
         z-index: 10;
@@ -51,7 +55,8 @@
 
         &.open {
             opacity: 1;
-            max-height: 300px;
+            max-height: 250px;
+            overflow: auto;
         }
 
         .option {

@@ -15,7 +15,16 @@ export default {
     },
     admin: {
       title: 'Admin panel',
-      description: 'This page provides user and role management.'
+      description: 'This page provides user and role management.',
+
+      tables: {
+        user: {
+          editRoles: 'Edit roles',
+        },
+        role: {
+          editPermissions: 'Edit permissions',
+        },
+      },
     },
     patients: {
       title: 'List of all patients',
@@ -64,6 +73,64 @@ export default {
           password: 'Password',
           banned: 'Blocked',
           banReason: 'Reason for blocking',
+          roles: 'Roles',
+      },
+    },
+    role: {
+      singular: 'Role',
+      plural: 'Roles',
+      gender: 'female',
+
+      singularCases: {
+        nominative: 'Role',
+        genitive: 'Role',
+        dative: 'Role',
+        accusative: 'Role',
+        instrumental: 'Role',
+        prepositional: 'Role',
+      },
+
+      pluralCases: {
+        nominative: 'Roles',
+        genitive: 'Roles',
+        dative: 'Roles',
+        accusative: 'Roles',
+        instrumental: 'Roles',
+        prepositional: 'Roles',
+      },
+
+      fields: {
+        value: 'Name',
+        description: 'Description',
+        permissions: 'Permissions',
+      },
+    },
+    permission: {
+      singular: 'Permission',
+      plural: 'Permissions',
+      gender: 'neuter',
+
+      singularCases: {
+        nominative: 'Permission',
+        genitive: 'Permission',
+        dative: 'Permission',
+        accusative: 'Permission',
+        instrumental: 'Permission',
+        prepositional: 'Permission',
+      },
+
+      pluralCases: {
+        nominative: 'Permissions',
+        genitive: 'Permissions',
+        dative: 'Permissions',
+        accusative: 'Permissions',
+        instrumental: 'Permissions',
+        prepositional: 'Permissions',
+      },
+
+      fields: {
+        value: 'Name',
+        description: 'Description',
       },
     },
     patient: {

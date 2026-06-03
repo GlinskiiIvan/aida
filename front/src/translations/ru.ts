@@ -15,7 +15,16 @@ export default {
     },
     admin: {
       title: 'Админ панель',
-      description: 'На этой странице ощуществляется управление пользователями и ролями.'
+      description: 'На этой странице ощуществляется управление пользователями и ролями.',
+
+      tables: {
+        user: {
+          editRoles: 'Редактировать роли',
+        },
+        role: {
+          editPermissions: 'Редактировать разрешения',
+        },
+      },
     },
     patients: {
       title: 'Список всех пациентов',
@@ -68,6 +77,64 @@ export default {
         password: 'Пароль',
         banned: 'Заблокирован',
         banReason: 'Причина блокировки',
+        roles: 'Роли',
+      },
+    },
+    role: {
+      singular: 'Роль',
+      plural: 'Роли',
+      gender: 'female',
+
+      singularCases: {
+        nominative: 'Роль',
+        genitive: 'Роли',
+        dative: 'Роли',
+        accusative: 'Роль',
+        instrumental: 'Ролью',
+        prepositional: 'Роли',
+      },
+
+      pluralCases: {
+        nominative: 'Роли',
+        genitive: 'Ролей',
+        dative: 'Ролям',
+        accusative: 'Роли',
+        instrumental: 'Ролями',
+        prepositional: 'Ролях',
+      },
+
+      fields: {
+        value: 'Название',
+        description: 'Описание',
+        permissions: 'Разрешения',
+      },
+    },
+    permission: {
+      singular: 'Разрешение',
+      plural: 'Разрешения',
+      gender: 'neuter',
+
+      singularCases: {
+        nominative: 'Разрешение',
+        genitive: 'Разрешения',
+        dative: 'Разрешению',
+        accusative: 'Разрешение',
+        instrumental: 'Разрешением',
+        prepositional: 'Разрешении',
+      },
+
+      pluralCases: {
+        nominative: 'Разрешения',
+        genitive: 'Разрешений',
+        dative: 'Разрешениям',
+        accusative: 'Разрешения',
+        instrumental: 'Разрешениями',
+        prepositional: 'Разрешениях',
+      },
+
+      fields: {
+        value: 'Название',
+        description: 'Описание',
       },
     },
     patient: {

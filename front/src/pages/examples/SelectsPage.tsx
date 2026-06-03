@@ -15,7 +15,7 @@ const testOptions: Option[] = [{id: 1, name: 'Option 1'}, {id: 2, name: 'Option 
 
 const SelectsPage: React.FC = () => {
     const [option, setOption] = React.useState<Option>();
-    // const [option2, setOption2] = React.useState<string>();
+    const [option2, setOption2] = React.useState<Option[]>([]);
 
     const fullWidth = {flex: '1'};
 
@@ -34,6 +34,18 @@ const SelectsPage: React.FC = () => {
                     <Select
                         label='Test select' placeholder='Select value...'
                         options={testOptions} value={option} onChangeValue={setOption} 
+                        getKey={(T) => T.id} getValue={(T) => T.name}
+                        validation={{status: 'default', messages: []}} />
+                    <Select<Option>
+                        multiple
+                        label='Test multiple select' placeholder='Select value...' decorativeIcon='INFO'
+                        options={[...testOptions,...testOptions,...testOptions,...testOptions,...testOptions,...testOptions,...testOptions,...testOptions,]} value={option2} onChangeValue={setOption2} 
+                        getKey={(T) => T.id} getValue={(T) => T.name}
+                        validation={{status: 'default', messages: []}} />
+                    <Select<Option>
+                        multiple
+                        label='Test multiple select' placeholder='Select value...'
+                        options={testOptions} value={option2} onChangeValue={setOption2} 
                         getKey={(T) => T.id} getValue={(T) => T.name}
                         validation={{status: 'default', messages: []}} />
                 </Stack>

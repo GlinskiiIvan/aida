@@ -566,17 +566,16 @@ const ManagedTable = <T extends Record<string, unknown>,>({
                 options={actionsModal}
                 footer={
                     <Stack 
+                        style={{flexWrap: 'wrap'}}
                         direction='row' gap='sm' justify='flex-end' align='center'>
+                        {record?.modalActions}
                         <Button
                             variant='primary'
-                            icon={contextAction === 'add' ? 'ADD' : 'EDIT'} 
+                            icon={'CHECK'} 
                             disabled={!record?.canSubmitRecord} 
                             onClick={actionHandler}>
                             {t('actions.save')}
                         </Button>
-
-                        {record?.modalActions}
-
                         {((canRemoveRecord) && (context === Context.UPDATE)) && (
                             // <IconButton icon={{name: 'REMOVE'}} onClick={removeModal.open} />
                             <Button

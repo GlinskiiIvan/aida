@@ -1,10 +1,12 @@
 import React from 'react';
-import { ManagedTable, Page, Select, Stack, TextField, type ColumnTable, type SelectItem } from '../../ui/copmonents';
+import { Button, ManagedTable, Modal, Page, Select, Stack, TextField, type ColumnTable, type SelectItem } from '../../ui/copmonents';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../routes';
 
 import { roleApi } from '../../store/services/role';
+import { useModal } from '../../ui/copmonents/Modal/useModal';
+import { permissionApi, type Permission } from '../../store/services/permission';
 
 const rolePage = () => {
     const {t} = useTranslation();
@@ -16,6 +18,11 @@ const rolePage = () => {
     const createMutation = roleApi.useCreateRoleMutation();
     const updateMutation = roleApi.useUpdateRoleMutation();
     const removeMutation = roleApi.useRemoveRoleMutation();
+
+    const [updateRolePermissionsTrigger, updateRolePermissionsData] = roleApi.useUpdatePermissionsMutation();
+
+    const [allRolePermissionsTrigger, allRolePermissionsData] = roleApi.useLazyFindAllRolePermissionsQuery();
+    const [allPermissionsTrigger, allPermissionsData] = permissionApi.useLazyFindAllPermissionsQuery();
 
     const allData = allDataQuery[1]?.data?.data || [];
     const oneData = oneDataQuery[1]?.data;
@@ -74,6 +81,40 @@ const rolePage = () => {
     }
     // ACTIONS END ///////////////////////////////////////////////////////////////////
     
+    const updateRolePermissionsModal = useModal('updateRolePermissionsModal');
+
+    const openUpdateRolePermissionsModalHandler = () => {
+        if(oneData) {
+            allPermissionsTrigger({});
+            allRolePermissionsTrigger(oneData.id);
+        }
+        updateRolePermissionsModal.open();
+    }
+
+    React.useEffect(() => {
+        if(allRolePermissionsData.isSuccess) {
+            setRolePermissions(allRolePermissionsData.data ?? []);
+        }
+    }, [allRolePermissionsData.fulfilledTimeStamp, allRolePermissionsData.isSuccess])
+
+    const updateRolePermissionsHandler = () => {
+        if(oneData) {
+            updateRolePermissionsTrigger({
+                id: oneData.id,
+                permissions: rolePermissions.map(el => el.id)
+            })
+        }
+        updateRolePermissionsModal.close();
+    }
+
+    React.useEffect(() => {
+        if(!updateRolePermissionsModal.show) {
+            setRolePermissions([]);
+        }
+    }, [updateRolePermissionsModal.show])
+
+    const [rolePermissions, setRolePermissions] = React.useState<Permission[]>([]);
+
     return (
         <>
             <ManagedTable
@@ -130,9 +171,34 @@ const rolePage = () => {
                     canSubmitRecord,
                     fillFormWithRecordData,
                     clearFieldsRecordHandler,
+                    modalActions: <>
+                        <Button 
+                            variant='secondary' intent='normal' icon='EDIT' 
+                            onClick={openUpdateRolePermissionsModalHandler} >
+                                {t('pages.admin.tables.role.editPermissions')}
+                        </Button>
+                    </>
                 }} >
 
             </ManagedTable>
+
+            <Modal 
+                title={`${t(`enums.action.edit`)} ${t('entities.permission.pluralCases.genitive').toLocaleLowerCase()}`}
+                options={updateRolePermissionsModal}
+                footer={
+                    <Stack direction='row' gap='sm' justify='flex-end' align='center'>
+                        <Button variant='primary' intent='normal' icon='CHECK' onClick={updateRolePermissionsHandler} >{t('actions.confirm')}</Button>
+                        <Button variant='secondary' intent='destructive' icon='CLOSE' onClick={() => updateRolePermissionsModal.close()} >{t('actions.cancel')}</Button>
+                    </Stack>
+                } >
+                    {allPermissionsData.isSuccess && (
+                        <Select<Permission>
+                            multiple dropdownMode='sticky'
+                            label={t('entities.role.fields.permissions')}
+                            options={allPermissionsData.data.data} value={rolePermissions} onChangeValue={setRolePermissions} 
+                            getKey={(T) => T.id} getValue={(T) => T.value} />
+                    )}
+            </Modal>
         </>
     );
 };

@@ -172,14 +172,18 @@ const UserPage = () => {
                     fillFormWithRecordData,
                     clearFieldsRecordHandler,
                     modalActions: <>
-                        <Button variant='secondary' intent='normal' icon='ADD' onClick={openUpdateUserRolesModalHandler} >{t('pages.admin.tables.user.updateRoles')}</Button>
+                        <Button 
+                            variant='secondary' intent='normal' icon='EDIT' 
+                            onClick={openUpdateUserRolesModalHandler} >
+                                {t('pages.admin.tables.user.editRoles')}
+                        </Button>
                     </>
                 }} >
 
             </ManagedTable>
             
             <Modal 
-                title={t(`emums.action.edit`)}
+                title={`${t(`enums.action.edit`)} ${t('entities.role.pluralCases.genitive').toLocaleLowerCase()}`}
                 options={updateUserRolesModal}
                 footer={
                     <Stack direction='row' gap='sm' justify='flex-end' align='center'>
@@ -190,7 +194,7 @@ const UserPage = () => {
                     {allRolesData.isSuccess && (
                         <Select<Role>
                             multiple dropdownMode='sticky'
-                            label='Test multiple select'
+                            label={t('entities.user.fields.roles')}
                             options={allRolesData.data.data} value={userRoles} onChangeValue={setUserRoles} 
                             getKey={(T) => T.id} getValue={(T) => T.value} />
                     )}

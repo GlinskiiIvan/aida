@@ -18,6 +18,9 @@ export default {
       description: 'This page provides user and role management.',
 
       tables: {
+        user: {
+          editRoles: 'Edit roles',
+        },
         role: {
           editPermissions: 'Edit permissions',
         },
@@ -70,6 +73,7 @@ export default {
           password: 'Password',
           banned: 'Blocked',
           banReason: 'Reason for blocking',
+          roles: 'Roles',
       },
     },
     role: {

@@ -18,6 +18,9 @@ export default {
       description: 'На этой странице ощуществляется управление пользователями и ролями.',
 
       tables: {
+        user: {
+          editRoles: 'Редактировать роли',
+        },
         role: {
           editPermissions: 'Редактировать разрешения',
         },
@@ -74,6 +77,7 @@ export default {
         password: 'Пароль',
         banned: 'Заблокирован',
         banReason: 'Причина блокировки',
+        roles: 'Роли',
       },
     },
     role: {

@@ -164,12 +164,12 @@ const rolePage = () => {
                 footer={
                     <Stack direction='row' gap='sm' justify='flex-end' align='center'>
                         <Button variant='primary' intent='normal' icon='CHECK' onClick={updateRolePermissionsHandler} >{t('actions.confirm')}</Button>
-                        <Button variant='primary' intent='destructive' icon='CLOSE' onClick={() => updateRolePermissionsModal.close()} >{t('actions.cancel')}</Button>
+                        <Button variant='secondary' intent='destructive' icon='CLOSE' onClick={() => updateRolePermissionsModal.close()} >{t('actions.cancel')}</Button>
                     </Stack>
                 } >
                     {allPermissionsData.isSuccess && (
                         <Select<Permission>
-                            multiple
+                            multiple dropdownMode='sticky'
                             label='Test multiple select'
                             options={allPermissionsData.data.data} value={rolePermissions} onChangeValue={setRolePermissions} 
                             getKey={(T) => T.id} getValue={(T) => T.value} />

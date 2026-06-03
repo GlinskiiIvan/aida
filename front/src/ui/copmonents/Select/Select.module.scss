@@ -28,7 +28,7 @@
     }
 
     .list {
-        position: absolute;
+        position: var(--select-dropdown-mode);
         left: 0;
         top: calc(100% + var(--space-xs));
         z-index: 10;

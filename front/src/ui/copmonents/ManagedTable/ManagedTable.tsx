@@ -566,6 +566,7 @@ const ManagedTable = <T extends Record<string, unknown>,>({
                 options={actionsModal}
                 footer={
                     <Stack 
+                        style={{flexWrap: 'wrap'}}
                         direction='row' gap='sm' justify='flex-end' align='center'>
                         <Button
                             variant='primary'

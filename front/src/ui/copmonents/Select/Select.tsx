@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './Select.module.scss';
 import FormField from '../FormField';
 import FieldTrigger from '../FieldTrigger';
-import type { ValidationInfo } from '../types';
+import type { CSSVars, ValidationInfo } from '../types';
 import type { IconPath } from '../Icon';
 import clsx from 'clsx';
 import Icon from '../Icon';
@@ -33,6 +33,7 @@ type SelectProps<T> = {
     getValue?: (item: T) => React.ReactNode;
 
     decorativeIcon?: IconPath;
+    dropdownMode?: 'absolute' | 'sticky';
 } & React.ComponentProps<'div'> & (SingeSelect<T> | MultipleSelect<T>)
 
 const Select = <T,>({
@@ -50,6 +51,7 @@ const Select = <T,>({
         messages: []
     },
     decorativeIcon,
+    dropdownMode = 'absolute',
     className,
     ...props
 }: SelectProps<T>) => {
@@ -136,6 +138,10 @@ const Select = <T,>({
         )}
     </>;
 
+    const inlineStyleList: CSSVars = {
+        '--select-dropdown-mode': dropdownMode,
+    };
+
     return (
         <FormField 
             {...props} className={classesLayout} ref={selectRef}
@@ -150,7 +156,7 @@ const Select = <T,>({
                     </button>
                     <Icon className={styles.arrow} name='ARROWDOWN' />
                 </FieldTrigger>
-                <ul className={classesList}>
+                <ul className={classesList} style={inlineStyleList}>
                     {options && options.map((item) => {
                         let display: React.ReactNode | string | number;
                         let key: React.Key;

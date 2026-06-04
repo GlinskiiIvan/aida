@@ -1,4 +1,4 @@
-export const dicomDateToISO = (studyDate: string, studyTime: string): string | null => {
+export const dicomDateToISO = (studyDate: string | null, studyTime: string | null): string | null => {
   if (!studyDate) return null;
 
   // Дата

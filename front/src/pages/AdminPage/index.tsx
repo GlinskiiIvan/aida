@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Page } from '../../ui/copmonents';
 import UserTable from './User';
 import RoleTable from './Role';
+import DoctorTable from './Doctor';
 
 const AdminPage = () => {
     const {t} = useTranslation();
@@ -14,6 +15,7 @@ const AdminPage = () => {
 
             <UserTable />
             <RoleTable />
+            <DoctorTable />
         </Page>
     );
 };

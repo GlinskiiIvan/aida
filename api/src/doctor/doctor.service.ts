@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { Patient } from 'src/patient/entities/patient.entity';
 import { FindOptions, Includeable } from 'sequelize';
+import { buildOrder, buildResultData, buildWhere, FindAllServiceParams } from 'src/utils';
 
 @Injectable()
 export class DoctorService {
@@ -37,9 +38,32 @@ export class DoctorService {
     }
   }
 
-  async findAll() {
+  async findAll(params: FindAllServiceParams) {
     try {
-      return await this.repository.findAll();
+      const whereParams = buildWhere<Doctor>({
+        dateFrom: params.dateFrom,
+        dateTo: params.dateTo,
+        filterBy: params.filterBy,
+        filterValue: params.filterValue,
+      });
+      const orderParams = buildOrder({
+        sortBy: params.sortBy, 
+        sortOrder: params.sortOrder
+      });
+
+      const { rows: studies, count } = await this.repository.findAndCountAll({
+        where: whereParams,
+        order: orderParams,
+        limit: params.pageSize || undefined,
+        offset: params.offset || undefined,
+      });
+
+      return buildResultData<Doctor>({
+        rows: studies,
+        page: params.page,
+        limit: params.pageSize,
+        count,
+      });
     } catch (error) {
         const msg = `Ошибка при получении всех докторов. ${error.message}`;
         console.log(msg);

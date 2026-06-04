@@ -6,7 +6,7 @@ import { Series } from "src/series/entities/series.entity";
 interface TableCreationAttrs {
     readonly seriesId: number;
     readonly imageName: string;
-    readonly instanceNumber: number;
+    readonly instanceNumber?: number | null;
     readonly rawMetadata: JSON;
 }
 
@@ -34,9 +34,9 @@ export class InstanceImage extends Model<InstanceImage, TableCreationAttrs> {
     @Column({ type: DataType.STRING, unique: true })
     imagePath: string;
 
-    @ApiProperty({ example: 4, description: 'Последоватльный номер изображения в серии' })
-    @Column({ type: DataType.INTEGER, })
-    instanceNumber: number;
+    @ApiProperty({ example: 4, description: 'Последоватльный номер изображения в серии', required: false, })
+    @Column({ type: DataType.INTEGER, allowNull: true, defaultValue: null, })
+    instanceNumber?: number | null;
 
     @ApiProperty({
         example: {

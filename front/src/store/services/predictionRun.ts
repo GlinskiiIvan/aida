@@ -45,10 +45,10 @@ export const predictionRunApi = api.injectEndpoints({
             providesTags: (result) =>
                 result
                     ? [
-                        ...result.data.map(({ id }) => ({ type: 'predictionRun' as const, id })),
-                        { type: 'predictionRun', id: 'LIST' },
+                        ...result.data.map(({ id }) => ({ type: 'prediction-runs' as const, id })),
+                        { type: 'prediction-runs', id: 'LIST' },
                     ]
-                    : [{ type: 'predictionRun', id: 'LIST' }],
+                    : [{ type: 'prediction-runs', id: 'LIST' }],
         }),
     }),
 });

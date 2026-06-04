@@ -4,6 +4,16 @@ import { baseQueryWithReauth } from './baseQueryWithReauth';
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['users', 'studies', 'ingestion', 'inference', 'predictionRun', 'prediction', 'users', 'roles', 'permissions'],
+  tagTypes: [
+    'inference',
+    'ingestion',
+    'patients',
+    'permissions',
+    'predictions',
+    'prediction-runs',
+    'roles',
+    'studies',
+    'users',
+  ],
   endpoints: () => ({}),
 });

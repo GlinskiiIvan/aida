@@ -5,7 +5,6 @@ import type { Study } from './study';
 import { api } from '../api/api';
 
 export interface CreatePatientDto {
-    readonly doctorId: number;
     readonly fullName: string;
     readonly birthDate: string;
     readonly gender: Gender;
@@ -21,7 +20,6 @@ export interface UpdatePatientDto extends Partial<CreatePatientDto> {
 
 export type Patient = {
     id: number,
-    doctorId: number,
     isPublic: boolean,
     fullName: string,
     birthDate: string,

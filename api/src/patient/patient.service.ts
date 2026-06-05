@@ -31,13 +31,14 @@ export class PatientService {
     as: 'studies'
   };
 
-  async create(dto: CreatePatientDto) {
+  async create(dto: CreatePatientDto, userId: number) {
     try {
-      await this.doctorService.findOneOrThrow(dto.doctorId);
+      const doctor = await this.doctorService.findOneOrThrowByUserId(userId);
 
       const patient = await this.repository.create({
         ...dto,
         birthDate: new Date(dto.birthDate),
+        doctorId: doctor.id,
       });
 
       return patient;

@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { Patient } from 'src/patient/entities/patient.entity';
 import { FindOptions, Includeable } from 'sequelize';
+import { buildOrder, buildResultData, buildWhere, FindAllServiceParams } from 'src/utils';
 
 @Injectable()
 export class DoctorService {
@@ -20,6 +21,12 @@ export class DoctorService {
   private includePatients: Includeable = {
     model: Patient,
     as: 'patients',
+  };
+
+  private includeUser: Includeable = {
+    model: User,
+    as: 'user',
+    attributes: ['id', 'email'],
   };
 
   async create(dto: CreateDoctorDto) {
@@ -37,9 +44,33 @@ export class DoctorService {
     }
   }
 
-  async findAll() {
+  async findAll(params: FindAllServiceParams) {
     try {
-      return await this.repository.findAll();
+      const whereParams = buildWhere<Doctor>({
+        dateFrom: params.dateFrom,
+        dateTo: params.dateTo,
+        filterBy: params.filterBy,
+        filterValue: params.filterValue,
+      });
+      const orderParams = buildOrder({
+        sortBy: params.sortBy, 
+        sortOrder: params.sortOrder
+      });
+
+      const { rows: studies, count } = await this.repository.findAndCountAll({
+        where: whereParams,
+        order: orderParams,
+        limit: params.pageSize || undefined,
+        offset: params.offset || undefined,
+        include: [this.includeUser],
+      });
+
+      return buildResultData<Doctor>({
+        rows: studies,
+        page: params.page,
+        limit: params.pageSize,
+        count,
+      });
     } catch (error) {
         const msg = `Ошибка при получении всех докторов. ${error.message}`;
         console.log(msg);
@@ -73,6 +104,17 @@ export class DoctorService {
 
   async findOneOrThrow(id: number, options?: Omit<FindOptions<Doctor>, "where">) {
     const doctor = await this.repository.findByPk(id, options);
+    if (!doctor) {
+      throw new HttpException('Доктор не найден', HttpStatus.NOT_FOUND);
+    }
+    return doctor;
+  }
+
+  async findOneOrThrowByUserId(userId: number, options?: Omit<FindOptions<Doctor>, "where">) {
+    const doctor = await this.repository.findOne({
+      where: {userId,},
+      ...options
+    });
     if (!doctor) {
       throw new HttpException('Доктор не найден', HttpStatus.NOT_FOUND);
     }

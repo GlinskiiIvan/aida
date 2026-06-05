@@ -3,10 +3,6 @@ import { IsDateString, IsEmail, IsEnum, IsNumber, IsOptional, IsPhoneNumber, IsS
 import { Gender } from "src/common/enums";
 
 export class CreatePatientDto {
-    @ApiProperty({ example: 1, description: 'Уникальный ID доктора' })
-    @IsNumber({}, { message: 'doctorId должен быть числом' })
-    readonly doctorId: number;
-
     @ApiProperty({ example: 'Глинский Иван Николаевич', description: 'Полное имя', })
     @IsString({ message: 'fullName должно быть строкой' })
     readonly fullName: string;

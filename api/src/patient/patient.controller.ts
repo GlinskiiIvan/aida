@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Request } from '@nestjs/common';
 import { PatientService } from './patient.service';
 import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdatePatientDto } from './dto/update-patient.dto';
@@ -20,8 +20,8 @@ export class PatientController {
   @ApiResponse({ status: 200, type: Patient })
   @Permissions('patient:create')
   @Post()
-  create(@Body() dto: CreatePatientDto) {
-    return this.patientService.create(dto);
+  create(@Body() dto: CreatePatientDto, @Request() req) {
+    return this.patientService.create(dto, req.user.id);
   }
 
   @ApiOperation({ summary: 'Получение всех пациентов' })

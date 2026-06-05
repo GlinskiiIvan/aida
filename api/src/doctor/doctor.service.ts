@@ -103,6 +103,17 @@ export class DoctorService {
     return doctor;
   }
 
+  async findOneOrThrowByUserId(userId: number, options?: Omit<FindOptions<Doctor>, "where">) {
+    const doctor = await this.repository.findOne({
+      where: {userId,},
+      ...options
+    });
+    if (!doctor) {
+      throw new HttpException('Доктор не найден', HttpStatus.NOT_FOUND);
+    }
+    return doctor;
+  }
+
   async update(id: number, dto: UpdateDoctorDto) {
     try {
       await this.findOneOrThrow(id);

@@ -22,6 +22,10 @@ export interface UpdateDoctorDto extends Partial<CreateDoctorDto> {
 export type Doctor = {
     readonly id: number;
     readonly userId: number;
+    readonly user: {
+        id: number;
+        email: string;
+    };
     readonly fullName: string;
     readonly birthDate: string;
     readonly gender: string;

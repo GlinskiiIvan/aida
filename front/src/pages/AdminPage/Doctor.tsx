@@ -24,6 +24,7 @@ const doctorPage = () => {
 
     const columns: ColumnTable<typeof allData[number]>[] = [
         {key: 'id', label: 'ID', sortable: false}, 
+        {key: 'user', label: t('entities.doctor.fields.user'), sortable: false, render: (el) => el.user.email}, 
         {key: 'fullName', label: t('entities.doctor.fields.fullName'), sortable: false}, 
         {key: 'birthDate', label: t('entities.doctor.fields.birthDate'), sortable: false}, 
         {key: 'gender', label: t('entities.doctor.fields.gender'), sortable: false}, 
@@ -37,6 +38,10 @@ const doctorPage = () => {
 
     // FILTERS START //////////////////////////////////////////////////////////////
     const searchFieldOptions: SelectItem[] = [
+        {
+            title: t('entities.doctor.fields.user'),
+            value: 'user.email',
+        },
         {
             title: t('entities.doctor.fields.fullName'),
             value: 'fullName',

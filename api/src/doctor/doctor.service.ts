@@ -23,6 +23,12 @@ export class DoctorService {
     as: 'patients',
   };
 
+  private includeUser: Includeable = {
+    model: User,
+    as: 'user',
+    attributes: ['id', 'email'],
+  };
+
   async create(dto: CreateDoctorDto) {
     try {
       await this.userService.findOneOrThrow(dto.userId);
@@ -56,6 +62,7 @@ export class DoctorService {
         order: orderParams,
         limit: params.pageSize || undefined,
         offset: params.offset || undefined,
+        include: [this.includeUser],
       });
 
       return buildResultData<Doctor>({

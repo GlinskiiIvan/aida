@@ -76,6 +76,42 @@ export default {
           roles: 'Roles',
       },
     },
+    doctor: {
+      singular: 'Doctor',
+      plural: 'Doctors',
+      gender: 'male',
+
+      singularCases: {
+        nominative: 'Doctor',
+        genitive: 'Doctor',
+        dative: 'Doctor',
+        accusative: 'Doctor',
+        instrumental: 'Doctor',
+        prepositional: 'Doctor',
+      },
+
+      pluralCases: {
+        nominative: 'Doctors',
+        genitive: 'Doctors',
+        dative: 'Doctors',
+        accusative: 'Doctors',
+        instrumental: 'Doctors',
+        prepositional: 'Doctors',
+      },
+
+      fields: {
+        user: 'User',
+        fullName: 'Full Name',
+        birthDate: 'Date of Birth',
+        gender: 'Gender',
+        phone: 'Phone',
+        contactEmail: 'Contact Email',
+        specialization: 'Specialization',
+        department: 'Department',
+        licenseNumber: 'License Number',
+        note: 'Note',
+      },
+    },
     role: {
       singular: 'Role',
       plural: 'Roles',

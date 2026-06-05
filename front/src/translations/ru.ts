@@ -80,6 +80,42 @@ export default {
         roles: 'Роли',
       },
     },
+    doctor: {
+      singular: 'Врач',
+      plural: 'Врачи',
+      gender: 'male',
+
+      singularCases: {
+        nominative: 'Врач',
+        genitive: 'Врача',
+        dative: 'Врачу',
+        accusative: 'Врача',
+        instrumental: 'Врачом',
+        prepositional: 'Враче',
+      },
+
+      pluralCases: {
+        nominative: 'Врачи',
+        genitive: 'Врачей',
+        dative: 'Врачам',
+        accusative: 'Врачей',
+        instrumental: 'Врачами',
+        prepositional: 'Врачах',
+      },
+
+      fields: {
+        user: 'Пользователь',
+        fullName: 'ФИО',
+        birthDate: 'Дата рождения',
+        gender: 'Пол',
+        phone: 'Телефон',
+        contactEmail: 'Контактный email',
+        specialization: 'Специализация',
+        department: 'Отделение',
+        licenseNumber: 'Номер лицензии',
+        note: 'Примечание',
+      },
+    },
     role: {
       singular: 'Роль',
       plural: 'Роли',

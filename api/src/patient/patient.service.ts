@@ -33,7 +33,7 @@ export class PatientService {
 
   async create(dto: CreatePatientDto) {
     try {
-      await this.doctorService.findOneOrThrow(dto.doctorId);
+      // await this.doctorService.findOneOrThrow(dto.doctorId);
 
       const patient = await this.repository.create({
         ...dto,

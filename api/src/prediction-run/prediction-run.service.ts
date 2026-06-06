@@ -32,7 +32,7 @@ export class PredictionRunService {
   async create(dto: CreatePredictionRunDto) {
     try {
       await this.studyService.findOneOrThrow(dto.studyId);
-      await this.doctorServise.findOneOrThrow(dto.createdById);
+      // await this.doctorServise.findOneOrThrow(dto.createdById);
 
       const run = await this.repository.create(dto);
       return run;

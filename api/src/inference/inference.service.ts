@@ -68,18 +68,29 @@ export class InferenceService {
                     stderr += data.toString();
                 });
 
-                python.on('close', (code) => {
+                python.on('close', async (code) => {
                     if (code !== 0) {
-                        this.predictionService.update(prediction.id, {status: Status.Failed});
+                        await this.predictionService.update(prediction.id, {status: Status.Failed});
                         console.error('Python error:', stderr);
                         return reject(stderr);
                     }
 
                     try {
-                        const parsed = JSON.parse(stdout);
+                        // const parsed = JSON.parse(stdout);
+                        const cleaned = stdout.trim();
+
+                        // защита от мусора
+                        const jsonStart = cleaned.indexOf('{');
+                        const jsonEnd = cleaned.lastIndexOf('}');
+
+                        if (jsonStart === -1 || jsonEnd === -1) {
+                            throw new Error(`Invalid Python output: ${cleaned}`);
+                        }
+
+                        const parsed = JSON.parse(cleaned.slice(jsonStart, jsonEnd + 1));
                         resolve(parsed);
                     } catch (e) {
-                        this.predictionService.update(prediction.id, {status: Status.Failed});
+                        await this.predictionService.update(prediction.id, {status: Status.Failed});
                         console.error('Ошибка парсинга JSON:', stdout);
                         reject(e);
                     }

@@ -68,7 +68,14 @@ export class IngestionService {
                     }
 
                     try {
+                        if (!stdout || stdout.trim() === '' || stdout.trim() === 'null') {
+                            console.warn('Skipped DICOM (no output)');
+                            return resolve(null);
+                        }
                         const parsed = JSON.parse(stdout);
+                        if (parsed?.skip) {
+                            return resolve(null);
+                        }
                         resolve(parsed);
                     } catch (e) {
                         console.error('Ошибка парсинга JSON:', stdout);
@@ -113,7 +120,15 @@ export class IngestionService {
                     }
 
                     try {
+                        if (!stdout || stdout.trim() === '' || stdout.trim() === 'null') {
+                            console.warn('Skipped DICOM (no output)');
+                            return resolve(null);
+                        }
+
                         const parsed = JSON.parse(stdout);
+                        if (parsed?.skip) {
+                            return resolve(null);
+                        }
                         const imageName = parsed['imageName'];
                         const rawMetadata = parsed['rawMetadata'];
 
@@ -127,7 +142,7 @@ export class IngestionService {
                         resolve(rawMetadata);
                     } catch (e) {
                         console.error('Ошибка парсинга JSON:', stdout);
-                        reject(e);
+                        resolve(null);
                     }
                 });
             });
@@ -155,7 +170,10 @@ export class IngestionService {
                     results.push(await this.processInstanceImage(series.id, imagePath, series.path));
                 }
 
-                lastImageData = results[results.length - 1];
+                lastImageData = 
+                    results.find(r => r?.['Image Position Patient']) ||
+                    results[0] ||
+                    null;
                 
                 const orientation = lastImageData?.['Image Orientation (Patient)'] ?? null;
                 const seriesDescription = lastImageData?.['Series Description'] ?? null;
@@ -164,7 +182,7 @@ export class IngestionService {
                     seriesNumber: lastImageData?.['Series Number'] ?? null,
                     modality: lastImageData?.['Modality'] ?? null,
                     orientation: orientation ? getSliceOrientation(orientation) : seriesDescription ? getSliceOrientationFromSeriesDescription(seriesDescription): null,
-                    protocol: getProrocolName(lastImageData?.['Series Description']) ?? null,
+                    protocol: seriesDescription ? getProrocolName(seriesDescription) : null,
                     imagesCount: paths.length,
                     description: seriesDescription,
                     rawMetadata: lastImageData,

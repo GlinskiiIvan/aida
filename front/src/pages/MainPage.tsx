@@ -25,7 +25,7 @@ const MainPage = () => {
                         fontSize: '32px',
                     }}
                 >
-                    Добро пожаловать в MRI System 👋
+                    Добро пожаловать в "AI Diagnostic Assistant" 👋
                 </h1>
 
                 <p

@@ -3,7 +3,7 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import { MainLayout } from '../../ui/layouts';
 import { ROUTES } from '../routes';
 
-import logo from '../../assets/images/logo-laba.png';
+import logo from '../../../public/logo.png';
 import userPhoto from '../../assets/images/user.png';
 import type { IconPath } from '../../ui/copmonents';
 import {ExamplesPage} from '../../pages/examples';
@@ -85,7 +85,7 @@ const AppRouter: React.FC = () => {
                         items: sidebatItems,
                         organization: {
                             logo: logo,
-                            name: 'Gl-CO',
+                            name: 'AIDA',
                             to: ROUTES.Main
                         },
                         profile: {

@@ -247,6 +247,7 @@ export default {
         seriesCount: 'Количество серий',
         imagesCount: 'Количество изображений',
         note: 'Примечание',
+        model: 'Модель',
       },
     },
     predictionRun: {
@@ -514,7 +515,7 @@ export default {
 
   sidebar: {
     admin: 'Админ панель',
-    main: 'Главная',
+    main: 'О приложении',
     patients: 'Пациенты',
     studies: 'Исследования',
     examples: 'UI компоненты',

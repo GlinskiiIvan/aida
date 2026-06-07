@@ -114,7 +114,7 @@ const PatientPage = () => {
                 }}
                 tableProps={{
                     table: {
-                        maxHeight: 200,
+                        maxHeight: 500,
                     },
                     thead: {
                         columns,

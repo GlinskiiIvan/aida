@@ -211,6 +211,7 @@ export default {
         seriesCount: 'Сериялар саны',
         imagesCount: 'Кескіндер саны',
         note: 'Ескертпе',
+        model: 'Үлгі',
       },
     },
     predictionRun: {
@@ -478,7 +479,7 @@ export default {
 
   sidebar: {
     admin: 'Админ панелі',
-    main: 'Басты бет',
+    main: 'Қосымша туралы',
     patients: 'Пациенттер',
     studies: 'Зерттеулер',
     examples: 'UI компоненттері',

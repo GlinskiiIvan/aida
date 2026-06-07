@@ -243,6 +243,7 @@ export default {
         seriesCount: 'Number of episodes',
         imagesCount: 'Number of images',
         note: 'Note',
+        model: 'Model',
       },
     },
     predictionRun: {
@@ -510,7 +511,7 @@ export default {
 
   sidebar: {
     admin: 'Admin panel',
-    main: 'Main',
+    main: 'About',
     patients: 'Patients',
     studies: 'Studies',
     examples: 'UI components',

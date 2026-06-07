@@ -478,7 +478,7 @@ export default {
 
   sidebar: {
     admin: 'Админ панелі',
-    main: 'Басты бет',
+    main: 'Қосымша туралы',
     patients: 'Пациенттер',
     studies: 'Зерттеулер',
     examples: 'UI компоненттері',

@@ -64,12 +64,12 @@ const AppRouter: React.FC = () => {
                     tooltip: t('sidebar.studies'),
                     icon: 'INFO' as IconPath,
                 },
-                {
-                    to: ROUTES.Examples,
-                    label: t('sidebar.examples'),
-                    tooltip: t('sidebar.examples'),
-                    icon: 'INFO' as IconPath,
-                },
+                // {
+                //     to: ROUTES.Examples,
+                //     label: t('sidebar.examples'),
+                //     tooltip: t('sidebar.examples'),
+                //     icon: 'INFO' as IconPath,
+                // },
             ]
         }
     ];

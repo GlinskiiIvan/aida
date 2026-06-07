@@ -510,7 +510,7 @@ export default {
 
   sidebar: {
     admin: 'Admin panel',
-    main: 'Main',
+    main: 'About',
     patients: 'Patients',
     studies: 'Studies',
     examples: 'UI components',

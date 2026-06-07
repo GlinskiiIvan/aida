@@ -514,7 +514,7 @@ export default {
 
   sidebar: {
     admin: 'Админ панель',
-    main: 'Главная',
+    main: 'О приложении',
     patients: 'Пациенты',
     studies: 'Исследования',
     examples: 'UI компоненты',

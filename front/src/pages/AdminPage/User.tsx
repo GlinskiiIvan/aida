@@ -23,8 +23,10 @@ const UserPage = () => {
     const [allUserRolesTrigger, allUserRolesData] = userApi.useLazyFindAllUserRolesQuery();
     const [allRolesTrigger, allRolesData] = roleApi.useLazyFindAllRolesQuery();
 
+    const [actionMode, setActionMode] = React.useState<'create' | 'edit'>('create');
+
     const allData = allDataQuery[1]?.data?.data || [];
-    const oneData = oneDataQuery[1]?.data;
+    let oneData = oneDataQuery[1]?.data;
 
     const columns: ColumnTable<typeof allData[number]>[] = [
         {key: 'id', label: 'ID', sortable: false}, 
@@ -69,6 +71,7 @@ const UserPage = () => {
 
     const fillFormWithRecordData = () => {
         if(oneData) {
+            setActionMode('edit');
             setRecordFields({
                 email: oneData.email || '',
                 password: '',
@@ -77,6 +80,7 @@ const UserPage = () => {
     }
 
     const clearFieldsRecordHandler = () => {
+        setActionMode('create');
         setRecordFields(initialRecordData);
     }
     // ACTIONS END ///////////////////////////////////////////////////////////////////
@@ -171,13 +175,15 @@ const UserPage = () => {
                     canSubmitRecord,
                     fillFormWithRecordData,
                     clearFieldsRecordHandler,
-                    modalActions: <>
-                        <Button 
-                            variant='secondary' intent='normal' icon='EDIT' 
-                            onClick={openUpdateUserRolesModalHandler} >
-                                {t('pages.admin.tables.user.editRoles')}
-                        </Button>
-                    </>
+                    modalActions: <>{
+                        (actionMode === 'edit') && (
+                            <Button 
+                                variant='secondary' intent='normal' icon='EDIT' 
+                                onClick={openUpdateUserRolesModalHandler} >
+                                    {t('pages.admin.tables.user.editRoles')}
+                            </Button>
+                        )
+                    }</>
                 }} >
 
             </ManagedTable>

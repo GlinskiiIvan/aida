@@ -24,6 +24,8 @@ const rolePage = () => {
     const [allRolePermissionsTrigger, allRolePermissionsData] = roleApi.useLazyFindAllRolePermissionsQuery();
     const [allPermissionsTrigger, allPermissionsData] = permissionApi.useLazyFindAllPermissionsQuery();
 
+    const [actionMode, setActionMode] = React.useState<'create' | 'edit'>('create');
+
     const allData = allDataQuery[1]?.data?.data || [];
     const oneData = oneDataQuery[1]?.data;
 
@@ -69,6 +71,7 @@ const rolePage = () => {
 
     const fillFormWithRecordData = () => {
         if(oneData) {
+            setActionMode('edit');
             setRecordFields({
                 value: oneData.value || '',
                 description: oneData.description || '',
@@ -77,6 +80,7 @@ const rolePage = () => {
     }
 
     const clearFieldsRecordHandler = () => {
+        setActionMode('create');
         setRecordFields(initialRecordData);
     }
     // ACTIONS END ///////////////////////////////////////////////////////////////////
@@ -171,13 +175,15 @@ const rolePage = () => {
                     canSubmitRecord,
                     fillFormWithRecordData,
                     clearFieldsRecordHandler,
-                    modalActions: <>
-                        <Button 
-                            variant='secondary' intent='normal' icon='EDIT' 
-                            onClick={openUpdateRolePermissionsModalHandler} >
-                                {t('pages.admin.tables.role.editPermissions')}
-                        </Button>
-                    </>
+                    modalActions: <>{
+                        (actionMode === 'edit') && (
+                            <Button 
+                                variant='secondary' intent='normal' icon='EDIT' 
+                                onClick={openUpdateRolePermissionsModalHandler} >
+                                    {t('pages.admin.tables.role.editPermissions')}
+                            </Button>
+                        )
+                    }</>
                 }} >
 
             </ManagedTable>

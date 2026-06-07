@@ -211,6 +211,7 @@ export default {
         seriesCount: 'Сериялар саны',
         imagesCount: 'Кескіндер саны',
         note: 'Ескертпе',
+        model: 'Үлгі',
       },
     },
     predictionRun: {

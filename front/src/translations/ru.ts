@@ -247,6 +247,7 @@ export default {
         seriesCount: 'Количество серий',
         imagesCount: 'Количество изображений',
         note: 'Примечание',
+        model: 'Модель',
       },
     },
     predictionRun: {

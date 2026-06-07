@@ -243,6 +243,7 @@ export default {
         seriesCount: 'Number of episodes',
         imagesCount: 'Number of images',
         note: 'Note',
+        model: 'Model',
       },
     },
     predictionRun: {

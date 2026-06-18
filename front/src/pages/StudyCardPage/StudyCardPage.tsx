@@ -694,7 +694,7 @@ const StudyCardPage = () => {
                             value={model} 
                             onChangeValue={(val) => setModel(val)} 
                             options={modelsOptions} 
-                            label={t('entities.patient.fields.gender')}
+                            label={t('entities.study.fields.model')}
                             getKey={(item) => item.label}
                             getValue={(item) => item.label} />
                     </Modal>

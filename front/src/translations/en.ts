@@ -13,9 +13,65 @@ export default {
         password: 'Enter password...',
       },
     },
+    home: {
+      title: "Welcome to AI Diagnostic Assistant",
+      description: "A system for storing, processing, and analyzing knee MRI studies with support for artificial intelligence algorithms.",
+
+      sections: {
+        studies: {
+          title: "Study Management",
+          items: {
+            upload: "DICOM archive upload",
+            processing: "Automatic data processing",
+            storage: "Storage of image series and scans",
+            results: "Results review"
+          }
+        },
+
+        ai: {
+          title: "AI Analysis",
+          items: {
+            models: "Run trained models",
+            detection: "Detection of injury indicators",
+            confidence: "Result confidence assessment",
+            history: "Prediction history storage"
+          }
+        },
+
+        management: {
+          title: "️Data Management",
+          items: {
+            patients: "Patient database management",
+            studies: "Study management",
+            metadata: "DICOM metadata viewing",
+            analysis: "Analysis result monitoring"
+          }
+        }
+      },
+
+      gettingStarted: {
+        title: "Getting Started",
+        steps: {
+          createPatient: "Create a new patient or select an existing one.",
+          uploadStudy: "Upload an MRI study archive.",
+          waitProcessing: "Wait for data processing to complete.",
+          openStudy: "Open the study to view the images.",
+          runInference: "Run AI analysis if needed."
+        }
+      }
+    },
     admin: {
       title: 'Admin panel',
-      description: 'This page provides user and role management.'
+      description: 'This page provides user and role management.',
+
+      tables: {
+        user: {
+          editRoles: 'Edit roles',
+        },
+        role: {
+          editPermissions: 'Edit permissions',
+        },
+      },
     },
     patients: {
       title: 'List of all patients',
@@ -64,6 +120,100 @@ export default {
           password: 'Password',
           banned: 'Blocked',
           banReason: 'Reason for blocking',
+          roles: 'Roles',
+      },
+    },
+    doctor: {
+      singular: 'Doctor',
+      plural: 'Doctors',
+      gender: 'male',
+
+      singularCases: {
+        nominative: 'Doctor',
+        genitive: 'Doctor',
+        dative: 'Doctor',
+        accusative: 'Doctor',
+        instrumental: 'Doctor',
+        prepositional: 'Doctor',
+      },
+
+      pluralCases: {
+        nominative: 'Doctors',
+        genitive: 'Doctors',
+        dative: 'Doctors',
+        accusative: 'Doctors',
+        instrumental: 'Doctors',
+        prepositional: 'Doctors',
+      },
+
+      fields: {
+        user: 'User',
+        fullName: 'Full Name',
+        birthDate: 'Date of Birth',
+        gender: 'Gender',
+        phone: 'Phone',
+        contactEmail: 'Contact Email',
+        specialization: 'Specialization',
+        department: 'Department',
+        licenseNumber: 'License Number',
+        note: 'Note',
+      },
+    },
+    role: {
+      singular: 'Role',
+      plural: 'Roles',
+      gender: 'female',
+
+      singularCases: {
+        nominative: 'Role',
+        genitive: 'Role',
+        dative: 'Role',
+        accusative: 'Role',
+        instrumental: 'Role',
+        prepositional: 'Role',
+      },
+
+      pluralCases: {
+        nominative: 'Roles',
+        genitive: 'Roles',
+        dative: 'Roles',
+        accusative: 'Roles',
+        instrumental: 'Roles',
+        prepositional: 'Roles',
+      },
+
+      fields: {
+        value: 'Name',
+        description: 'Description',
+        permissions: 'Permissions',
+      },
+    },
+    permission: {
+      singular: 'Permission',
+      plural: 'Permissions',
+      gender: 'neuter',
+
+      singularCases: {
+        nominative: 'Permission',
+        genitive: 'Permission',
+        dative: 'Permission',
+        accusative: 'Permission',
+        instrumental: 'Permission',
+        prepositional: 'Permission',
+      },
+
+      pluralCases: {
+        nominative: 'Permissions',
+        genitive: 'Permissions',
+        dative: 'Permissions',
+        accusative: 'Permissions',
+        instrumental: 'Permissions',
+        prepositional: 'Permissions',
+      },
+
+      fields: {
+        value: 'Name',
+        description: 'Description',
       },
     },
     patient: {
@@ -140,6 +290,7 @@ export default {
         seriesCount: 'Number of episodes',
         imagesCount: 'Number of images',
         note: 'Note',
+        model: 'Model',
       },
     },
     predictionRun: {
@@ -322,6 +473,10 @@ export default {
     file: 'File',
     dicomZip: 'DICOM archive (.zip)',
     predictionRunning: "Starting prediction",
+    language: 'Language',
+    russian: 'Russian',
+    english: 'English',
+    kazakh: 'Kazakh',
   },
 
   enums: {
@@ -403,7 +558,7 @@ export default {
 
   sidebar: {
     admin: 'Admin panel',
-    main: 'Main',
+    main: 'About',
     patients: 'Patients',
     studies: 'Studies',
     examples: 'UI components',

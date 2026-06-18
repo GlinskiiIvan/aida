@@ -6,6 +6,10 @@ import contextlib
 import io
 from ultralytics import YOLO
 
+os.environ["YOLO_VERBOSE"] = "False"
+os.environ["ULTRALYTICS_SILENT"] = "1"
+os.environ["YOLO_CONFIG_DIR"] = "/tmp/ultralytics"
+
 def YOLO_bbox(version: str, source: str):
     start_time = time.time()
 
@@ -15,12 +19,14 @@ def YOLO_bbox(version: str, source: str):
 
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         modelPath = os.path.join(BASE_DIR, 'models', 'yolo', 'bbox', f'{version}.pt')
-        
-        model = YOLO(modelPath)
-        results = model(source, verbose=False)
+
+        f = io.StringIO()
+
+        with contextlib.redirect_stdout(f):
+            model = YOLO(modelPath)
+            results = model(source, verbose=False)
 
         result = results[0]
-
         boxes = result.boxes
 
         output = []

@@ -51,18 +51,19 @@ def get_attrs(file):
 def convert_dicom_to_png(dicom_path, output_dir, apply_clahe=True, apply_laplacian=True):
     try:
         if not os.path.exists(dicom_path):
-            raise FileNotFoundError(f"File not found: {dicom_path}")
+            print(f"File not found: {dicom_path}", file=sys.stderr)
+            return None
 
         try:
-            ds = pydicom.dcmread(dicom_path)
+            ds = pydicom.dcmread(dicom_path, force=True)
         except Exception as e:
-            raise Exception(f"Invalid DICOM file: {dicom_path}. {str(e)}")
+            print(f"Invalid DICOM: {dicom_path} {str(e)}", file=sys.stderr)
+            return None
 
-        if not hasattr(ds, 'pixel_array'):
-            raise Exception(f"No pixel data in DICOM: {dicom_path}")
-
-        # Чтение DICOM файла
-        ds = pydicom.dcmread(dicom_path)
+        if not hasattr(ds, "PixelData"):
+            print(f"Skip (no PixelData): {dicom_path}", file=sys.stderr)
+            return None
+        
         image_data = ds.pixel_array
 
         series_number = str(getattr(ds, 'SeriesNumber', 'N/A'))
@@ -101,10 +102,15 @@ def convert_dicom_to_png(dicom_path, output_dir, apply_clahe=True, apply_laplaci
         }
     except Exception as e:
         print(str(e), file=sys.stderr)
-        sys.exit(1)
+        return None
 
 if len(sys.argv) > 2 and sys.argv[1] == 'convert_dicom_to_png':
     result = convert_dicom_to_png(sys.argv[2], sys.argv[3])
+    
+    if result is None:
+        print(json.dumps({"skip": True}))
+        sys.exit(0)
+
     print(json.dumps(result), flush=True)
 
 sys.stdout.flush()

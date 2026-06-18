@@ -3,8 +3,8 @@ import { PredictionRunService } from './prediction-run.service';
 import { CreatePredictionRunDto } from './dto/create-prediction-run.dto';
 import { UpdatePredictionRunDto } from './dto/update-prediction-run.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/roles.decorator';
-import { RolesGuard } from 'src/guards/roles.guard';
+import { Permissions } from 'src/decorators/permissions.decorator';
+import { PermissionsGuard } from 'src/guards/permissions.guard';
 import { PredictionRun } from './entities/prediction-run.entity';
 import { Prediction } from 'src/prediction/entities/prediction.entity';
 import { FindAllQueryDto } from 'src/utils/dto/findAllQuery.dto';
@@ -18,8 +18,7 @@ export class PredictionRunController {
 
   @ApiOperation({ summary: 'Создание запуска предсказания' })
   @ApiResponse({ status: 200, type: PredictionRun })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('prediction-run:create')
   @Post()
   create(@Body() dto: CreatePredictionRunDto) {
     return this.predictionRunService.create(dto);
@@ -27,8 +26,7 @@ export class PredictionRunController {
 
   @ApiOperation({ summary: 'Получение всех запусков предсказаний' })
   @ApiResponse({ status: 200, type: [PredictionRun] })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('prediction-run:read')
   @Get()
   findAll() {
     return this.predictionRunService.findAll();
@@ -36,8 +34,7 @@ export class PredictionRunController {
 
   @ApiOperation({ summary: 'Получение запуска предсказания по id' })
   @ApiResponse({ status: 200, type: PredictionRun })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('prediction-run:read')
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.predictionRunService.findOne(+id);
@@ -45,8 +42,7 @@ export class PredictionRunController {
 
   @ApiOperation({ summary: 'Получение всех предсказаний запуска предсказания по id' })
   @ApiResponse({ status: 200, type: [Prediction] })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('prediction-run:read')
   @Get(':id/predictions')
   findAllPredictions(@Param('id') id: string, @Query() query: FindAllQueryDto) {
     const params = buildFindAllParams(query);
@@ -55,8 +51,7 @@ export class PredictionRunController {
 
   @ApiOperation({ summary: 'Обновление запуска предсказания' })
   @ApiResponse({ status: 200, type: PredictionRun })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('prediction-run:update')
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdatePredictionRunDto) {
     return this.predictionRunService.update(+id, dto);
@@ -64,8 +59,7 @@ export class PredictionRunController {
 
   @ApiOperation({ summary: 'Восстановление запуска предсказания после мягкого удаления' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('prediction-run:delete')
   @Patch(':id/restore')
   restore(@Param('id') id: string) {
     return this.predictionRunService.restore(+id);
@@ -73,8 +67,7 @@ export class PredictionRunController {
 
   @ApiOperation({ summary: 'Мягкое удаление запуска предсказания' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('prediction-run:delete')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.predictionRunService.remove(+id);
@@ -82,8 +75,7 @@ export class PredictionRunController {
 
   @ApiOperation({ summary: 'Жесткое удаление запуска предсказания' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('prediction-run:delete')
   @Delete(':id/force')
   forceRemove(@Param('id') id: string) {
     return this.predictionRunService.forceRemove(+id);

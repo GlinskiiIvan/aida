@@ -6,6 +6,8 @@ import { Role } from './entities/role.entity';
 import { User } from 'src/users/entities/user.entity';
 import { FindOptions, Includeable } from 'sequelize';
 import { buildOrder, buildResultData, buildWhere, FindAllServiceParams } from 'src/utils';
+import { Permission } from 'src/permission/entities/permission.entity';
+import { UpdatePermissionsDto } from './dto/update-permissions.dto';
 
 @Injectable()
 export class RolesService {
@@ -16,6 +18,12 @@ export class RolesService {
   private includeUsers: Includeable = {
     model: User,
     as: 'users',
+  }
+
+  private includePermissions: Includeable = {
+    model: Permission,
+    as: 'permissions',
+    attributes: ['id', 'value', 'description'],
   }
 
   async create(dto: CreateRoleDto) {
@@ -69,6 +77,20 @@ export class RolesService {
     }
   }
 
+  async findAllPermissions(roleId: number) {
+    try {
+      const role = await this.findOneOrThrow(roleId, {
+        include: [this.includePermissions]
+      });
+
+      return role.permissions;
+    } catch (error) {
+        const msg = `Ошибка при получении разрешений роли по id. ${error.message}`;
+        console.log(msg);
+        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async findOneOrThrow(id: number, options?: Omit<FindOptions<Role>, "where">) {
     const role = await this.repository.findByPk(id, options);
     if(!role) {
@@ -118,6 +140,18 @@ export class RolesService {
         returning: true,
       });
       return updatedRows[0];
+    } catch (error) {
+        const msg = `Ошибка при обновлении роли. ${error.message}`;
+        console.log(msg);
+        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async updatePermissions(role_id: number, dto: UpdatePermissionsDto) {
+    try {
+      const role = await this.findOneOrThrow(role_id);
+      await role.$set('permissions', dto.permissions);
+      return true;
     } catch (error) {
         const msg = `Ошибка при обновлении роли. ${error.message}`;
         console.log(msg);

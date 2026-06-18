@@ -1,8 +1,8 @@
 import { Body, Controller, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { IngestionService } from './ingestion.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/roles.decorator';
-import { RolesGuard } from 'src/guards/roles.guard';
+import { Permissions } from 'src/decorators/permissions.decorator';
+import { PermissionsGuard } from 'src/guards/permissions.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadStudyDto } from './dto/upload-study.dto';
 
@@ -32,8 +32,7 @@ export class IngestionController {
           },
       },
   })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('ingestion:upload')
   @UseInterceptors(FileInterceptor('dicomZip'))
   @Post('/upload/study')
   processStudy(@Body() dto: UploadStudyDto, @UploadedFile() dicomZip) {

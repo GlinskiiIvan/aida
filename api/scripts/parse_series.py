@@ -68,11 +68,16 @@ def parse_series(main_directory):
             
             # Проверяем, если файл является DICOM, пытаясь его прочитать
             try:
-                ds = pydicom.dcmread(dicom_path)
+                try:
+                    ds = pydicom.dcmread(dicom_path, force=True)
+                except Exception as e:
+                    print(f"Invalid DICOM: {dicom_path} {str(e)}", file=sys.stderr)
+                    return None
+                
                 series_uid = getattr(ds, 'SeriesInstanceUID', None)
-                body_part = getattr(ds, 'BodyPartExamined', '').lower()
-                study_description = getattr(ds, 'StudyDescription', '').lower()
-                series_description = getattr(ds, 'SeriesDescription', 'N/A').lower()
+                body_part = (getattr(ds, 'BodyPartExamined', '') or '').lower()
+                study_description = (getattr(ds, 'StudyDescription', '') or '').lower()
+                series_description = (getattr(ds, 'SeriesDescription', 'N/A') or '').lower()
                 methods = extract_methods_from_name(series_description)
                 if series_uid:
                     if is_knee(body_part, study_description) and is_protocol_allowed(series_description, methods):
@@ -87,6 +92,11 @@ def parse_series(main_directory):
 
 if len(sys.argv) > 2 and sys.argv[1] == 'parse_series':
     result = parse_series(sys.argv[2])
+
+    if result is None:
+        print(json.dumps({"skip": True}))
+        sys.exit(0)
+
     print(json.dumps(result), flush=True)
 
 sys.stdout.flush()

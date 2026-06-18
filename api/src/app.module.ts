@@ -33,6 +33,10 @@ import { InstanceImage } from './instance-image/entities/instance-image.entity';
 import { IngestionModule } from './ingestion/ingestion.module';
 import { InferenceModule } from './inference/inference.module';
 import { SeedModule } from './seed/seed.module';
+import { PermissionModule } from './permission/permission.module';
+import { Permission } from './permission/entities/permission.entity';
+import { RolePermission } from './intermediary-tables/role-permission.entity';
+import { PermissionsGuard } from './guards/permissions.guard';
 
 @Module({
   imports: [
@@ -48,6 +52,8 @@ import { SeedModule } from './seed/seed.module';
       database: process.env.POSTGRES_DB,
       models: [
         User, 
+        Permission,
+        RolePermission,
         Role, 
         UserRoles, 
         Post,
@@ -90,12 +96,17 @@ import { SeedModule } from './seed/seed.module';
     InstanceImageModule,
     IngestionModule,
     InferenceModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard,
     },
     AppService,
   ],

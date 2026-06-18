@@ -3,7 +3,7 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import { MainLayout } from '../../ui/layouts';
 import { ROUTES } from '../routes';
 
-import logo from '../../assets/images/logo-laba.png';
+import logo from '../../../public/logo.png';
 import userPhoto from '../../assets/images/user.png';
 import type { IconPath } from '../../ui/copmonents';
 import {ExamplesPage} from '../../pages/examples';
@@ -16,6 +16,8 @@ import {LoginPage} from '../../pages';
 import { useTranslation } from 'react-i18next';
 import { setLogoutHandler } from '../../store/http';
 import AdminPage from '../../pages/AdminPage';
+import { useModal } from '../../ui/copmonents/Modal/useModal';
+import Settings from '../../ui/app/Settings';
 
 const AppRouter: React.FC = () => {
     const {t} = useTranslation();
@@ -62,36 +64,39 @@ const AppRouter: React.FC = () => {
                     tooltip: t('sidebar.studies'),
                     icon: 'INFO' as IconPath,
                 },
-                {
-                    to: ROUTES.Examples,
-                    label: t('sidebar.examples'),
-                    tooltip: t('sidebar.examples'),
-                    icon: 'INFO' as IconPath,
-                },
+                // {
+                //     to: ROUTES.Examples,
+                //     label: t('sidebar.examples'),
+                //     tooltip: t('sidebar.examples'),
+                //     icon: 'INFO' as IconPath,
+                // },
             ]
         }
     ];
 
+    const settingsModal = useModal('settingsModal');
+    
     return (
         <Routes>
             <Route path={ROUTES.Login} element={ <LoginPage /> } />
             <Route path={ROUTES.Main} element={
                 <RequireAuth>
                     <MainLayout sidebar={{
-                    items: sidebatItems,
-                    organization: {
-                        logo: logo,
-                        name: 'Gl-CO',
-                        to: ROUTES.Main
-                    },
-                    profile: {
-                        name: userData?.email,
-                        photo: userPhoto,
-                        role: userData?.roles?.map(role => role.value).join(', '),
-                        logout: logoutHandler,
-                    },
-                    openSettings: () => alert('Settings!')
-                }} />
+                        items: sidebatItems,
+                        organization: {
+                            logo: logo,
+                            name: 'AIDA',
+                            to: ROUTES.Main
+                        },
+                        profile: {
+                            name: userData?.email,
+                            photo: userPhoto,
+                            role: userData?.roles?.map(role => role.value).join(', '),
+                            logout: logoutHandler,
+                        },
+                        openSettings: settingsModal.open
+                    }} />
+                    <Settings options={settingsModal} />
                 </RequireAuth>
                 
             }>

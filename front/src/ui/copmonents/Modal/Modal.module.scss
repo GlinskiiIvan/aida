@@ -33,3 +33,6 @@
         }
     }
 }
+.wrapper:not(.open) {
+    visibility: hidden;
+}

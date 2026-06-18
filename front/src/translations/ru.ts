@@ -13,9 +13,65 @@ export default {
         password: 'Введите пароль...',
       },
     },
+    home: {
+      title: "Добро пожаловать в AI Diagnostic Assistant",
+      description: "Система для хранения, обработки и анализа МРТ-исследований коленного сустава с поддержкой алгоритмов искусственного интеллекта.",
+
+      sections: {
+        studies: {
+          title: "Работа с исследованиями",
+          items: {
+            upload: "Загрузка DICOM-архивов",
+            processing: "Автоматическая обработка данных",
+            storage: "Хранение серий и изображений",
+            results: "Просмотр результатов"
+          }
+        },
+
+        ai: {
+          title: "Анализ ИИ",
+          items: {
+            models: "Запуск обученных моделей",
+            detection: "Поиск признаков повреждений",
+            confidence: "Оценка достоверности результатов",
+            history: "Хранение истории предсказаний"
+          }
+        },
+
+        management: {
+          title: "️Управление данными",
+          items: {
+            patients: "Ведение базы пациентов",
+            studies: "Управление исследованиями",
+            metadata: "Просмотр метаданных DICOM",
+            analysis: "Контроль результатов анализа"
+          }
+        }
+      },
+
+      gettingStarted: {
+        title: "Начало работы",
+        steps: {
+          createPatient: "Создайте пациента или выберите существующего.",
+          uploadStudy: "Загрузите архив с МРТ-исследованием.",
+          waitProcessing: "Дождитесь завершения обработки данных.",
+          openStudy: "Откройте исследование для просмотра снимков.",
+          runInference: "Запустите анализ ИИ при необходимости."
+        }
+      }
+    },
     admin: {
       title: 'Админ панель',
-      description: 'На этой странице ощуществляется управление пользователями и ролями.'
+      description: 'На этой странице ощуществляется управление пользователями и ролями.',
+
+      tables: {
+        user: {
+          editRoles: 'Редактировать роли',
+        },
+        role: {
+          editPermissions: 'Редактировать разрешения',
+        },
+      },
     },
     patients: {
       title: 'Список всех пациентов',
@@ -68,6 +124,100 @@ export default {
         password: 'Пароль',
         banned: 'Заблокирован',
         banReason: 'Причина блокировки',
+        roles: 'Роли',
+      },
+    },
+    doctor: {
+      singular: 'Врач',
+      plural: 'Врачи',
+      gender: 'male',
+
+      singularCases: {
+        nominative: 'Врач',
+        genitive: 'Врача',
+        dative: 'Врачу',
+        accusative: 'Врача',
+        instrumental: 'Врачом',
+        prepositional: 'Враче',
+      },
+
+      pluralCases: {
+        nominative: 'Врачи',
+        genitive: 'Врачей',
+        dative: 'Врачам',
+        accusative: 'Врачей',
+        instrumental: 'Врачами',
+        prepositional: 'Врачах',
+      },
+
+      fields: {
+        user: 'Пользователь',
+        fullName: 'ФИО',
+        birthDate: 'Дата рождения',
+        gender: 'Пол',
+        phone: 'Телефон',
+        contactEmail: 'Контактный email',
+        specialization: 'Специализация',
+        department: 'Отделение',
+        licenseNumber: 'Номер лицензии',
+        note: 'Примечание',
+      },
+    },
+    role: {
+      singular: 'Роль',
+      plural: 'Роли',
+      gender: 'female',
+
+      singularCases: {
+        nominative: 'Роль',
+        genitive: 'Роли',
+        dative: 'Роли',
+        accusative: 'Роль',
+        instrumental: 'Ролью',
+        prepositional: 'Роли',
+      },
+
+      pluralCases: {
+        nominative: 'Роли',
+        genitive: 'Ролей',
+        dative: 'Ролям',
+        accusative: 'Роли',
+        instrumental: 'Ролями',
+        prepositional: 'Ролях',
+      },
+
+      fields: {
+        value: 'Название',
+        description: 'Описание',
+        permissions: 'Разрешения',
+      },
+    },
+    permission: {
+      singular: 'Разрешение',
+      plural: 'Разрешения',
+      gender: 'neuter',
+
+      singularCases: {
+        nominative: 'Разрешение',
+        genitive: 'Разрешения',
+        dative: 'Разрешению',
+        accusative: 'Разрешение',
+        instrumental: 'Разрешением',
+        prepositional: 'Разрешении',
+      },
+
+      pluralCases: {
+        nominative: 'Разрешения',
+        genitive: 'Разрешений',
+        dative: 'Разрешениям',
+        accusative: 'Разрешения',
+        instrumental: 'Разрешениями',
+        prepositional: 'Разрешениях',
+      },
+
+      fields: {
+        value: 'Название',
+        description: 'Описание',
       },
     },
     patient: {
@@ -144,6 +294,7 @@ export default {
         seriesCount: 'Количество серий',
         imagesCount: 'Количество изображений',
         note: 'Примечание',
+        model: 'Модель',
       },
     },
     predictionRun: {
@@ -330,6 +481,10 @@ export default {
     file: 'Файл',
     dicomZip: 'DICOM архив (.zip)',
     predictionRunning: "Запуск предсказания",
+    language: 'Язык',
+    russian: 'Русский',
+    english: 'Английский',
+    kazakh: 'Казахский',
   },
 
   enums: {
@@ -407,7 +562,7 @@ export default {
 
   sidebar: {
     admin: 'Админ панель',
-    main: 'Главная',
+    main: 'О приложении',
     patients: 'Пациенты',
     studies: 'Исследования',
     examples: 'UI компоненты',

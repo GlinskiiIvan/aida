@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request }
 import { InferenceService } from './inference.service';
 import { PredictionRunDto } from './dto/prediction-run.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/roles.decorator';
-import { RolesGuard } from 'src/guards/roles.guard';
+import { Permissions } from 'src/decorators/permissions.decorator';
+import { PermissionsGuard } from 'src/guards/permissions.guard';
 
 @ApiBearerAuth('token')
 @ApiTags('Выход данных')
@@ -13,8 +13,7 @@ export class InferenceController {
 
   @ApiOperation({ summary: 'Запуск предсказания исследования' })
   @ApiResponse({ status: 200, type: Boolean })
-  @Roles('admin', 'doctor')
-  @UseGuards(RolesGuard)
+  @Permissions('inference:run')
   @Post('predict/:studyId')
   predict(@Param('studyId') studyId: string, @Body() dto: PredictionRunDto, @Request() req) {
     return this.inferenceService.predict(+studyId, +req.user.id, dto);

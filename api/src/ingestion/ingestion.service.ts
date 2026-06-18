@@ -68,7 +68,14 @@ export class IngestionService {
                     }
 
                     try {
+                        if (!stdout || stdout.trim() === '' || stdout.trim() === 'null') {
+                            console.warn('Skipped DICOM (no output)');
+                            return resolve(null);
+                        }
                         const parsed = JSON.parse(stdout);
+                        if (parsed?.skip) {
+                            return resolve(null);
+                        }
                         resolve(parsed);
                     } catch (e) {
                         console.error('Ошибка парсинга JSON:', stdout);
@@ -106,28 +113,36 @@ export class IngestionService {
                     stderr += data.toString();
                 });
 
-                python.on('close', (code) => {
+                python.on('close', async (code) => {
                     if (code !== 0) {
                         console.error('Python error:', stderr);
                         return reject(stderr);
                     }
 
                     try {
+                        if (!stdout || stdout.trim() === '' || stdout.trim() === 'null') {
+                            console.warn('Skipped DICOM (no output)');
+                            return resolve(null);
+                        }
+
                         const parsed = JSON.parse(stdout);
+                        if (parsed?.skip) {
+                            return resolve(null);
+                        }
                         const imageName = parsed['imageName'];
                         const rawMetadata = parsed['rawMetadata'];
 
-                        this.instanceImageService.create({
+                        await this.instanceImageService.create({
                             seriesId,
                             imageName,
-                            instanceNumber: rawMetadata['Instance Number'],
+                            instanceNumber: rawMetadata?.['Instance Number'] ?? null,
                             rawMetadata,
                         });
 
                         resolve(rawMetadata);
                     } catch (e) {
                         console.error('Ошибка парсинга JSON:', stdout);
-                        reject(e);
+                        resolve(null);
                     }
                 });
             });
@@ -155,17 +170,21 @@ export class IngestionService {
                     results.push(await this.processInstanceImage(series.id, imagePath, series.path));
                 }
 
-                lastImageData = results[results.length - 1];
+                lastImageData = 
+                    results.find(r => r?.['Image Position Patient']) ||
+                    results[0] ||
+                    null;
                 
-                const orientation = lastImageData['Image Orientation (Patient)'];
+                const orientation = lastImageData?.['Image Orientation (Patient)'] ?? null;
+                const seriesDescription = lastImageData?.['Series Description'] ?? null;
                 await this.seriesService.update(series.id, {
                     status: Status.Completed,
-                    seriesNumber: lastImageData['Series Number'] || null,
-                    modality: lastImageData['Modality'] || null,
-                    orientation: orientation ? getSliceOrientation(orientation) : getSliceOrientationFromSeriesDescription(lastImageData['Series Description']) || null,
-                    protocol: getProrocolName(lastImageData['Series Description']) || null,
+                    seriesNumber: lastImageData?.['Series Number'] ?? null,
+                    modality: lastImageData?.['Modality'] ?? null,
+                    orientation: orientation ? getSliceOrientation(orientation) : seriesDescription ? getSliceOrientationFromSeriesDescription(seriesDescription): null,
+                    protocol: seriesDescription ? getProrocolName(seriesDescription) : null,
                     imagesCount: paths.length,
-                    description: lastImageData['Series Description'] || null,
+                    description: seriesDescription,
                     rawMetadata: lastImageData,
                 });
             }
@@ -198,17 +217,17 @@ export class IngestionService {
             
             await this.studyService.update(study.id, {
                 status: Status.Completed,
-                studyInstanceUID: lastImageData['Study Instance UID'] || null,
-                studyId: lastImageData['Study ID'] || null,
-                specificCharacterSet: lastImageData['Specific Character Set'] || null,
-                studyDateTime: dicomDateToISO(lastImageData['Study Date'], lastImageData['Study Time']),
-                modality: lastImageData['Modality'] || null,
-                institutionName: lastImageData['Institution Name'] || null,
-                stationName: lastImageData['Station Name'] || null,
-                manufacturer: lastImageData['Manufacturer'] || null,
-                manufacturersModelName: lastImageData[`Manufacturer's Model Name`] || null,
-                referringPhysiciansName: lastImageData[`Referring Physician's Name`] || null,
-                description: lastImageData['Study Description'] || null,
+                studyInstanceUID: lastImageData?.['Study Instance UID'] ?? null,
+                studyId: lastImageData?.['Study ID'] ?? null,
+                specificCharacterSet: lastImageData?.['Specific Character Set'] ?? null,
+                studyDateTime: dicomDateToISO(lastImageData?.['Study Date'] ?? null, lastImageData?.['Study Time'] ?? null),
+                modality: lastImageData?.['Modality'] ?? null,
+                institutionName: lastImageData?.['Institution Name'] ?? null,
+                stationName: lastImageData?.['Station Name'] ?? null,
+                manufacturer: lastImageData?.['Manufacturer'] ?? null,
+                manufacturersModelName: lastImageData?.[`Manufacturer's Model Name`] ?? null,
+                referringPhysiciansName: lastImageData?.[`Referring Physician's Name`] ?? null,
+                description: lastImageData?.['Study Description'] ?? null,
                 seriesCount: allSeries.length,
                 imagesCount,
             });

@@ -58,7 +58,6 @@ const PatientPage = () => {
     ];
 
     type RecordData = {
-        doctorId: number;
         fullName: string;
         birthDate: string;
         gender: typeof gendertOptions[0];
@@ -68,7 +67,6 @@ const PatientPage = () => {
     };
 
     const initialRecordData: RecordData = {
-        doctorId: 1,
         fullName: '',
         birthDate: '',
         gender: gendertOptions[0],
@@ -89,7 +87,6 @@ const PatientPage = () => {
     const fillFormWithRecordData = () => {
         if(oneData) {
             setRecordFields({
-                doctorId: oneData.doctorId,
                 fullName: oneData.fullName,
                 birthDate: oneData.birthDate,
                 gender: gendertOptions.find(option => option.id === oneData.gender) || gendertOptions[0],
@@ -117,7 +114,7 @@ const PatientPage = () => {
                 }}
                 tableProps={{
                     table: {
-                        maxHeight: 200,
+                        maxHeight: 500,
                     },
                     thead: {
                         columns,

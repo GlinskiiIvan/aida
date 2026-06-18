@@ -11,6 +11,7 @@ import { Doctor } from 'src/doctor/entities/doctor.entity';
 import { FindOptions, Includeable } from 'sequelize';
 import { PredictionRun } from 'src/prediction-run/entities/prediction-run.entity';
 import { buildOrder, buildResultData, buildWhere, FindAllServiceParams } from 'src/utils';
+import { UpdateRolesDto } from './dto/update-roles.dto';
 
 @Injectable()
 export class UsersService {
@@ -53,6 +54,18 @@ export class UsersService {
       return updatedRows[0];
     } catch (error) {
         const msg = `Ошибка при обновлении пользователя. ${error.message}`;
+        console.log(msg);
+        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async updateRoles(userId: number, dto: UpdateRolesDto) {
+    try {
+      const user = await this.findOneOrThrow(userId);
+      await user.$set('roles', dto.roles);
+      return true;
+    } catch (error) {
+        const msg = `Ошибка при обновлении ролей пользователя. ${error.message}`;
         console.log(msg);
         throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }

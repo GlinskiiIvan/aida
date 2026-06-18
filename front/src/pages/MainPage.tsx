@@ -1,6 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const MainPage = () => {
+    const {t} = useTranslation();
+    
     return (
         <div
             style={{
@@ -25,7 +28,7 @@ const MainPage = () => {
                         fontSize: '32px',
                     }}
                 >
-                    Добро пожаловать в "AI Diagnostic Assistant" 👋
+                    {t('pages.home.title')} 👋
                 </h1>
 
                 <p
@@ -36,8 +39,7 @@ const MainPage = () => {
                         color: '#666',
                     }}
                 >
-                    Система для хранения, обработки и анализа МРТ-исследований коленного
-                    сустава с поддержкой алгоритмов искусственного интеллекта.
+                    {t('pages.home.description')}
                 </p>
             </div>
 
@@ -56,13 +58,13 @@ const MainPage = () => {
                         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
                     }}
                 >
-                    <h2>📁 Работа с исследованиями</h2>
+                    <h2>📁 {t('pages.home.sections.studies.title')}</h2>
 
                     <ul style={{ lineHeight: 1.8, listStyle: 'disc' }}>
-                        <li>Загрузка DICOM-архивов</li>
-                        <li>Автоматическая обработка данных</li>
-                        <li>Хранение серий и изображений</li>
-                        <li>Просмотр результатов</li>
+                        <li>{t('pages.home.sections.studies.items.upload')}</li>
+                        <li>{t('pages.home.sections.studies.items.processing')}</li>
+                        <li>{t('pages.home.sections.studies.items.storage')}</li>
+                        <li>{t('pages.home.sections.studies.items.results')}</li>
                     </ul>
                 </div>
 
@@ -74,13 +76,13 @@ const MainPage = () => {
                         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
                     }}
                 >
-                    <h2>🤖 Анализ ИИ</h2>
+                    <h2>🤖 {t('pages.home.sections.ai.title')}</h2>
 
                     <ul style={{ lineHeight: 1.8, listStyle: 'disc' }}>
-                        <li>Запуск обученных моделей</li>
-                        <li>Поиск признаков повреждений</li>
-                        <li>Оценка достоверности результатов</li>
-                        <li>Хранение истории предсказаний</li>
+                        <li>{t('pages.home.sections.ai.items.models')}</li>
+                        <li>{t('pages.home.sections.ai.items.detection')}</li>
+                        <li>{t('pages.home.sections.ai.items.confidence')}</li>
+                        <li>{t('pages.home.sections.ai.items.history')}</li>
                     </ul>
                 </div>
 
@@ -92,13 +94,13 @@ const MainPage = () => {
                         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
                     }}
                 >
-                    <h2>👨‍⚕️ Управление данными</h2>
+                    <h2>👨‍⚕️ {t('pages.home.sections.management.title')}</h2>
 
                     <ul style={{ lineHeight: 1.8, listStyle: 'disc' }}>
-                        <li>Ведение базы пациентов</li>
-                        <li>Управление исследованиями</li>
-                        <li>Просмотр метаданных DICOM</li>
-                        <li>Контроль результатов анализа</li>
+                        <li>{t('pages.home.sections.management.items.patients')}</li>
+                        <li>{t('pages.home.sections.management.items.studies')}</li>
+                        <li>{t('pages.home.sections.management.items.metadata')}</li>
+                        <li>{t('pages.home.sections.management.items.analysis')}</li>
                     </ul>
                 </div>
             </div>
@@ -112,7 +114,7 @@ const MainPage = () => {
                     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
                 }}
             >
-                <h2>🚀 Начало работы</h2>
+                <h2>🚀 {t('pages.home.gettingStarted.title')}</h2>
 
                 <ol
                     style={{
@@ -121,11 +123,11 @@ const MainPage = () => {
                         listStyle: 'auto'
                     }}
                 >
-                    <li>Создайте пациента или выберите существующего.</li>
-                    <li>Загрузите архив с МРТ-исследованием.</li>
-                    <li>Дождитесь завершения обработки данных.</li>
-                    <li>Откройте исследование для просмотра снимков.</li>
-                    <li>Запустите анализ ИИ при необходимости.</li>
+                    <li>{t('pages.home.gettingStarted.steps.createPatient')}</li>
+                    <li>{t('pages.home.gettingStarted.steps.uploadStudy')}</li>
+                    <li>{t('pages.home.gettingStarted.steps.waitProcessing')}</li>
+                    <li>{t('pages.home.gettingStarted.steps.openStudy')}</li>
+                    <li>{t('pages.home.gettingStarted.steps.runInference')}</li>
                 </ol>
             </div>
         </div>

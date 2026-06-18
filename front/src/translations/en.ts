@@ -13,6 +13,53 @@ export default {
         password: 'Enter password...',
       },
     },
+    home: {
+      title: "Welcome to AI Diagnostic Assistant",
+      description: "A system for storing, processing, and analyzing knee MRI studies with support for artificial intelligence algorithms.",
+
+      sections: {
+        studies: {
+          title: "Study Management",
+          items: {
+            upload: "DICOM archive upload",
+            processing: "Automatic data processing",
+            storage: "Storage of image series and scans",
+            results: "Results review"
+          }
+        },
+
+        ai: {
+          title: "AI Analysis",
+          items: {
+            models: "Run trained models",
+            detection: "Detection of injury indicators",
+            confidence: "Result confidence assessment",
+            history: "Prediction history storage"
+          }
+        },
+
+        management: {
+          title: "️Data Management",
+          items: {
+            patients: "Patient database management",
+            studies: "Study management",
+            metadata: "DICOM metadata viewing",
+            analysis: "Analysis result monitoring"
+          }
+        }
+      },
+
+      gettingStarted: {
+        title: "Getting Started",
+        steps: {
+          createPatient: "Create a new patient or select an existing one.",
+          uploadStudy: "Upload an MRI study archive.",
+          waitProcessing: "Wait for data processing to complete.",
+          openStudy: "Open the study to view the images.",
+          runInference: "Run AI analysis if needed."
+        }
+      }
+    },
     admin: {
       title: 'Admin panel',
       description: 'This page provides user and role management.',

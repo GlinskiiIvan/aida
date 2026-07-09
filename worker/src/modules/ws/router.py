@@ -22,4 +22,4 @@ async def websocket_endpoint(
             await websocket.receive_text()
 
     except WebSocketDisconnect:
-        ws_manager.disconnect(task_id, websocket)
+        ws_manager.disconnect(websocket, task_id)

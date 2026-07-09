@@ -6,7 +6,11 @@ import redis.asyncio as redis
 from src.core.config import REDIS_BROKER_URL
 from .manager import ws_manager
 
+
 async def redis_listener():
+    if REDIS_BROKER_URL is None:
+        raise RuntimeError("REDIS_BROKER_URL is not set")
+
     client = redis.from_url(REDIS_BROKER_URL)
     pubsub = client.pubsub()
 
@@ -15,8 +19,7 @@ async def redis_listener():
     try:
         while True:
             message = await pubsub.get_message(
-                ignore_subscribe_messages=True,
-                timeout=1.0
+                ignore_subscribe_messages=True, timeout=1.0
             )
 
             if message is None:

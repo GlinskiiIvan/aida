@@ -1,0 +1,3 @@
+from .upload_image_collection import upload_image_collection_task
+from .run_detection import run_detection_task
+from .training_tasks import train_model_task

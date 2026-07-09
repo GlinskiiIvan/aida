@@ -1,6 +1,7 @@
 from collections import defaultdict
 from fastapi import WebSocket
 
+
 class ConnectionManager:
     def __init__(self):
         self.connections: dict[str, list[WebSocket]] = defaultdict(list)
@@ -21,13 +22,14 @@ class ConnectionManager:
     async def send_personal_message(self, task_id: str, data: dict):
         if task_id not in self.connections:
             return
-        
+
         for ws in self.connections[task_id]:
             await ws.send_json(data)
 
     async def broadcast(self, data: dict):
-        for connection in self.connections:
+        for connection in self.connections.values():
             for ws in connection:
                 await ws.send_json(data)
+
 
 ws_manager = ConnectionManager()

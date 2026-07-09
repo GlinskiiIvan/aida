@@ -38,3 +38,7 @@ tqdm==4.67.3
 
 pydicom
 uuid6
+
+pylibjpeg
+pylibjpeg-libjpeg
+pylibjpeg-openjpeg

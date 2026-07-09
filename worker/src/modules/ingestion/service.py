@@ -37,5 +37,3 @@ async def upload_study(dto: UploadStudyDTO):
         "processedSeries": processed_series,
         "processedImages": processed_images,
     }
-
-    print(data)

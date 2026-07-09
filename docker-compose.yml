@@ -4,7 +4,7 @@ services:
     build:
       context: ./api
     env_file:
-      - ${ENV_FILE}
+      - ./api/.development.env
     volumes:
       - ./api:/app
       - /app/node_modules
@@ -21,7 +21,7 @@ services:
     build:
       context: ./front
     env_file:
-      - ${ENV_FILE}
+      - ./front/.development.env
     volumes:
       - ./front:/app
       - /app/node_modules
@@ -43,7 +43,7 @@ services:
       - ./worker:/app
       - ./storage:/storage
     env_file:
-      - ${ENV_FILE}
+      - ./worker/.env.local
     restart: unless-stopped
 
   worker:
@@ -56,14 +56,12 @@ services:
       - ./worker:/app
       - ./storage:/storage
     env_file:
-      - ${ENV_FILE}
+      - ./worker/.env.local
     restart: unless-stopped
 
   redis:
     image: redis:7
     container_name: aida-redis
-    env_file:
-      - ${ENV_FILE}
     ports:
       - "6380:6379"
     restart: unless-stopped
@@ -89,7 +87,7 @@ services:
     container_name: aida-postgres
     image: postgres:16
     env_file:
-      - ${ENV_FILE}
+      - ./api/.development.env
     environment:
       PG_DATA: /var/lib/postgresql/data
     ports:

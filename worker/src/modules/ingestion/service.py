@@ -7,18 +7,18 @@ from .schema import UploadStudyDTO
 
 
 async def upload_study(dto: UploadStudyDTO):
-    study_path = await extract_archive(
+    extracted_study_path = await extract_archive(
         study_path=dto.study_path,
         archive_path=dto.archive_path,
     )
 
     series_list, study_metadata = parse_series(
-        study_dir=study_path,
+        study_dir=extracted_study_path,
     )
 
     processed_series, processed_images = await process_series(
         study_id=dto.study_id,
-        study_path=study_path,
+        study_path=dto.study_path,
         series_list=series_list,
     )
 
@@ -37,3 +37,5 @@ async def upload_study(dto: UploadStudyDTO):
         "processedSeries": processed_series,
         "processedImages": processed_images,
     }
+
+    print(data)

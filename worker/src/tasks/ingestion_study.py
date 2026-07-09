@@ -1,10 +1,11 @@
 import shutil
+import asyncio
 
 from celery import Task
 
 from pathlib import Path
-from core.enums.task import Task as TaskEnum
-from core.enums.status import Status
+from src.core.enums.task import Task as TaskEnum
+from src.core.enums.status import Status
 
 from src.modules.ingestion import service as ingestion_service
 from src.modules.ws.publisher import publish_task
@@ -14,11 +15,11 @@ from src.modules.ingestion.schema import UploadStudyDTO
 
 
 @celery.task(bind=True, name=TaskEnum.UPLOAD_STUDY)
-async def upload_study_task(
+def upload_study_task(
     self: Task,
     dto,
     archive_path: Path,
-    upload_dir: str,
+    upload_dir: Path,
 ):
     task_id = self.request.id
 
@@ -33,12 +34,14 @@ async def upload_study_task(
     print(f"TASK {TaskEnum.UPLOAD_STUDY} STARTED")
 
     try:
-        await ingestion_service.upload_study(
-            dto=UploadStudyDTO(
-                task_id=task_id,
-                study_id=dto["study_id"],
-                study_path=dto["study_path"],
-                archive_path=archive_path,
+        asyncio.run(
+            ingestion_service.upload_study(
+                dto=UploadStudyDTO(
+                    task_id=task_id,
+                    study_id=dto["study_id"],
+                    study_path=Path(dto["study_path"]),
+                    archive_path=archive_path,
+                )
             )
         )
     finally:

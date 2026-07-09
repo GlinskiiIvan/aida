@@ -1,7 +1,7 @@
 import uuid
 
 from src.core.enums.status import Status
-import get_orientation
+from . import get_orientation
 from .get_protocol import get_protocol_name
 from .convert_image import convert_dicom_to_png
 
@@ -13,7 +13,7 @@ from collections import defaultdict
 
 async def process_series(
     study_id: uuid.UUID,
-    study_path: str,
+    study_path: Path,
     series_list: defaultdict[str, list[str]],
 ):
     last_image_data = None
@@ -24,7 +24,7 @@ async def process_series(
         for index, (_, image_paths) in enumerate(series_list.items(), start=1):
             id = uuid7()
 
-            series_path = Path(study_path) / f"series_{id}"
+            series_path = Path(study_path) / "series" / f"{id}"
             series_path.mkdir(parents=True, exist_ok=True)
 
             results = []

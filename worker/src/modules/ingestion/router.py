@@ -1,6 +1,7 @@
 import uuid
 import os
 
+from pathlib import Path
 from src.core.config import TMP_UPLOAD_DIR
 
 from fastapi import UploadFile, File, APIRouter
@@ -41,8 +42,8 @@ router = APIRouter(prefix="/ingestion", tags=["ingestion"])
     response_description="Идентификатор фоновой задачи обработки DICOM-исследования и информация о ее текущем статусе.",
 )
 async def upload_study(
-    study_id: int = Form(...),
-    study_path: int = Form(...),
+    study_id: uuid.UUID = Form(...),
+    study_path: str = Form(...),
     archive: UploadFile = File(None),
 ):
     dto = {

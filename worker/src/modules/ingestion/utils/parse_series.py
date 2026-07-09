@@ -2,6 +2,7 @@ import sys
 import os
 import re
 import pydicom
+from pathlib import Path
 from pydicom.errors import InvalidDicomError
 from typing import List
 from collections import defaultdict
@@ -90,7 +91,7 @@ def is_protocol_allowed(series_description: str, methods: List[str]):
     )
 
 
-def parse_series(study_dir):
+def parse_series(study_dir: Path):
     series_list = defaultdict(list)
     study_metadata: dict[str, Any] | None = None
 

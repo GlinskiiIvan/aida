@@ -7,6 +7,7 @@ services:
       - ./api/.development.env
     volumes:
       - ./api:/app
+      - ./storage:/storage
       - /app/node_modules
     ports:
       - 6100:3000
@@ -24,6 +25,7 @@ services:
       - ./front/.development.env
     volumes:
       - ./front:/app
+      - ./storage:/storage
       - /app/node_modules
     ports:
       - 5173:5173

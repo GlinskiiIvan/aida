@@ -9,5 +9,5 @@ REDIS_RESULT_BACKEND = os.getenv("REDIS_RESULT_BACKEND")
 
 
 BASE_DIR = Path("/app")
-STORAGE_DIR = BASE_DIR / "storage"
+STORAGE_DIR = Path("/storage")
 TMP_UPLOAD_DIR = STORAGE_DIR / "tmp" / "uploads"

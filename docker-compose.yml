@@ -1,10 +1,10 @@
 services:
   api:
-    container_name: mri_system-api
+    container_name: aida-api
     build:
       context: ./api
     env_file:
-      - ./api/.development.env
+      - ${ENV_FILE}
     volumes:
       - ./api:/app
       - /app/node_modules
@@ -14,13 +14,14 @@ services:
     command: pnpm run start:dev
     depends_on:
       - postgres
-    restart: always
+    restart: unless-stopped
+
   front:
-    container_name: mri_system-front
+    container_name: aida-front
     build:
       context: ./front
     env_file:
-      - ./front/.development.env
+      - ${ENV_FILE}
     volumes:
       - ./front:/app
       - /app/node_modules
@@ -28,19 +29,75 @@ services:
       - 5173:5173
       - 9228:9228
     command: pnpm run start:dev
-    restart: always
+    restart: unless-stopped
+
+  worker_api:
+    image: aida-worker_api
+    container_name: aida-worker_api
+    build:
+      context: ./worker
+    command: uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./worker:/app
+      - ./storage:/storage
+    env_file:
+      - ${ENV_FILE}
+    restart: unless-stopped
+
+  worker:
+    image: aida-celery
+    container_name: aida-celery
+    build:
+      context: ./worker
+    command: celery -A src.tasks.celery_app worker --loglevel=info
+    volumes:
+      - ./worker:/app
+      - ./storage:/storage
+    env_file:
+      - ${ENV_FILE}
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    container_name: aida-redis
+    env_file:
+      - ${ENV_FILE}
+    ports:
+      - "6380:6379"
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: aida-rabbitmq
+
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+
+    restart: unless-stopped
+
   postgres:
-    container_name: mri_system-postgres
+    container_name: aida-postgres
     image: postgres:16
     env_file:
-      - ./api/.development.env
+      - ${ENV_FILE}
     environment:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5435:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
-    restart: always
+    restart: unless-stopped
 
 volumes:
   pgdata:
+  rabbitmq:

@@ -1,6 +1,7 @@
+name: aida
+
 services:
   backend:
-    container_name: aida-backend
     build:
       context: ./backend
     env_file:
@@ -20,7 +21,6 @@ services:
       - backend
 
   frontend:
-    container_name: aida-frontend
     build:
       context: ./frontend
     env_file:
@@ -38,8 +38,6 @@ services:
       - backend
 
   compute:
-    image: aida-compute
-    container_name: aida-compute
     build:
       context: ./compute
     command: uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload
@@ -55,8 +53,6 @@ services:
       - backend
 
   worker:
-    image: aida-worker
-    container_name: aida-worker
     build:
       context: ./compute
     command: celery -A src.tasks.celery_app worker --loglevel=info
@@ -71,7 +67,6 @@ services:
 
   redis:
     image: redis:7
-    container_name: aida-redis
     ports:
       - "6380:6379"
     restart: unless-stopped
@@ -80,7 +75,6 @@ services:
 
   rabbitmq:
     image: rabbitmq:4-management
-    container_name: aida-rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
@@ -94,7 +88,6 @@ services:
       - backend
 
   postgres:
-    container_name: aida-postgres
     image: postgres:16
     env_file:
       - ./backend/${ENV_FILE}

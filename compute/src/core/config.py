@@ -6,6 +6,7 @@ load_dotenv()
 
 REDIS_BROKER_URL = os.getenv("REDIS_BROKER_URL")
 REDIS_RESULT_BACKEND = os.getenv("REDIS_RESULT_BACKEND")
+RABBITMQ_URL = os.getenv("RABBITMQ_URL")
 
 
 BASE_DIR = Path("/app")

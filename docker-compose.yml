@@ -5,7 +5,7 @@ services:
     build:
       context: ./backend
     env_file:
-      - ./backend/${ENV_FILE}
+      - ./backend/${BACKEND_ENV}
     volumes:
       - ./backend:/app
       - ./storage:/storage
@@ -24,7 +24,7 @@ services:
     build:
       context: ./frontend
     env_file:
-      - ./frontend/${ENV_FILE}
+      - ./frontend/${FRONTEND_ENV}
     volumes:
       - ./frontend:/app
       - ./storage:/storage
@@ -47,7 +47,7 @@ services:
       - ./compute:/app
       - ./storage:/storage
     env_file:
-      - ./compute/${ENV_FILE}
+      - ./compute/${COMPUTE_ENV}
     restart: unless-stopped
     networks:
       - backend
@@ -60,7 +60,7 @@ services:
       - ./compute:/app
       - ./storage:/storage
     env_file:
-      - ./compute/${ENV_FILE}
+      - ./compute/${COMPUTE_ENV}
     restart: unless-stopped
     networks:
       - backend
@@ -90,7 +90,7 @@ services:
   postgres:
     image: postgres:16
     env_file:
-      - ./backend/${ENV_FILE}
+      - ./backend/${BACKEND_ENV}
     environment:
       PG_DATA: /var/lib/postgresql/data
     ports:

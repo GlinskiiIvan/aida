@@ -1,5 +1,7 @@
 import aio_pika
 
+from src.core.config import RABBITMQ_URL
+
 connection = None
 channel = None
 
@@ -9,7 +11,7 @@ async def connect():
     global connection
     global channel
 
-    connection = await aio_pika.connect_robust("amqp://admin:admin@rabbitmq/")
+    connection = await aio_pika.connect_robust(RABBITMQ_URL)
 
     channel = await connection.channel()
 

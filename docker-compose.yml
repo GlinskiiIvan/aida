@@ -16,6 +16,8 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
+    networks:
+      - backend
 
   frontend:
     container_name: aida-frontend
@@ -32,6 +34,8 @@ services:
       - 9228:9228
     command: pnpm run start:dev
     restart: unless-stopped
+    networks:
+      - backend
 
   compute:
     image: aida-compute
@@ -47,6 +51,8 @@ services:
     env_file:
       - ./compute/${ENV_FILE}
     restart: unless-stopped
+    networks:
+      - backend
 
   worker:
     image: aida-worker
@@ -60,6 +66,8 @@ services:
     env_file:
       - ./compute/${ENV_FILE}
     restart: unless-stopped
+    networks:
+      - backend
 
   redis:
     image: redis:7
@@ -67,23 +75,23 @@ services:
     ports:
       - "6380:6379"
     restart: unless-stopped
+    networks:
+      - backend
 
   rabbitmq:
     image: rabbitmq:4-management
     container_name: aida-rabbitmq
-
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
-
     ports:
       - "5672:5672"
       - "15672:15672"
-
     volumes:
       - rabbitmq:/var/lib/rabbitmq
-
     restart: unless-stopped
+    networks:
+      - backend
 
   postgres:
     container_name: aida-postgres
@@ -97,7 +105,12 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
+    networks:
+      - backend
 
 volumes:
   pgdata:
   rabbitmq:
+
+networks:
+  backend:

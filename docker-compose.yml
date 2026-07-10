@@ -1,12 +1,12 @@
 services:
-  api:
-    container_name: aida-api
+  backend:
+    container_name: aida-backend
     build:
-      context: ./api
+      context: ./backend
     env_file:
-      - ./api/.development.env
+      - ./backend/.development.env
     volumes:
-      - ./api:/app
+      - ./backend:/app
       - ./storage:/storage
       - /app/node_modules
     ports:
@@ -17,14 +17,14 @@ services:
       - postgres
     restart: unless-stopped
 
-  front:
-    container_name: aida-front
+  frontend:
+    container_name: aida-frontend
     build:
-      context: ./front
+      context: ./frontend
     env_file:
-      - ./front/.development.env
+      - ./frontend/.development.env
     volumes:
-      - ./front:/app
+      - ./frontend:/app
       - ./storage:/storage
       - /app/node_modules
     ports:
@@ -33,32 +33,32 @@ services:
     command: pnpm run start:dev
     restart: unless-stopped
 
-  worker_api:
-    image: aida-worker_api
-    container_name: aida-worker_api
+  compute:
+    image: aida-compute
+    container_name: aida-compute
     build:
-      context: ./worker
+      context: ./compute
     command: uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload
     ports:
       - "8002:8000"
     volumes:
-      - ./worker:/app
+      - ./compute:/app
       - ./storage:/storage
     env_file:
-      - ./worker/.env.local
+      - ./compute/.env.dev.local
     restart: unless-stopped
 
   worker:
-    image: aida-celery
-    container_name: aida-celery
+    image: aida-worker
+    container_name: aida-worker
     build:
-      context: ./worker
+      context: ./compute
     command: celery -A src.tasks.celery_app worker --loglevel=info
     volumes:
-      - ./worker:/app
+      - ./compute:/app
       - ./storage:/storage
     env_file:
-      - ./worker/.env.local
+      - ./compute.env.dev.local
     restart: unless-stopped
 
   redis:
@@ -89,7 +89,7 @@ services:
     container_name: aida-postgres
     image: postgres:16
     env_file:
-      - ./api/.development.env
+      - ./backend/.development.env
     environment:
       PG_DATA: /var/lib/postgresql/data
     ports:

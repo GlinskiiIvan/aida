@@ -6,9 +6,9 @@ from celery import Task
 from pathlib import Path
 from src.core.enums.task import Task as TaskEnum
 from src.core.enums.status import Status
+from src.core.ws.publisher import publish_task
 
 from src.modules.ingestion import service as ingestion_service
-from src.modules.ws.publisher import publish_task
 from .celery_app import celery
 
 from src.modules.ingestion.schema import UploadStudyDTO

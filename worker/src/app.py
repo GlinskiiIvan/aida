@@ -7,9 +7,9 @@ from typing import Optional
 from src.core.startup import init_storage
 
 from .modules.ingestion.router import router as ingestion_router
-from .modules.ws.router import router as ws_router
+from .core.ws.router import router as ws_router
 
-from .modules.ws.listener import redis_listener
+from .core.ws.listener import redis_listener
 
 app = FastAPI()
 

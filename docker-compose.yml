@@ -13,7 +13,7 @@ services:
     ports:
       - 6100:3000
       - 9229:9229
-    command: pnpm run start:dev
+    command: pnpm run start
     depends_on:
       - postgres
     restart: unless-stopped
@@ -32,7 +32,7 @@ services:
     ports:
       - 5173:5173
       - 9228:9228
-    command: pnpm run start:dev
+    command: pnpm run start
     restart: unless-stopped
     networks:
       - backend

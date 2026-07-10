@@ -1,15 +1,15 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
+import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
 
 import { RabbitService } from "../rabbit.service";
 
 import { RabbitQueue } from "../rabbit.constants";
 
 @Injectable()
-export class RabbitInferenceListener implements OnModuleInit {
+export class RabbitInferenceListener implements OnApplicationBootstrap {
   constructor(private readonly rabbit: RabbitService) {}
 
-  async onModuleInit() {
-    const channel = this.rabbit.getChannel();
+  async onApplicationBootstrap() {
+    const channel = await this.rabbit.getChannel();
 
     await channel.consume(RabbitQueue.INFERENCE, async (msg) => {
       if (!msg) return;

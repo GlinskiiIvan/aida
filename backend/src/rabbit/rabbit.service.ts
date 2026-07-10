@@ -6,8 +6,11 @@ import { RabbitExchange, RabbitQueue } from "./rabbit.constants";
 
 @Injectable()
 export class RabbitService implements OnModuleInit, OnModuleDestroy {
-  private connection!: amqp.Connection;
+  private connection!: amqp.ChannelModel;
   private channel!: amqp.Channel;
+
+  private ready!: Promise<void>;
+  private resolve!: () => void;
 
   async onModuleInit() {
     this.connection = await amqp.connect(process.env.RABBITMQ_URL!);
@@ -31,7 +34,8 @@ export class RabbitService implements OnModuleInit, OnModuleDestroy {
     await this.channel.bindQueue(RabbitQueue.INFERENCE, RabbitExchange.EVENTS, "inference.*");
   }
 
-  getChannel(): amqp.Channel {
+  async getChannel(): Promise<amqp.Channel> {
+    await this.ready;
     return this.channel;
   }
 

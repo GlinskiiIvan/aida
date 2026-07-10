@@ -5,6 +5,9 @@ from .utils.parse_series import parse_series
 from .utils.process_series import process_series
 from .schema import UploadStudyDTO
 
+from src.core.rabbit import publisher as rabbit_publisher
+from src.core.enums import rabbit
+
 
 async def upload_study(dto: UploadStudyDTO):
     extracted_study_path = await extract_archive(
@@ -37,3 +40,7 @@ async def upload_study(dto: UploadStudyDTO):
         "processedSeries": processed_series,
         "processedImages": processed_images,
     }
+
+    await rabbit_publisher.publish(
+        routing_key=rabbit.RoutingKey.STUDY_COMPLETED, body=data
+    )

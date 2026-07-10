@@ -42,3 +42,5 @@ uuid6
 pylibjpeg
 pylibjpeg-libjpeg
 pylibjpeg-openjpeg
+
+aio-pika

@@ -4,7 +4,7 @@ import { UpdateInstanceImageDto } from './dto/update-instance-image.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { InstanceImage } from './entities/instance-image.entity';
 import { SeriesService } from 'src/series/series.service';
-import { FindOptions, Includeable } from 'sequelize';
+import { FindOptions, Includeable, Transaction } from 'sequelize';
 import { Prediction } from 'src/prediction/entities/prediction.entity';
 import * as path from 'path';
 import { buildResultData, FindAllServiceParams } from 'src/utils';
@@ -35,6 +35,16 @@ constructor(
       return instance;
     } catch (error) {
         const msg = `Ошибка при создании инстанса изображения. ${error.message}`;
+        console.log(msg);
+        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async bulkCreate(data: InstanceImage[], transaction: Transaction) {
+    try {
+      return this.repository.bulkCreate(data, {transaction});
+    } catch (error) {
+        const msg = `Ошибка при создании всех инстансов изображений исследования. ${error.message}`;
         console.log(msg);
         throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }

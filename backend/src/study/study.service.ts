@@ -6,7 +6,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Study } from './entities/study.entity';
 import { PatientService } from 'src/patient/patient.service';
 import { Series } from 'src/series/entities/series.entity';
-import { FindOptions, Includeable } from 'sequelize';
+import { FindOptions, Includeable, Transaction } from 'sequelize';
 import * as path from 'path';
 import { PredictionRun } from 'src/prediction-run/entities/prediction-run.entity';
 import { buildOrder, buildResultData, buildWhere, FindAllServiceParams } from 'src/utils';
@@ -184,7 +184,7 @@ export class StudyService {
     }
   }
 
-  async update(id: string, dto: UpdateStudyDto) {
+  async update(id: string, dto: UpdateStudyDto, transaction?: Transaction) {
     try {
       await this.findOneOrThrow(id);
       const [_, updatedRows] = await this.repository.update(
@@ -193,7 +193,8 @@ export class StudyService {
           studyDateTime: dto.studyDateTime ? new Date(dto.studyDateTime) : undefined,
         }, {
           where: {id}, 
-          returning: true
+          returning: true,
+          transaction
         }
       );
       return updatedRows[0]; 

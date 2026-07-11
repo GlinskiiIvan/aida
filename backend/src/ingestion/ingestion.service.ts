@@ -9,6 +9,8 @@ import { Status } from 'src/common/enums';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import FormData from 'form-data';
+import { Sequelize } from 'sequelize-typescript';
+import { StudyProcessedDto } from './dto/study-processed.dto';
 
 @Injectable()
 export class IngestionService {
@@ -18,6 +20,7 @@ export class IngestionService {
         private seriesService: SeriesService,
         private instanceImageService: InstanceImageService,
         private readonly http: HttpService,
+        private readonly sequelize: Sequelize,
     ) {}
 
     async ingestionStudy(dicomZip: Express.Multer.File, studyId: string, studyPath: string) {
@@ -64,6 +67,34 @@ export class IngestionService {
             const msg = `Ошибка при обработке исследования. ${error.message}`;
             console.log(msg);
             throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    async completeStudyProcessing(data: StudyProcessedDto) {
+        const transaction = await this.sequelize.transaction();
+
+        try {
+            await this.studyService.update(
+                data.studyId,
+                data.studyData,
+                transaction,
+            );
+
+            await this.seriesService.bulkCreate(
+                data.processedSeries,
+                transaction,
+            );
+
+            await this.instanceImageService.bulkCreate(
+                data.processedImages,
+                transaction,
+            );
+
+            await transaction.commit();
+        } catch (error) {
+            await transaction.rollback();
+
+            throw error;
         }
     }
 }

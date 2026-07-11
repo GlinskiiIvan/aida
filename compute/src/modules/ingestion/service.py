@@ -36,6 +36,7 @@ async def upload_study(dto: UploadStudyDTO):
     }
 
     data = {
+        "studyId": dto.study_id,
         "studyData": study_data,
         "processedSeries": processed_series,
         "processedImages": processed_images,

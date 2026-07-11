@@ -4,7 +4,7 @@ import { UpdateSeriesDto } from './dto/update-series.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Series } from './entities/series.entity';
 import { StudyService } from 'src/study/study.service';
-import { FindOptions, Includeable } from 'sequelize';
+import { FindOptions, Includeable, Transaction } from 'sequelize';
 import { InstanceImage } from 'src/instance-image/entities/instance-image.entity';
 import * as path from 'path';
 
@@ -41,6 +41,16 @@ export class SeriesService {
     }
   }
 
+  async bulkCreate(data: Series[], transaction: Transaction) {
+    try {
+      return this.repository.bulkCreate(data, {transaction});
+    } catch (error) {
+        const msg = `Ошибка при создании всех серий исследования. ${error.message}`;
+        console.log(msg);
+        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+  
   async findAll() {
     try {
       return await this.repository.findAll({

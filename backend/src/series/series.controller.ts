@@ -35,7 +35,7 @@ export class SeriesController {
   @Permissions('series:read')
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.seriesService.findOne(+id);
+    return this.seriesService.findOne(id);
   }
 
   @ApiOperation({ summary: 'Получение всех изображений серии по id' })
@@ -43,7 +43,7 @@ export class SeriesController {
   @Permissions('series:read')
   @Get(':id/images')
   findAllImages(@Param('id') id: string) {
-    return this.seriesService.findAllImages(+id);
+    return this.seriesService.findAllImages(id);
   }
 
   @ApiOperation({ summary: 'Обновление серии' })
@@ -51,7 +51,7 @@ export class SeriesController {
   @Permissions('series:update')
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateSeriesDto) {
-    return this.seriesService.update(+id, dto);
+    return this.seriesService.update(id, dto);
   }
 
   @ApiOperation({ summary: 'Восстановление серии после мягкого удаления' })
@@ -59,7 +59,7 @@ export class SeriesController {
   @Permissions('series:delete')
   @Patch(':id/restore')
   restore(@Param('id') id: string) {
-    return this.seriesService.restore(+id);
+    return this.seriesService.restore(id);
   }
 
   @ApiOperation({ summary: 'Мягкое удаление серии' })
@@ -67,7 +67,7 @@ export class SeriesController {
   @Permissions('series:delete')
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.seriesService.remove(+id);
+    return this.seriesService.remove(id);
   }
 
   @ApiOperation({ summary: 'Жесткое удаление серии' })
@@ -75,6 +75,6 @@ export class SeriesController {
   @Permissions('series:delete')
   @Delete(':id/force')
   forceRemove(@Param('id') id: string) {
-    return this.seriesService.forceRemove(+id);
+    return this.seriesService.forceRemove(id);
   }
 }

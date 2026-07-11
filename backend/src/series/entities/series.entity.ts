@@ -5,13 +5,14 @@ import { InstanceImage } from "src/instance-image/entities/instance-image.entity
 import { Study } from "src/study/entities/study.entity";
 
 interface TableCreationAttrs {
+    readonly id: string;
     readonly studyId: string;
 }
 @Table({ tableName: 'series', paranoid: true })
 export class Series extends Model<Series, TableCreationAttrs> {
-    @ApiProperty({ example: 1, description: 'Уникальный ID серии' })
-    @Column({ type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true, })
-    id: number;
+    @ApiProperty({ example: '0197f3f7-8d9b-7f4a-b2c1-5d8e9a7c4f21', description: 'Уникальный ID серии' })
+    @Column({ type: DataType.UUID, unique: true, primaryKey: true, })
+    id: string;
 
     // Внешний ключ укзаывающий на исследование
     @ApiProperty({ example: 1, description: 'Уникальный ID исследования' })

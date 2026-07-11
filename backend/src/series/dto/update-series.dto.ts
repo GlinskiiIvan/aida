@@ -3,7 +3,7 @@ import { CreateSeriesDto } from './create-series.dto';
 import { Modality, Orientation, Protocol, Status } from 'src/common/enums';
 import { IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 
-export class UpdateSeriesDto extends PartialType(OmitType(CreateSeriesDto, ['studyId'])) {
+export class UpdateSeriesDto extends PartialType(OmitType(CreateSeriesDto, ['studyId', 'id'])) {
     @ApiProperty({ example: 'SE000007', description: 'Номер серии', required: false, })
     @IsOptional()
     @IsString({ message: 'seriesNumber должна быть строкой' })

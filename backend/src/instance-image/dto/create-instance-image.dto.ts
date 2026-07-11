@@ -1,10 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsObject, IsOptional, IsString } from "class-validator";
+import { IsUUID, IsNumber, IsObject, IsOptional, IsString } from "class-validator";
 
 export class CreateInstanceImageDto {
-    @ApiProperty({ example: 1, description: 'Уникальный ID серии' })
-    @IsNumber({}, { message: 'seriesId должен быть числом' })
-    readonly seriesId: number;
+    @ApiProperty({
+        example: '0197f3f7-8d9b-7f4a-b2c1-5d8e9a7c4f21',
+        description: 'Уникальный ID серии',
+    })
+    @IsUUID('7', { message: 'seriesId должен быть корректным UUIDv7' })
+    readonly seriesId: string;
 
     @ApiProperty({ example: '00005-dd5595a4.png', description: 'Название изображения', required: false, })
     @IsOptional()

@@ -4,7 +4,7 @@ import { Prediction } from "src/prediction/entities/prediction.entity";
 import { Series } from "src/series/entities/series.entity";
 
 interface TableCreationAttrs {
-    readonly seriesId: number;
+    readonly seriesId: string;
     readonly imageName: string;
     readonly instanceNumber?: number | null;
     readonly rawMetadata: JSON;
@@ -20,7 +20,7 @@ export class InstanceImage extends Model<InstanceImage, TableCreationAttrs> {
     @ApiProperty({ example: 1, description: 'Уникальный ID серии' })
     @ForeignKey(() => Series)
     @Column({ type: DataType.INTEGER, })
-    seriesId: number;
+    seriesId: string;
 
     // alias для серии
     @BelongsTo(() => Series)

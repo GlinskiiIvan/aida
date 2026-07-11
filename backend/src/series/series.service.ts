@@ -53,7 +53,7 @@ export class SeriesService {
     }
   }
 
-  async findAllImages(id: number) {
+  async findAllImages(id: string) {
     try {
       const series = await this.findOneOrThrow(id, {
         include: [this.includeImages],
@@ -66,7 +66,7 @@ export class SeriesService {
     }
   }
 
-  async findOneOrThrow(id: number, options?: Omit<FindOptions<Series>, "where">) {
+  async findOneOrThrow(id: string, options?: Omit<FindOptions<Series>, "where">) {
     const series = await this.repository.findByPk(id, options);
 
     if(!series) {
@@ -76,7 +76,7 @@ export class SeriesService {
     return series;
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     try {
       const series = await this.findOneOrThrow(id);
       return series;
@@ -87,7 +87,7 @@ export class SeriesService {
     }
   }
 
-  async update(id: number, dto: UpdateSeriesDto) {
+  async update(id: string, dto: UpdateSeriesDto) {
     try {
       await this.findOneOrThrow(id);
       const [_, updatedRows] = await this.repository.update(dto, 
@@ -104,7 +104,7 @@ export class SeriesService {
     }
   }
 
-  async restore(id: number) {
+  async restore(id: string) {
     try {
       await this.repository.restore({where: {id}});
       return true;
@@ -115,7 +115,7 @@ export class SeriesService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
       await this.findOneOrThrow(id);
       await this.repository.destroy({where: {id}});
@@ -127,7 +127,7 @@ export class SeriesService {
     }
   }
 
-  async forceRemove(id: number) {
+  async forceRemove(id: string) {
     try {
       await this.repository.destroy({where: {id}, force: true});
       return true;

@@ -39,12 +39,57 @@ def convert_dicom_to_png(
 
         image_data = ds.pixel_array
 
+        TARGET_SPACING = 0.4  # мм/пиксель
+        TARGET_SIZE = 640
+
+        pixel_spacing = getattr(ds, "PixelSpacing", None)
+
+        # Ресемплирование к единому физическому разрешению
+        if pixel_spacing is not None:
+            try:
+                row_spacing = float(pixel_spacing[0])
+                col_spacing = float(pixel_spacing[1])
+
+                height, width = image_data.shape[:2]
+
+                new_height = int(round(height * row_spacing / TARGET_SPACING))
+                new_width = int(round(width * col_spacing / TARGET_SPACING))
+
+                interpolation = (
+                    cv2.INTER_AREA
+                    if new_height < height or new_width < width
+                    else cv2.INTER_CUBIC
+                )
+
+                image_data = cv2.resize(
+                    image_data,
+                    (new_width, new_height),
+                    interpolation=interpolation,
+                )
+
+            except (TypeError, ValueError, IndexError):
+                pass
+
         image_data = (
             (image_data - np.min(image_data))
             / (np.max(image_data) - np.min(image_data))
             * 255
         )
         image_data = image_data.astype(np.uint8)  # Конвертируем в 8-битный формат
+
+        height, width = image_data.shape[:2]
+
+        interpolation = (
+            cv2.INTER_AREA
+            if height > TARGET_SIZE or width > TARGET_SIZE
+            else cv2.INTER_CUBIC
+        )
+
+        image_data = cv2.resize(
+            image_data,
+            (TARGET_SIZE, TARGET_SIZE),
+            interpolation=interpolation,
+        )
 
         if apply_clahe:
             clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))

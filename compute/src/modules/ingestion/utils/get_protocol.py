@@ -1,12 +1,12 @@
 from src.core.enums.protocol import Protocol
 
 
-def get_protocol_name(series_description: str):
-    if "t1" in series_description:
+def get_protocol_name(value: str):
+    if "t1" in value:
         return Protocol.T1
-    elif "t2" in series_description:
+    elif "t2" in value:
         return Protocol.T2
-    elif "pd" in series_description:
+    elif "pd" in value:
         return Protocol.PD
     else:
         return None

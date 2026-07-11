@@ -7,6 +7,10 @@ export class CreateStudyDto {
     @IsNumber({}, { message: 'patientId должен быть числом' })
     readonly patientId: number;
 
+    @ApiProperty({ example: Status.Completed, description: 'Статус обработки', enum: Object.values(Status) })
+    @IsEnum(Status, { message: `status должен быть одним из значений: ${Object.values(Status).join(', ')}` })
+    readonly status: Status;
+
     @ApiProperty({ example: 'Странные колени', description: 'Заметка', required: false, })
     @IsOptional()
     @IsString({ message: 'note должно быть строкой' })

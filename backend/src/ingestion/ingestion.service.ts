@@ -20,7 +20,7 @@ export class IngestionService {
         private readonly http: HttpService,
     ) {}
 
-    async ingestionStudy(dicomZip: Express.Multer.File) {
+    async ingestionStudy(dicomZip: Express.Multer.File, studyId: string, studyPath: string) {
         const form = new FormData();
 
         form.append('archive', dicomZip.buffer, {
@@ -28,8 +28,8 @@ export class IngestionService {
             contentType: dicomZip.mimetype,
         });
 
-        form.append('study_id', '0197f3f7-8d9b-7f4a-b2c1-5d8e9a7c4f21');
-        form.append('study_path', '/storage/patients/2/studies/0197f3f7-8d9b-7f4a-b2c1-5d8e9a7c4f21');
+        form.append('study_id', studyId);
+        form.append('study_path', studyPath);
 
         const { data } = await firstValueFrom(
             this.http.post(
@@ -51,10 +51,10 @@ export class IngestionService {
             study = await this.studyService.create({
                 patientId: dto.patientId,
                 note: dto.note,
+                status: Status.Processing,
             });
-            await this.studyService.update(study.id, {status: Status.Processing});
 
-            const data = await this.ingestionStudy(dicomZip);
+            const data = await this.ingestionStudy(dicomZip, study.id, study.path);
             
             return data;
         } catch (error) {

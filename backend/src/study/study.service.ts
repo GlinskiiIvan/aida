@@ -47,7 +47,7 @@ export class StudyService {
 
       const study = await this.repository.create(dto);
 
-      study.path = path.join('storage', `patient_${dto.patientId}`, `study_${study.id}`);
+      study.path = path.join('/', 'storage', `patients`, `${dto.patientId}`, `studies`, `${study.id}`);
       await study.save();
 
       return study;      

@@ -68,9 +68,4 @@ export class UpdateStudyDto extends PartialType(OmitType(CreateStudyDto, ['patie
     @IsOptional()
     @IsNumber({}, { message: 'imagesCount должно быть числом' })
     readonly imagesCount?: number | null;
-    
-    @ApiProperty({ example: Status.Completed, description: 'Статус обработки', enum: Object.values(Status), required: false })
-    @IsOptional()
-    @IsEnum(Status, { message: `status должен быть одним из значений: ${Object.values(Status).join(', ')}` })
-    readonly status?: Status | null;
 }

@@ -501,7 +501,7 @@ const StudyCardPage = () => {
                                             <img
                                                 className={clsx(styles.image, {[styles.active]: isActiveImage(image.id)})}
                                                 ref={isActiveImage(image.id) ? activeImageSidebarRef : null}
-                                                src={`${import.meta.env.VITE_API_URI}/${image.imagePath}`} 
+                                                src={`${import.meta.env.VITE_API_URI}${image.imagePath}`} 
                                                 alt={image.imageName || undefined} />
                                         </button>
                                     ))}
@@ -519,7 +519,7 @@ const StudyCardPage = () => {
                                             ref={activeImageContentRef}
                                             role='button'
                                             onClick={fullScreenImageModal.open}
-                                            src={`${import.meta.env.VITE_API_URI}/${activeImage.imagePath}`} 
+                                            src={`${import.meta.env.VITE_API_URI}${activeImage.imagePath}`} 
                                             alt={activeImage.imagePath || undefined} />
                                     )}
                                     {(activeImage && selectedRun && selectedRun.status === 'completed') && overlays.map(item => (
@@ -583,7 +583,7 @@ const StudyCardPage = () => {
                                                         height: '100%',
                                                         objectFit: 'contain'
                                                     }}
-                                                    src={`${import.meta.env.VITE_API_URI}/${activeImage.imagePath}`} 
+                                                    src={`${import.meta.env.VITE_API_URI}${activeImage.imagePath}`} 
                                                     alt={activeImage.imagePath || undefined} />
                                             )}
                                             {(activeImage && selectedRun && selectedRun.status === 'completed') && overlays.map(item => (

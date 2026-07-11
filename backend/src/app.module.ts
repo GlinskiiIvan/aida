@@ -79,7 +79,7 @@ import { HttpModule } from '@nestjs/axios';
         serveRoot: "/image",
       },
       {
-        rootPath: path.join(__dirname, "..", "storage"),
+        rootPath: path.join(__dirname, "..", "..", "storage"),
         serveRoot: "/storage",
       },
     ),

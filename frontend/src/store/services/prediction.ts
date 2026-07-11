@@ -6,7 +6,7 @@ import { api } from '../api/api';
 export type PredictionBase = {
     id: number;
     runId: number;
-    imageId: number;
+    imageId: string;
     status: Status;
     resultClass?: ResultClass | null;
     maxConfidence?: number | null;

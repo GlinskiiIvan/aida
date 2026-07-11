@@ -6,7 +6,7 @@ import type { PredictionBase } from "./prediction";
 
 export type PredictionRun = {
     id: number;
-    studyId: number;
+    studyId: string;
     createdById: number;
     model: string;
     version: string;

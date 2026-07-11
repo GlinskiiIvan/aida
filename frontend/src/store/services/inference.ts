@@ -7,7 +7,7 @@ export type PredictionRunDto = {
 
 export const inferenceApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        predict: builder.mutation<Boolean, PredictionRunDto & {studyId: number}>({
+        predict: builder.mutation<Boolean, PredictionRunDto & {studyId: string}>({
             query: ({studyId, ...body}) => ({
                 url: `inference/predict/${studyId}`,
                 method: 'POST',

@@ -26,7 +26,7 @@ const StudyCardPage = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { id } = useParams();
 
-    const {data: study, refetch, isSuccess: studyIsSuccess, fulfilledTimeStamp: studyFulfilledTimeStamp} = studyApi.useFindOneStudyQuery(Number(id));
+    const {data: study, refetch, isSuccess: studyIsSuccess, fulfilledTimeStamp: studyFulfilledTimeStamp} = studyApi.useFindOneStudyQuery(id);
     const [remove, {isSuccess: studyRemoveIsSuccess, isError: studyRemoveIsError, error: studyRemoveError, fulfilledTimeStamp: studyRemoveFulfilledTimeStamp}] = studyApi.useRemoveStudyMutation();
     const [update, {isSuccess: studyUpdateIsSuccess, isError: studyUpdateIsError, error: studyUpdateError, fulfilledTimeStamp: studyUpdateFulfilledTimeStamp}] = studyApi.useUpdateStudyMutation();
 
@@ -174,7 +174,7 @@ const StudyCardPage = () => {
     const predictionRunHandler = () => {
         if(canSubmitPredictionRun) {
             predict({
-                studyId: Number(id),
+                studyId: id,
                 model: model.model,
                 version: model.version,
             });
@@ -253,7 +253,7 @@ const StudyCardPage = () => {
 
     React.useEffect(() => {
         if(studyIsSuccess && study.status === 'completed') {
-            imagesTrigger({id: Number(id)});
+            imagesTrigger({id: id});
         }
     }, [studyFulfilledTimeStamp]);
 

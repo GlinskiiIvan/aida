@@ -5,7 +5,7 @@ import { api } from '../api/api';
 import type { PredictionRun } from "./predictionRun";
 
 export type Study = {
-    id: number;
+    id: string;
     patientId: number;
     studyInstanceUID: string | null;
     studyId: string | null;
@@ -29,20 +29,20 @@ export type Study = {
 }
 
 export interface UpdateStudyDto extends Partial<Omit<Study, 'id' | 'patientId' | 'status' | 'path' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
-    id: number;
+    id: string;
     reason?: string;
 }
 
 export type InstanceImage = {
-    id: number;
-    seriesId: number;
+    id: string;
+    seriesId: string;
     imageName: string;
     imagePath: string;
     instanceNumber: number;
     rawMetadata: JSON;
     series: {
-        id: number;
-        studyId: number;
+        id: string;
+        studyId: string;
         seriesNumber?: string | null;
         modality?: Modality | null;
         protocol?: Protocol | null;
@@ -95,7 +95,7 @@ export const studyApi = api.injectEndpoints({
                     : [{ type: 'studies', id: 'LIST' }],
         }),
 
-        findAllStudyRuns: builder.query<ResponseFindAll<PredictionRun[]>, FindAllParams & {id: number}>({
+        findAllStudyRuns: builder.query<ResponseFindAll<PredictionRun[]>, FindAllParams & {id: string}>({
             query: ({id, ...body}) => `study/${id}/runs${buildFindAllParams(body)}`,
             serializeQueryArgs: ({ endpointName, queryArgs }) => {
                 return `${endpointName}-${JSON.stringify({
@@ -127,7 +127,7 @@ export const studyApi = api.injectEndpoints({
                     : [{ type: 'studies', id: 'LIST' }],
         }),
 
-        findAllStudyImages: builder.query<ResponseFindAll<InstanceImage[]>, FindAllParams & {id: number}>({
+        findAllStudyImages: builder.query<ResponseFindAll<InstanceImage[]>, FindAllParams & {id: string}>({
             query: ({id, ...body}) => `study/${id}/images${buildFindAllParams(body)}`,
             serializeQueryArgs: ({ endpointName, queryArgs }) => {
                 return `${endpointName}-${JSON.stringify({
@@ -159,8 +159,8 @@ export const studyApi = api.injectEndpoints({
                     : [{ type: 'studies', id: 'LIST' }],
         }),
 
-        findOneStudy: builder.query<Study, number>({
-            query: (id: number) => `study/${id}`,
+        findOneStudy: builder.query<Study, string>({
+            query: (id: string) => `study/${id}`,
         }),
 
         updateStudy: builder.mutation<Study, UpdateStudyDto>({
@@ -175,7 +175,7 @@ export const studyApi = api.injectEndpoints({
             invalidatesTags: [{type: 'studies', id: 'LIST'}],
         }),
 
-        removeStudy: builder.mutation<boolean, {id: number, reason: string}>({
+        removeStudy: builder.mutation<boolean, {id: string, reason: string}>({
             query(data) {
                 const { id, reason } = data;
                 return {

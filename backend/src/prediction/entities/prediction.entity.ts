@@ -29,7 +29,7 @@ export class Prediction extends Model<Prediction, TableCreationAttrs> {
     // Внешний ключ укзаывающий на изображение
     @ApiProperty({ example: 1, description: 'Уникальный ID изображения' })
     @ForeignKey(() => InstanceImage)
-    @Column({ type: DataType.INTEGER, })
+    @Column({ type: DataType.UUID, })
     imageId: string;
 
     // alias для изображения

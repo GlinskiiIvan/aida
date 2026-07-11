@@ -20,7 +20,7 @@ export class PredictionRun extends Model<PredictionRun, TableCreationAttrs> {
     // Внешний ключ укзаывающий на исследование
     @ApiProperty({ example: 1, description: 'Уникальный ID исследования' })
     @ForeignKey(() => Study)
-    @Column({ type: DataType.INTEGER, })
+    @Column({ type: DataType.UUID, })
     studyId: string;
 
     // alias для исследования

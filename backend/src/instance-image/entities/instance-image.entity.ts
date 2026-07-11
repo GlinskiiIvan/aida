@@ -20,7 +20,7 @@ export class InstanceImage extends Model<InstanceImage, TableCreationAttrs> {
     // Внешний ключ укзаывающий на серию
     @ApiProperty({ example: 1, description: 'Уникальный ID серии' })
     @ForeignKey(() => Series)
-    @Column({ type: DataType.INTEGER, })
+    @Column({ type: DataType.UUID, })
     seriesId: string;
 
     // alias для серии

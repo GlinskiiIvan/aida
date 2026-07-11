@@ -1,6 +1,3 @@
-export {dicomDateToISO} from './dicomDateToISO';
-export {getSliceOrientation, getSliceOrientationFromSeriesDescription} from './getOrientation';
-export {getProrocolName} from './getProrocolName';
 export {getTotalPages} from './getTotalPages';
 export {buildFindAllParams} from './buildFindAllParams';
 export {buildWhere} from './buildWhere';

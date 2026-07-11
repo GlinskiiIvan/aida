@@ -77,7 +77,7 @@ constructor(
       ],
 
       order: [
-        [{ model: Series, as: 'series' }, 'seriesNumber', 'ASC'],
+        [{ model: Series, as: 'series' }, 'id', 'ASC'],
         ['instanceNumber', 'ASC'],
       ],
     });

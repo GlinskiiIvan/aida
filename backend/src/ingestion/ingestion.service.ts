@@ -11,6 +11,9 @@ import { spawn } from 'child_process';
 import { Status } from 'src/common/enums';
 import { dicomDateToISO, getProrocolName, getPythonPath, getSliceOrientation, getSliceOrientationFromSeriesDescription } from 'src/utils';
 import { Series } from 'src/series/entities/series.entity';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import FormData from 'form-data';
 
 @Injectable()
 export class IngestionService {
@@ -19,6 +22,7 @@ export class IngestionService {
         private studyService: StudyService,
         private seriesService: SeriesService,
         private instanceImageService: InstanceImageService,
+        private readonly http: HttpService,
     ) {}
 
     async extractArchive(study: Study, dicomZip: Express.Multer.File): Promise<string> {
@@ -200,6 +204,28 @@ export class IngestionService {
     }
 
     async processStudy(dto: UploadStudyDto, dicomZip: Express.Multer.File) {
+        const form = new FormData();
+
+        form.append('archive', dicomZip.buffer, {
+            filename: dicomZip.originalname,
+            contentType: dicomZip.mimetype,
+        });
+
+        form.append('study_id', '0197f3f7-8d9b-7f4a-b2c1-5d8e9a7c4f21');
+        form.append('study_path', '/storage/patients/2/studies/0197f3f7-8d9b-7f4a-b2c1-5d8e9a7c4f21');
+
+        const { data } = await firstValueFrom(
+            this.http.post(
+                `${process.env.COMPUTE_URL}/ingestion/upload-study`,
+                form,
+                {
+                    headers: form.getHeaders(),
+                },
+            ),
+        );
+
+        return data;
+
         let study: Study | null = null;
 
         try {

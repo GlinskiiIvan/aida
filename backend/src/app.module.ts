@@ -38,6 +38,7 @@ import { Permission } from "./permission/entities/permission.entity";
 import { RolePermission } from "./intermediary-tables/role-permission.entity";
 import { PermissionsGuard } from "./guards/permissions.guard";
 import { RabbitModule } from "./rabbit/rabbit.module";
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { RabbitModule } from "./rabbit/rabbit.module";
         serveRoot: "/storage",
       },
     ),
+    HttpModule,
     RabbitModule,
     SeedModule,
     UsersModule,

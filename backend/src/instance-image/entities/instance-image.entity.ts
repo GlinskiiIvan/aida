@@ -4,6 +4,7 @@ import { Prediction } from "src/prediction/entities/prediction.entity";
 import { Series } from "src/series/entities/series.entity";
 
 interface TableCreationAttrs {
+    readonly id: string;
     readonly seriesId: string;
     readonly imageName: string;
     readonly instanceNumber?: number | null;
@@ -12,9 +13,9 @@ interface TableCreationAttrs {
 
 @Table({ tableName: 'instance_image', paranoid: true })
 export class InstanceImage extends Model<InstanceImage, TableCreationAttrs> {
-    @ApiProperty({ example: 1, description: 'Уникальный ID изображения' })
-    @Column({ type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true, })
-    id: number;
+    @ApiProperty({ example: '0197f3f7-8d9b-7f4a-b2c1-5d8e9a7c4f21', description: 'Уникальный ID изображения' })
+    @Column({ type: DataType.UUID, unique: true, primaryKey: true, })
+    id: string;
 
     // Внешний ключ укзаывающий на серию
     @ApiProperty({ example: 1, description: 'Уникальный ID серии' })

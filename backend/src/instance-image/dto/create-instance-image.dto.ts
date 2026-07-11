@@ -4,6 +4,13 @@ import { IsUUID, IsNumber, IsObject, IsOptional, IsString } from "class-validato
 export class CreateInstanceImageDto {
     @ApiProperty({
         example: '0197f3f7-8d9b-7f4a-b2c1-5d8e9a7c4f21',
+        description: 'Уникальный ID изображения',
+    })
+    @IsUUID('7', { message: 'id должен быть корректным UUIDv7' })
+    readonly id: string;
+
+    @ApiProperty({
+        example: '0197f3f7-8d9b-7f4a-b2c1-5d8e9a7c4f21',
         description: 'Уникальный ID серии',
     })
     @IsUUID('7', { message: 'seriesId должен быть корректным UUIDv7' })

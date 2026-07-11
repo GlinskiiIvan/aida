@@ -35,7 +35,7 @@ export class InstanceImageController {
   @Permissions('instance-image:read')
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.instanceImageService.findOne(+id);
+    return this.instanceImageService.findOne(id);
   }
 
   @ApiOperation({ summary: 'Получение всех предсказаний инстанса изображения' })
@@ -43,7 +43,7 @@ export class InstanceImageController {
   @Permissions('instance-image:read')
   @Get(':id')
   findAllPredictions(@Param('id') id: string) {
-    return this.instanceImageService.findAllPredictions(+id);
+    return this.instanceImageService.findAllPredictions(id);
   }
 
   @ApiOperation({ summary: 'Обновление инстанса изображения' })
@@ -51,7 +51,7 @@ export class InstanceImageController {
   @Permissions('instance-image:update')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateInstanceImageDto: UpdateInstanceImageDto) {
-    return this.instanceImageService.update(+id, updateInstanceImageDto);
+    return this.instanceImageService.update(id, updateInstanceImageDto);
   }
 
   @ApiOperation({ summary: 'Восстановление инстанса изображения после мягкого удаления' })
@@ -59,7 +59,7 @@ export class InstanceImageController {
   @Permissions('instance-image:delete')
   @Patch(':id/restore')
   restore(@Param('id') id: string) {
-    return this.instanceImageService.restore(+id);
+    return this.instanceImageService.restore(id);
   }
 
   @ApiOperation({ summary: 'Мягкое удаление инстанса изображения' })
@@ -67,7 +67,7 @@ export class InstanceImageController {
   @Permissions('instance-image:delete')
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.instanceImageService.remove(+id);
+    return this.instanceImageService.remove(id);
   }
 
   @ApiOperation({ summary: 'Жесткое удаление инстанса изображения' })
@@ -75,6 +75,6 @@ export class InstanceImageController {
   @Permissions('instance-image:delete')
   @Delete(':id/force')
   forceRemove(@Param('id') id: string) {
-    return this.instanceImageService.forceRemove(+id);
+    return this.instanceImageService.forceRemove(id);
   }
 }

@@ -7,7 +7,7 @@ import { BBox } from "src/types";
 
 interface TableCreationAttrs {
     readonly runId: number;
-    readonly imageId: number;
+    readonly imageId: string;
 }
 
 @Table({ tableName: 'prediction', paranoid: true })
@@ -30,7 +30,7 @@ export class Prediction extends Model<Prediction, TableCreationAttrs> {
     @ApiProperty({ example: 1, description: 'Уникальный ID изображения' })
     @ForeignKey(() => InstanceImage)
     @Column({ type: DataType.INTEGER, })
-    imageId: number;
+    imageId: string;
 
     // alias для изображения
     @BelongsTo(() => InstanceImage)

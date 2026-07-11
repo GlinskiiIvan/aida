@@ -3,6 +3,7 @@ import json
 import aio_pika
 
 from . import connection
+from . import setup_exchanges
 from src.core.enums import rabbit
 
 
@@ -11,6 +12,9 @@ async def publish(
     body: dict,
     exchange_name: rabbit.Exchange = rabbit.Exchange.EVENTS,
 ):
+    if not connection.is_connected():
+        await connection.connect()
+        await setup_exchanges.setup()
 
     channel = connection.get_channel()
 
@@ -18,7 +22,7 @@ async def publish(
 
     await exchange.publish(
         aio_pika.Message(
-            body=json.dumps(body).encode(),
+            body=json.dumps(body, default=str).encode(),
             delivery_mode=aio_pika.DeliveryMode.PERSISTENT,
         ),
         routing_key=routing_key,

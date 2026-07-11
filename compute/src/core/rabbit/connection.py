@@ -29,3 +29,11 @@ def get_channel():
         raise RuntimeError("RabbitMQ channel is not initialized")
 
     return channel
+
+def is_connected() -> bool:
+    return (
+        connection is not None
+        and not connection.is_closed
+        and channel is not None
+        and not channel.is_closed
+    )

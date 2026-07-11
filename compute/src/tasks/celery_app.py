@@ -1,4 +1,6 @@
+import asyncio
 from celery import Celery
+from celery.signals import worker_process_init
 from dotenv import load_dotenv
 
 from src.core.config import REDIS_BROKER_URL
@@ -25,4 +27,3 @@ celery.conf.update(
 )
 
 celery.autodiscover_tasks(["src.tasks"])
-

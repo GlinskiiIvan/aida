@@ -8,7 +8,9 @@ from typing import List
 from collections import defaultdict
 from typing import Any
 
+from .metadata_aggregator import aggregate_metadata
 from .extract_study_metadata import extract_study_metadata
+from .get_attrs import get_attrs
 
 
 def is_knee(body_part, study_description):
@@ -94,6 +96,7 @@ def is_protocol_allowed(series_description: str, methods: List[str]):
 def parse_series(study_dir: Path):
     series_list = defaultdict(list)
     study_metadata: dict[str, Any] | None = None
+    all_metadata = []
 
     for root, _, files in os.walk(study_dir):
         for file in files:
@@ -103,12 +106,11 @@ def parse_series(study_dir: Path):
             try:
                 try:
                     ds = pydicom.dcmread(dicom_path, force=True)
+                    metadata = get_attrs(dicom_path)
+                    all_metadata.append(metadata)
                 except Exception as e:
                     print(f"Invalid DICOM: {dicom_path} {str(e)}", file=sys.stderr)
                     raise RuntimeError("Не удалось распарсить исследование")
-
-                if study_metadata is None:
-                    study_metadata = extract_study_metadata(ds)
 
                 series_uid = getattr(ds, "SeriesInstanceUID", None)
                 body_part = (getattr(ds, "BodyPartExamined", "") or "").lower()
@@ -128,4 +130,8 @@ def parse_series(study_dir: Path):
                 continue
             except Exception as e:
                 print(f"Ошибка при обработке {dicom_path}: {e}")
+
+    aggregated_metadata = aggregate_metadata(all_metadata)
+    study_metadata = extract_study_metadata(aggregated_metadata)
+
     return series_list, study_metadata

@@ -4,6 +4,7 @@ from src.core.enums.status import Status
 from . import get_orientation
 from .get_protocol import get_protocol_name
 from .convert_image import convert_dicom_to_png
+from .metadata_aggregator import aggregate_metadata
 
 from uuid6 import uuid7
 
@@ -43,28 +44,17 @@ async def process_series(
             if not results:
                 continue
 
-            last_image_data = (
-                next(
-                    (
-                        r
-                        for r in results
-                        if r.get("Image Position (Patient)")
-                        or r.get("Image Position Patient")
-                    ),
-                    None,
-                )
-                or results[0]
-            )
+            series_metadata = aggregate_metadata(results)
 
-            orientation = last_image_data.get("Image Orientation (Patient)")
-            description = last_image_data.get("Series Description")
+            orientation = series_metadata.get("Image Orientation (Patient)")
+            description = series_metadata.get("Series Description")
 
             processed_series.append(
                 {
                     "id": id,
                     "studyId": study_id,
-                    "series_number": last_image_data.get("Series Number"),
-                    "modality": last_image_data.get("Modality"),
+                    "seriesNumber": series_metadata.get("Series Number"),
+                    "modality": series_metadata.get("Modality"),
                     "protocol": (
                         get_protocol_name(description) if description else None
                     ),
@@ -79,8 +69,8 @@ async def process_series(
                             else None
                         )
                     ),
-                    "images_count": len(image_paths),
-                    "raw_metadata": last_image_data,
+                    "imagesCount": len(image_paths),
+                    "rawMetadata": series_metadata,
                     "path": str(series_path),
                     "status": Status.COMPLETED,
                     "description": description,

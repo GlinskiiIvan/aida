@@ -40,7 +40,7 @@ export class StudyController {
   @Permissions('study:read')
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.studyService.findOne(+id);
+    return this.studyService.findOne(id);
   }
 
   @ApiOperation({ summary: 'Получение всех серий исследования по id' })
@@ -48,7 +48,7 @@ export class StudyController {
   @Permissions('study:read')
   @Get(':id/series')
   findAllSeries(@Param('id') id: string) {
-    return this.studyService.findAllSeries(+id);
+    return this.studyService.findAllSeries(id);
   }
 
   @ApiOperation({ summary: 'Получение всех запусков предсказаний исследования по id' })
@@ -57,7 +57,7 @@ export class StudyController {
   @Get(':id/runs')
   findAllRuns(@Param('id') id: string, @Query() query: FindAllQueryDto) {
     const params = buildFindAllParams(query);
-    return this.studyService.findAllRuns(+id, params);
+    return this.studyService.findAllRuns(id, params);
   }
 
   @ApiOperation({ summary: 'Получение всех изображений исследования по id' })
@@ -66,7 +66,7 @@ export class StudyController {
   @Get(':id/images')
   findAllImages(@Param('id') id: string, @Query() query: FindAllQueryDto) {
     const params = buildFindAllParams(query);
-    return this.studyService.findAllImages(+id, params);
+    return this.studyService.findAllImages(id, params);
   }
 
   @ApiOperation({ summary: 'Обновление исследования' })
@@ -74,7 +74,7 @@ export class StudyController {
   @Permissions('study:update')
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateStudyDto) {
-    return this.studyService.update(+id, dto);
+    return this.studyService.update(id, dto);
   }
 
   @ApiOperation({ summary: 'Восстановление исследования после мягкого удаления' })
@@ -82,7 +82,7 @@ export class StudyController {
   @Permissions('study:delete')
   @Patch(':id/restore')
   restore(@Param('id') id: string) {
-    return this.studyService.restore(+id);
+    return this.studyService.restore(id);
   }
 
   @ApiOperation({ summary: 'Мягкое удаление исследования' })
@@ -90,7 +90,7 @@ export class StudyController {
   @Permissions('study:delete')
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.studyService.remove(+id);
+    return this.studyService.remove(id);
   }
 
   @ApiOperation({ summary: 'Жесткое удаление исследования' })
@@ -98,6 +98,6 @@ export class StudyController {
   @Permissions('study:delete')
   @Delete(':id/force')
   forceRemove(@Param('id') id: string) {
-    return this.studyService.forceRemove(+id);
+    return this.studyService.forceRemove(id);
   }
 }

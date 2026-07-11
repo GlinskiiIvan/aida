@@ -5,7 +5,7 @@ import { InstanceImage } from "src/instance-image/entities/instance-image.entity
 import { Study } from "src/study/entities/study.entity";
 
 interface TableCreationAttrs {
-    readonly studyId: number;
+    readonly studyId: string;
 }
 @Table({ tableName: 'series', paranoid: true })
 export class Series extends Model<Series, TableCreationAttrs> {
@@ -17,7 +17,7 @@ export class Series extends Model<Series, TableCreationAttrs> {
     @ApiProperty({ example: 1, description: 'Уникальный ID исследования' })
     @ForeignKey(() => Study)
     @Column({ type: DataType.INTEGER, })
-    studyId: number;
+    studyId: string;
 
     // alias для исследования
     @BelongsTo(() => Study)

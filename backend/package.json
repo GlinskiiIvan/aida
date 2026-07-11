@@ -31,6 +31,7 @@
     "@types/form-data": "^2.5.2",
     "@types/sequelize": "^4.28.20",
     "@types/unzipper": "^0.10.11",
+    "@types/uuid": "^11.0.0",
     "amqplib": "^2.0.1",
     "axios": "^1.18.1",
     "bcryptjs": "^3.0.2",

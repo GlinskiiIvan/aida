@@ -52,7 +52,7 @@ constructor(
     }
   }
 
-  async findAllByStudyId(studyId: number, params: FindAllServiceParams) {
+  async findAllByStudyId(studyId: string, params: FindAllServiceParams) {
     const { rows, count } = await this.repository.findAndCountAll({
       limit: params.pageSize || undefined,
       offset: params.offset || undefined,

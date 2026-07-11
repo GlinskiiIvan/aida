@@ -6,7 +6,7 @@ import { Study } from "src/study/entities/study.entity";
 import { User } from "src/users/entities/user.entity";
 
 interface TableCreationAttrs {
-    readonly studyId: number;
+    readonly studyId: string;
     readonly createdById: number;
     readonly model: string;
     readonly version: string;
@@ -21,7 +21,7 @@ export class PredictionRun extends Model<PredictionRun, TableCreationAttrs> {
     @ApiProperty({ example: 1, description: 'Уникальный ID исследования' })
     @ForeignKey(() => Study)
     @Column({ type: DataType.INTEGER, })
-    studyId: number;
+    studyId: string;
 
     // alias для исследования
     @BelongsTo(() => Study)

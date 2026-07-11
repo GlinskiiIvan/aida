@@ -16,6 +16,6 @@ export class InferenceController {
   @Permissions('inference:run')
   @Post('predict/:studyId')
   predict(@Param('studyId') studyId: string, @Body() dto: PredictionRunDto, @Request() req) {
-    return this.inferenceService.predict(+studyId, +req.user.id, dto);
+    return this.inferenceService.predict(studyId, +req.user.id, dto);
   }
 }

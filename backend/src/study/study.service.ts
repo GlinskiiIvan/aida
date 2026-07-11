@@ -124,7 +124,7 @@ export class StudyService {
     }
   }
 
-  async findAllSeries(id: number) {
+  async findAllSeries(id: string) {
     try {
       const study = await this.findOneOrThrow(id, {
         include: [this.includeSeries]
@@ -137,7 +137,7 @@ export class StudyService {
     }
   }
 
-  async findAllRuns(id: number, params: FindAllServiceParams) {
+  async findAllRuns(id: string, params: FindAllServiceParams) {
     try {
       const study = await this.findOneOrThrow(id);
       const runs = await this.predictionRunService.findAllByStudyId(id, params);
@@ -150,7 +150,7 @@ export class StudyService {
     }
   }
 
-  async findAllImages(id: number, params: FindAllServiceParams) {
+  async findAllImages(id: string, params: FindAllServiceParams) {
     try {
       const study = await this.findOneOrThrow(id);
       const images = await this.instanceImageService.findAllByStudyId(id, params);
@@ -163,7 +163,7 @@ export class StudyService {
     }
   }
 
-  async findOneOrThrow(id: number, options?: Omit<FindOptions<Study>, "where">) {
+  async findOneOrThrow(id: string, options?: Omit<FindOptions<Study>, "where">) {
     const study = await this.repository.findByPk(id, options);
     if(!study) {
       throw new HttpException(`Исследование не найдено.`, HttpStatus.NOT_FOUND);
@@ -171,7 +171,7 @@ export class StudyService {
     return study;
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     try {
       const study = await this.findOneOrThrow(id, {
         include: [this.includePatient]
@@ -184,7 +184,7 @@ export class StudyService {
     }
   }
 
-  async update(id: number, dto: UpdateStudyDto) {
+  async update(id: string, dto: UpdateStudyDto) {
     try {
       await this.findOneOrThrow(id);
       const [_, updatedRows] = await this.repository.update(
@@ -204,7 +204,7 @@ export class StudyService {
     }
   }
 
-  async restore(id: number) {
+  async restore(id: string) {
     try {
       await this.repository.restore({where: {id}});
       return true;
@@ -215,7 +215,7 @@ export class StudyService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
       await this.findOneOrThrow(id);
       await this.repository.destroy({where: {id}});
@@ -227,7 +227,7 @@ export class StudyService {
     }
   }
 
-  async forceRemove(id: number) {
+  async forceRemove(id: string) {
     try {
       await this.repository.destroy({where: {id}, force: true});
       return true;

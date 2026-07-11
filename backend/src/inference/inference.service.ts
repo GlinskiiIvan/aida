@@ -22,7 +22,7 @@ export class InferenceService {
     private predictionService: PredictionService,
   ) {}
 
-  async predict(studyId: number, createdById: number, dto: PredictionRunDto) {
+  async predict(studyId: string, createdById: number, dto: PredictionRunDto) {
     let run: PredictionRun | null = null;
 
     try {

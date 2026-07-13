@@ -12,7 +12,9 @@ def get_slice_orientation(orientation):
         return Orientation.OBLIQUE_CUT
 
 
-def get_slice_orientation_from_series_description(series_description):
+def get_slice_orientation_from_series_description(series_description: str):
+    series_description = series_description.lower()
+
     if "tra" in series_description:
         return Orientation.AXIAL
     elif "sag" in series_description:

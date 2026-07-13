@@ -5,6 +5,7 @@ from . import get_orientation
 from .get_protocol import get_protocol_name
 from .convert_image import convert_dicom_to_png
 from .metadata_aggregator import aggregate_metadata
+from .get_modality import get_modality
 
 from uuid6 import uuid7
 
@@ -54,7 +55,7 @@ async def process_series(
                     "id": id,
                     "studyId": study_id,
                     "seriesNumber": series_metadata.get("Series Number"),
-                    "modality": series_metadata.get("Modality"),
+                    "modality": get_modality(series_metadata.get("Modality")),
                     "protocol": (
                         get_protocol_name(description) if description else None
                     ),

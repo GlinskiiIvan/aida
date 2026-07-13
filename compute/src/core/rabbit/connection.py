@@ -19,7 +19,6 @@ async def connect():
 
 
 async def disconnect():
-
     if connection:
         await connection.close()
 
@@ -27,8 +26,8 @@ async def disconnect():
 def get_channel():
     if channel is None:
         raise RuntimeError("RabbitMQ channel is not initialized")
-
     return channel
+
 
 def is_connected() -> bool:
     return (
@@ -37,3 +36,4 @@ def is_connected() -> bool:
         and channel is not None
         and not channel.is_closed
     )
+

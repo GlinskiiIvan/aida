@@ -1,12 +1,15 @@
 import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
 
 import { RabbitService } from "../rabbit.service";
-
-import { RabbitQueue } from "../rabbit.constants";
+import { RabbitQueue, RabbitRoutingKey } from "../rabbit.constants";
+import { InferenceService } from "src/inference/inference.service";
 
 @Injectable()
 export class RabbitInferenceListener implements OnApplicationBootstrap {
-  constructor(private readonly rabbit: RabbitService) {}
+  constructor(
+    private readonly rabbit: RabbitService,
+    private readonly inferenceService: InferenceService,
+  ) {}
 
   async onApplicationBootstrap() {
     const channel = await this.rabbit.getChannel();
@@ -18,7 +21,11 @@ export class RabbitInferenceListener implements OnApplicationBootstrap {
 
       const body = JSON.parse(msg.content.toString());
 
-      console.log("[INFERENCE]", routingKey, body);
+      switch (routingKey) {
+        case RabbitRoutingKey.INFERENCE_COMPLETED:
+          await this.inferenceService.completeInferenceProcessing(body);
+          break;
+      }
 
       channel.ack(msg);
     });

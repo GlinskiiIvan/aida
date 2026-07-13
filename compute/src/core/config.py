@@ -11,4 +11,5 @@ RABBITMQ_URL = os.getenv("RABBITMQ_URL")
 
 BASE_DIR = Path("/app")
 STORAGE_DIR = Path("/storage")
+MODELS_DIR = STORAGE_DIR / "models"
 TMP_UPLOAD_DIR = STORAGE_DIR / "tmp" / "uploads"

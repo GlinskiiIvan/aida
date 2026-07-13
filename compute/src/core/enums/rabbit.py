@@ -1,6 +1,11 @@
 from enum import Enum
 
 
+class Queue(str, Enum):
+    STUDY = "study"
+    INFERENCE = "inference"
+
+
 class Exchange(str, Enum):
     EVENTS = "events"
     STUDY = "study"

@@ -1,18 +1,18 @@
-import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CreateInstanceImageDto } from './dto/create-instance-image.dto';
-import { UpdateInstanceImageDto } from './dto/update-instance-image.dto';
-import { InjectModel } from '@nestjs/sequelize';
-import { InstanceImage } from './entities/instance-image.entity';
-import { SeriesService } from 'src/series/series.service';
-import { FindOptions, Includeable, Transaction } from 'sequelize';
-import { Prediction } from 'src/prediction/entities/prediction.entity';
-import * as path from 'path';
-import { buildResultData, FindAllServiceParams } from 'src/utils';
-import { Series } from 'src/series/entities/series.entity';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { CreateInstanceImageDto } from "./dto/create-instance-image.dto";
+import { UpdateInstanceImageDto } from "./dto/update-instance-image.dto";
+import { InjectModel } from "@nestjs/sequelize";
+import { InstanceImage } from "./entities/instance-image.entity";
+import { SeriesService } from "src/series/series.service";
+import { FindOptions, Includeable, Transaction } from "sequelize";
+import { Prediction } from "src/prediction/entities/prediction.entity";
+import * as path from "path";
+import { buildResultData, FindAllServiceParams } from "src/utils";
+import { Series } from "src/series/entities/series.entity";
 
 @Injectable()
 export class InstanceImageService {
-constructor(
+  constructor(
     @InjectModel(InstanceImage) private repository: typeof InstanceImage,
     @Inject(forwardRef(() => SeriesService)) private seriesService: SeriesService,
   ) {}
@@ -21,9 +21,9 @@ constructor(
 
   private includePredictions: Includeable = {
     model: Prediction,
-    as: 'predictions',
-  }
-    
+    as: "predictions",
+  };
+
   async create(dto: CreateInstanceImageDto) {
     try {
       const series = await this.seriesService.findOneOrThrow(dto.seriesId);
@@ -31,68 +31,68 @@ constructor(
       const instance = await this.repository.create(dto);
       instance.imagePath = path.join(series.path, dto.imageName);
       await instance.save();
-      
+
       return instance;
     } catch (error) {
-        const msg = `Ошибка при создании инстанса изображения. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при создании инстанса изображения. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async bulkCreate(data: InstanceImage[], transaction: Transaction) {
     try {
-      return this.repository.bulkCreate(data, {transaction});
+      return this.repository.bulkCreate(data, { transaction });
     } catch (error) {
-        const msg = `Ошибка при создании всех инстансов изображений исследования. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при создании всех инстансов изображений исследования. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async findAll() {
     try {
       return await this.repository.findAll({
-        order: [['instanceNumber', 'ASC']],
+        order: [["instanceNumber", "ASC"]],
       });
     } catch (error) {
-        const msg = `Ошибка при получении всех инстансов изображений. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при получении всех инстансов изображений. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async findAllByStudyId(studyId: string, params: FindAllServiceParams) {
     const { rows, count } = await this.repository.findAndCountAll({
-      limit: params.pageSize || undefined,
-      offset: params.offset || undefined,
+      limit: params?.pageSize || undefined,
+      offset: params?.offset || undefined,
 
       include: [
         {
           model: Series,
-          as: 'series',
+          as: "series",
           required: true,
           where: { studyId },
         },
       ],
 
       order: [
-        [{ model: Series, as: 'series' }, 'id', 'ASC'],
-        ['instanceNumber', 'ASC'],
+        [{ model: Series, as: "series" }, "id", "ASC"],
+        ["instanceNumber", "ASC"],
       ],
     });
 
     return buildResultData({
       rows,
       count,
-      page: params.page,
-      limit: params.pageSize,
+      page: params?.page || undefined,
+      limit: params?.pageSize || undefined,
     });
   }
 
   async findOneOrThrow(id: string, options?: Omit<FindOptions<InstanceImage>, "where">) {
     const instance = await this.repository.findByPk(id, options);
-    if(!instance) {
+    if (!instance) {
       throw new HttpException(`Инстанс изображения не найден.`, HttpStatus.NOT_FOUND);
     }
     return instance;
@@ -103,68 +103,71 @@ constructor(
       const instance = await this.findOneOrThrow(id);
       return instance;
     } catch (error) {
-        const msg = `Ошибка при получении инстанса изображения по id. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при получении инстанса изображения по id. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async findAllPredictions(id: string) {
     try {
       const instance = await this.findOneOrThrow(id, {
-        include: [this.includePredictions]
+        include: [this.includePredictions],
       });
       return instance.predictions;
     } catch (error) {
-        const msg = `Ошибка при получении всех предсказаний инстанса изображения по id. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при получении всех предсказаний инстанса изображения по id. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async update(id: string, dto: UpdateInstanceImageDto) {
     try {
       await this.findOneOrThrow(id);
-      const [_, updatedRows] = await this.repository.update(dto, {where: {id}, returning: true});
+      const [_, updatedRows] = await this.repository.update(dto, {
+        where: { id },
+        returning: true,
+      });
       return updatedRows[0];
     } catch (error) {
-        const msg = `Ошибка при обновлении инстанса изображения. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при обновлении инстанса изображения. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async remove(id: string) {
     try {
       await this.findOneOrThrow(id);
-      await this.repository.destroy({where: {id}});
+      await this.repository.destroy({ where: { id } });
       return true;
     } catch (error) {
-        const msg = `Ошибка при мягком удалении инстанса изображения. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при мягком удалении инстанса изображения. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async forceRemove(id: string) {
     try {
-      await this.repository.destroy({where: {id}, force: true});
+      await this.repository.destroy({ where: { id }, force: true });
       return true;
     } catch (error) {
-        const msg = `Ошибка при жестком удалении инстанса изображения. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при жестком удалении инстанса изображения. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async restore(id: string) {
     try {
-      await this.repository.restore({where: {id}});
+      await this.repository.restore({ where: { id } });
       return true;
     } catch (error) {
-        const msg = `Ошибка при восстановлении инстанса изображения после мягкого удаления. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при восстановлении инстанса изображения после мягкого удаления. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 }

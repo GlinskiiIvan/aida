@@ -10,8 +10,10 @@ from .modules.ingestion.router import router as ingestion_router
 
 from .core.ws.router import router as ws_router
 from .core.ws.listener import redis_listener
+
 from .core.rabbit import connection as rabbit_connection
 from .core.rabbit import setup_exchanges as rabbit_setup_exchanges
+from .core.rabbit import setup_listeners as rabbit_setup_listeners
 
 app = FastAPI()
 
@@ -30,6 +32,7 @@ async def on_startup():
     global listener_task
     await rabbit_connection.connect()
     await rabbit_setup_exchanges.setup()
+    await rabbit_setup_listeners.setup()
     init_storage()
     listener_task = asyncio.create_task(redis_listener())
 

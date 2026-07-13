@@ -18,3 +18,9 @@ export const RabbitRoutingKey = {
   INFERENCE_COMPLETED: "inference.completed",
   INFERENCE_FAILED: "inference.failed",
 } as const;
+
+export type RabbitQueue = (typeof RabbitQueue)[keyof typeof RabbitQueue];
+
+export type RabbitRoutingKey = (typeof RabbitRoutingKey)[keyof typeof RabbitRoutingKey];
+
+export type RabbitExchange = (typeof RabbitExchange)[keyof typeof RabbitExchange];

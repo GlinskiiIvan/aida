@@ -49,17 +49,17 @@ async def process_series(
                     results.append(result_image["rawMetadata"])
                     processed_images.append(result_image)
 
-                publish_task(
-                    task_id=task_id,
-                    message={
-                        "task_id": task_id,
-                        "task_type": Task.UPLOAD_STUDY,
-                        "status": Status.PROCESSING,
-                        "images": {"total": total_images, "current": index},
-                    },
-                )
+                    publish_task(
+                        task_id=task_id,
+                        message={
+                            "task_id": task_id,
+                            "task_type": Task.UPLOAD_STUDY,
+                            "status": Status.PROCESSING,
+                            "images": {"total": total_images, "current": current_image},
+                        },
+                    )
 
-                current_image += 1
+                    current_image += 1
 
             if not results:
                 continue

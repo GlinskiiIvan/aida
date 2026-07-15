@@ -90,7 +90,7 @@ export class InstanceImageService {
     });
   }
 
-  async findOneOrThrow(id: string, options?: Omit<FindOptions<InstanceImage>, "where">) {
+  async findOneOrThrow(id: number, options?: Omit<FindOptions<InstanceImage>, "where">) {
     const instance = await this.repository.findByPk(id, options);
     if (!instance) {
       throw new HttpException(`Инстанс изображения не найден.`, HttpStatus.NOT_FOUND);
@@ -98,7 +98,7 @@ export class InstanceImageService {
     return instance;
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     try {
       const instance = await this.findOneOrThrow(id);
       return instance;
@@ -109,7 +109,7 @@ export class InstanceImageService {
     }
   }
 
-  async findAllPredictions(id: string) {
+  async findAllPredictions(id: number) {
     try {
       const instance = await this.findOneOrThrow(id, {
         include: [this.includePredictions],
@@ -122,7 +122,7 @@ export class InstanceImageService {
     }
   }
 
-  async update(id: string, dto: UpdateInstanceImageDto) {
+  async update(id: number, dto: UpdateInstanceImageDto) {
     try {
       await this.findOneOrThrow(id);
       const [_, updatedRows] = await this.repository.update(dto, {
@@ -137,7 +137,7 @@ export class InstanceImageService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     try {
       await this.findOneOrThrow(id);
       await this.repository.destroy({ where: { id } });
@@ -149,7 +149,7 @@ export class InstanceImageService {
     }
   }
 
-  async forceRemove(id: string) {
+  async forceRemove(id: number) {
     try {
       await this.repository.destroy({ where: { id }, force: true });
       return true;
@@ -160,7 +160,7 @@ export class InstanceImageService {
     }
   }
 
-  async restore(id: string) {
+  async restore(id: number) {
     try {
       await this.repository.restore({ where: { id } });
       return true;

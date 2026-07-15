@@ -45,11 +45,8 @@ def inference_study_task(
                 "status": Status.COMPLETED,
             },
         )
-
         print(f"TASK {TaskEnum.UPLOAD_STUDY} FINISHED")
     except Exception as e:
-        print(f"TASK {TaskEnum.INFERENCE_STUDY} FAILED: {e}")
-
         publish_task(
             task_id=task_id,
             message={
@@ -59,5 +56,6 @@ def inference_study_task(
                 "error": str(e),
             },
         )
+        print(f"TASK {TaskEnum.INFERENCE_STUDY} FAILED: {e}")
 
         raise

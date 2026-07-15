@@ -49,4 +49,13 @@ def upload_study_task(
             shutil.rmtree(upload_dir, ignore_errors=True)
             print(f"CLEANED: {upload_dir}")
 
+        publish_task(
+            task_id=task_id,
+            message={
+                "task_id": task_id,
+                "task_type": TaskEnum.UPLOAD_STUDY,
+                "status": Status.COMPLETED,
+            },
+        )
+
         print(f"TASK {TaskEnum.UPLOAD_STUDY} FINISHED")

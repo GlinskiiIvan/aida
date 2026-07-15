@@ -20,6 +20,7 @@ async def upload_study(dto: UploadStudyDTO):
     )
 
     processed_series, processed_images = await process_series(
+        task_id=dto.task_id,
         study_id=dto.study_id,
         study_path=dto.study_path,
         series_list=series_list,

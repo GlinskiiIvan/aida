@@ -1,6 +1,8 @@
 import uuid
 
 from src.core.enums.status import Status
+from src.core.enums.task import Task
+
 from . import get_orientation
 from .get_protocol import get_protocol_name
 from .convert_image import convert_dicom_to_png
@@ -12,8 +14,11 @@ from uuid6 import uuid7
 from pathlib import Path
 from collections import defaultdict
 
+from src.core.ws.publisher import publish_task
+
 
 async def process_series(
+    task_id: str,
     study_id: int,
     study_path: Path,
     series_list: defaultdict[str, list[str]],
@@ -22,6 +27,9 @@ async def process_series(
     processed_images = []
 
     try:
+        total_images = sum(len(image_paths) for image_paths in series_list.values())
+        current_image = 1
+
         for index, (_, image_paths) in enumerate(series_list.items(), start=1):
             id = uuid7()
 
@@ -40,6 +48,18 @@ async def process_series(
                 if result_image is not None:
                     results.append(result_image["rawMetadata"])
                     processed_images.append(result_image)
+
+                publish_task(
+                    task_id=task_id,
+                    message={
+                        "task_id": task_id,
+                        "task_type": Task.UPLOAD_STUDY,
+                        "status": Status.PROCESSING,
+                        "images": {"total": total_images, "current": index},
+                    },
+                )
+
+                current_image += 1
 
             if not results:
                 continue

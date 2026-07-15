@@ -27,7 +27,7 @@ export class InferenceService {
     private readonly sequelize: Sequelize,
   ) {}
 
-  async predict(studyId: string, createdById: number, dto: PredictionRunDto) {
+  async predict(studyId: number, createdById: number, dto: PredictionRunDto) {
     let run: PredictionRun | null = null;
 
     try {

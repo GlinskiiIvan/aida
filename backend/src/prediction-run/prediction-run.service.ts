@@ -53,7 +53,7 @@ export class PredictionRunService {
     }
   }
 
-  async findAllByStudyId(studyId: string, params: FindAllServiceParams) {
+  async findAllByStudyId(studyId: number, params: FindAllServiceParams) {
     try {
       const whereParams = buildWhere<PredictionRun>({
         dateFrom: params.dateFrom,

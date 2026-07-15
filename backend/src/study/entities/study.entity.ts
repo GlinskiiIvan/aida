@@ -13,7 +13,6 @@ import { Modality, Status } from "src/common/enums";
 import { Patient } from "src/patient/entities/patient.entity";
 import { PredictionRun } from "src/prediction-run/entities/prediction-run.entity";
 import { Series } from "src/series/entities/series.entity";
-import { v7 as uuidv7 } from "uuid";
 
 interface TableCreationAttrs {
   readonly patientId: number;
@@ -23,11 +22,11 @@ interface TableCreationAttrs {
 @Table({ tableName: "study", paranoid: true })
 export class Study extends Model<Study, TableCreationAttrs> {
   @ApiProperty({
-    example: "0197f3f7-8d9b-7f4a-b2c1-5d8e9a7c4f21",
+    example: 1,
     description: "Уникальный ID исследования",
   })
-  @Column({ type: DataType.UUID, unique: true, primaryKey: true, defaultValue: () => uuidv7() })
-  id: string;
+  @Column({ type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true })
+  id: number;
 
   // Внешний ключ укзаывающий на пациента
   @ApiProperty({ example: 1, description: "Уникальный ID пациента" })
@@ -183,4 +182,3 @@ export class Study extends Model<Study, TableCreationAttrs> {
 // (0008,0090) - Referring Physician's Name:
 
 // (0008,1030) - Study Description: L-KNEE
-

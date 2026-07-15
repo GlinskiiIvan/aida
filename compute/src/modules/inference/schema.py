@@ -10,7 +10,7 @@ class PredictionType(str, Enum):
 
 
 class PredictionImageDTO(BaseModel):
-    id: UUID
+    id: int
     path: str
 
 

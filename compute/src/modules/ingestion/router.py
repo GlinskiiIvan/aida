@@ -42,7 +42,7 @@ router = APIRouter(prefix="/ingestion", tags=["ingestion"])
     response_description="Идентификатор фоновой задачи обработки DICOM-исследования и информация о ее текущем статусе.",
 )
 async def upload_study(
-    study_id: uuid.UUID = Form(...),
+    study_id: int = Form(...),
     study_path: str = Form(...),
     archive: UploadFile = File(None),
 ):

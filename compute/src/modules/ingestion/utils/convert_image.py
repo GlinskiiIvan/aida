@@ -6,8 +6,6 @@ import numpy as np
 import cv2
 import uuid
 
-from uuid6 import uuid7
-
 from pathlib import Path
 
 from .get_attrs import get_attrs
@@ -21,8 +19,6 @@ def convert_dicom_to_png(
     apply_laplacian: bool = True,
 ):
     try:
-        id = uuid7()
-
         if not os.path.exists(dicom_path):
             print(f"File not found: {dicom_path}", file=sys.stderr)
             return None
@@ -112,7 +108,6 @@ def convert_dicom_to_png(
         metadata = get_attrs(dicom_path)
 
         return {
-            "id": id,
             "seriesId": series_id,
             "imageName": filename,
             "imagePath": output_path,

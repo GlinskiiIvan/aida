@@ -14,11 +14,10 @@ from collections import defaultdict
 
 
 async def process_series(
-    study_id: uuid.UUID,
+    study_id: int,
     study_path: Path,
     series_list: defaultdict[str, list[str]],
 ):
-    last_image_data = None
     processed_series = []
     processed_images = []
 

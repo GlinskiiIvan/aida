@@ -36,6 +36,16 @@ def inference_study_task(
                 dto=dto,
             )
         )
+
+        publish_task(
+            task_id=task_id,
+            message={
+                "task_id": task_id,
+                "task_type": TaskEnum.INFERENCE_STUDY,
+                "status": Status.COMPLETED,
+            },
+        )
+
         print(f"TASK {TaskEnum.UPLOAD_STUDY} FINISHED")
     except Exception as e:
         print(f"TASK {TaskEnum.INFERENCE_STUDY} FAILED: {e}")

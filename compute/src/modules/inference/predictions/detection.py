@@ -1,4 +1,5 @@
 import sys
+import math
 import time
 import uuid
 import os
@@ -11,7 +12,10 @@ from src.core.config import MODELS_DIR
 from src.modules.inference import schema
 
 from src.core.enums.status import Status
+from src.core.enums.task import Task
 from src.core.enums.result_class import ResultClass
+
+from src.core.ws.publisher import publish_task
 
 
 def predict_image(run_id: int, model_name: str, image: schema.PredictionImageDTO):
@@ -92,20 +96,21 @@ def predict_old(
 
 
 def predict(
+    task_id: str,
     run_id: int,
     model_name: str,
     images: list[schema.PredictionImageDTO],
 ):
     BATCH_SIZE = 16
+    total_images = len(images)
+    total_batches = math.ceil(total_images / BATCH_SIZE)
 
     model_path = os.path.join(MODELS_DIR, "yolo", "bbox", "8x.pt")
     model = YOLO(model_path)
 
     predictions = []
 
-    total = len(images)
-
-    for batch_start in range(0, total, BATCH_SIZE):
+    for batch_start in range(0, total_images, BATCH_SIZE):
         batch = images[batch_start : batch_start + BATCH_SIZE]
 
         start_time = time.time()
@@ -164,12 +169,30 @@ def predict(
                 }
             )
 
-        processed = min(batch_start + len(batch), total)
+        processed = min(batch_start + len(batch), total_images)
+        current_batch = batch_start // BATCH_SIZE + 1
 
         print(
             f"[YOLO] Batch {batch_start // BATCH_SIZE + 1}: "
-            f"{processed}/{total} images processed "
+            f"{processed}/{total_images} images processed "
             f"({batch_time} ms)"
+        )
+
+        publish_task(
+            task_id=task_id,
+            message={
+                "task_id": task_id,
+                "task_type": Task.INFERENCE_STUDY,
+                "status": Status.PROCESSING,
+                "progress": {
+                    "totalImages": total_images,
+                    "processedImages": processed,
+                    "batchSize": BATCH_SIZE,
+                    "totalBatches": total_batches,
+                    "currentBatch": current_batch,
+                    "batchTime": batch_time,
+                },
+            },
         )
 
     return predictions

@@ -3,7 +3,7 @@ export interface TaskMessageIngestionStudy {
   task_type: string;
   status: string;
 
-  images: {
+  images?: {
     total: number;
     current: number;
   };

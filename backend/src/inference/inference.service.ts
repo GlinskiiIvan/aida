@@ -1,16 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { PredictionRunDto } from "./dto/prediction-run.dto";
-import { FilesService } from "src/files/files.service";
 import { StudyService } from "src/study/study.service";
-import { SeriesService } from "src/series/series.service";
-import { InstanceImageService } from "src/instance-image/instance-image.service";
 import { PredictionRunService } from "src/prediction-run/prediction-run.service";
-import { ResultClass, Status } from "src/common/enums";
-import * as path from "path";
-import { spawn } from "child_process";
+import { Status } from "src/common/enums";
 import { PredictionService } from "src/prediction/prediction.service";
 import { PredictionRun } from "src/prediction-run/entities/prediction-run.entity";
-import { getPythonPath } from "src/utils";
 import { RabbitPublisher } from "src/rabbit/rabbit.publisher";
 import { RabbitRoutingKey } from "src/rabbit/rabbit.constants";
 import { Sequelize } from "sequelize-typescript";
@@ -21,9 +15,7 @@ import { v7 as uuidv7 } from "uuid";
 @Injectable()
 export class InferenceService {
   constructor(
-    private fileService: FilesService,
     private studyService: StudyService,
-    private seriesService: SeriesService,
     private predictionRunService: PredictionRunService,
     private predictionService: PredictionService,
     private rabbitPublisher: RabbitPublisher,

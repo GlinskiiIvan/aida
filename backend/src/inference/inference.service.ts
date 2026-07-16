@@ -14,6 +14,9 @@ import { getPythonPath } from "src/utils";
 import { RabbitPublisher } from "src/rabbit/rabbit.publisher";
 import { RabbitRoutingKey } from "src/rabbit/rabbit.constants";
 import { Sequelize } from "sequelize-typescript";
+import { RabbitRpcService } from "src/rabbit/rabbit-rpc.service";
+
+import { v7 as uuidv7 } from "uuid";
 
 @Injectable()
 export class InferenceService {
@@ -24,6 +27,7 @@ export class InferenceService {
     private predictionRunService: PredictionRunService,
     private predictionService: PredictionService,
     private rabbitPublisher: RabbitPublisher,
+    private rabbitRpc: RabbitRpcService,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -33,6 +37,8 @@ export class InferenceService {
     try {
       const images = await this.studyService.findAllImages(studyId, undefined);
 
+      const requestId = uuidv7();
+
       run = await this.predictionRunService.create({
         studyId: studyId,
         createdById: createdById,
@@ -40,12 +46,28 @@ export class InferenceService {
         version: dto.version,
       });
 
-      await this.rabbitPublisher.publish(RabbitRoutingKey.INFERENCE_PENDING, {
+      await this.rabbitPublisher.publish(RabbitRoutingKey.INFERENCE_REQUEST, {
+        requestId,
         runId: run.id,
         type: "det",
         model_name: "yolo_8x",
         images: images.data.map((image) => ({ id: image.id, path: image.imagePath })),
       });
+
+      const response = await this.rabbitRpc.wait(requestId);
+      if (response) {
+        return {
+          taskId: response.taskId,
+          status: "pending",
+        };
+      }
+
+      return {
+        taskId: null,
+        status: "queued",
+        message:
+          "Задача поставлена в очередь. Выполнение начнется после появления доступного обработчика.",
+      };
     } catch (error) {
       if (run) {
         await this.predictionRunService.update(run.id, { status: Status.Failed });

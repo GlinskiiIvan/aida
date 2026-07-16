@@ -5,6 +5,8 @@ from celery import Task
 from src.core.enums.task import Task as TaskEnum
 from src.core.enums.status import Status
 from src.core.ws.publisher import publish_task
+from src.core.rabbit import publisher as rabbit_publisher
+from src.core.enums import rabbit
 
 from src.modules.inference import service as inference_service
 from .celery_app import celery
@@ -27,12 +29,24 @@ def inference_study_task(
             "status": Status.PENDING,
         },
     )
+    print(f"DTO: {dto}")
+    asyncio.run(
+        rabbit_publisher.publish(
+            routing_key=rabbit.RoutingKey.INFERENCE_PENDING,
+            body={
+                "requestId": dto["requestId"],
+                "task_id": task_id,
+                "status": "processing",
+            },
+        )
+    )
     print(f"TASK {TaskEnum.INFERENCE_STUDY} STARTED")
 
     try:
         dto = schema.PredictionRunDTO.model_validate(dto)
         asyncio.run(
             inference_service.predict_study(
+                task_id=task_id,
                 dto=dto,
             )
         )

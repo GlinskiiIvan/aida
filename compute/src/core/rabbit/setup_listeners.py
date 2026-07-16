@@ -5,8 +5,8 @@ from src.core.rabbit.listeners import predict as inference_study
 
 async def setup():
     await rabbit_consumer.consume(
-        queue=rabbit.Queue.INFERENCE,
-        routing_key=rabbit.RoutingKey.INFERENCE_PENDING,
+        queue=rabbit.Queue.WORKER,
+        routing_key=rabbit.RoutingKey.INFERENCE_REQUEST,
         exchange=rabbit.Exchange.EVENTS,
         callback=inference_study.prediction_listener,
     )

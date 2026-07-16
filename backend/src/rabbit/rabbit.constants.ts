@@ -1,10 +1,14 @@
 export const RabbitExchange = {
   EVENTS: "events",
+  BACKEND: "backend",
+  WORKER: "worker",
 } as const;
 
 export const RabbitQueue = {
   STUDY: "study",
   INFERENCE: "inference",
+  BACKEND: "backend",
+  WORKER: "worker",
 } as const;
 
 export const RabbitRoutingKey = {
@@ -13,6 +17,7 @@ export const RabbitRoutingKey = {
   STUDY_COMPLETED: "study.completed",
   STUDY_FAILED: "study.failed",
 
+  INFERENCE_REQUEST: "inference.request",
   INFERENCE_PENDING: "inference.pending",
   INFERENCE_PROCESSING: "inference.processing",
   INFERENCE_COMPLETED: "inference.completed",

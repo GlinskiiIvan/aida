@@ -15,6 +15,7 @@ class PredictionImageDTO(BaseModel):
 
 
 class PredictionRunDTO(BaseModel):
+    requestId: str
     runId: int
     type: PredictionType
     model_name: str

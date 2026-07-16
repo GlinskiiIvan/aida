@@ -21,17 +21,11 @@ export class RabbitService implements OnModuleInit, OnModuleDestroy {
       durable: true,
     });
 
-    await this.channel.assertQueue(RabbitQueue.STUDY, {
+    await this.channel.assertQueue(RabbitQueue.BACKEND, {
       durable: true,
     });
-
-    await this.channel.assertQueue(RabbitQueue.INFERENCE, {
-      durable: true,
-    });
-
-    await this.channel.bindQueue(RabbitQueue.STUDY, RabbitExchange.EVENTS, "study.*");
-
-    await this.channel.bindQueue(RabbitQueue.INFERENCE, RabbitExchange.EVENTS, "inference.*");
+    await this.channel.bindQueue(RabbitQueue.BACKEND, RabbitExchange.EVENTS, "inference.*");
+    await this.channel.bindQueue(RabbitQueue.BACKEND, RabbitExchange.EVENTS, "study.*");
   }
 
   async getChannel(): Promise<amqp.Channel> {

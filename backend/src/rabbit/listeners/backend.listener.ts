@@ -18,7 +18,7 @@ export class RabbitBackendListener implements OnApplicationBootstrap {
   async onApplicationBootstrap() {
     const channel = await this.rabbit.getChannel();
 
-    await channel.consume(RabbitQueue.INFERENCE, async (msg) => {
+    await channel.consume(RabbitQueue.BACKEND, async (msg) => {
       if (!msg) return;
 
       const routingKey = msg.fields.routingKey;

@@ -2,7 +2,7 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 
 import * as amqp from "amqplib";
 
-import { RabbitExchange, RabbitQueue } from "./rabbit.constants";
+import { RabbitExchange, RabbitQueue, RabbitRoutingKey } from "./rabbit.constants";
 
 @Injectable()
 export class RabbitService implements OnModuleInit, OnModuleDestroy {
@@ -24,8 +24,21 @@ export class RabbitService implements OnModuleInit, OnModuleDestroy {
     await this.channel.assertQueue(RabbitQueue.BACKEND, {
       durable: true,
     });
-    await this.channel.bindQueue(RabbitQueue.BACKEND, RabbitExchange.EVENTS, "inference.*");
-    await this.channel.bindQueue(RabbitQueue.BACKEND, RabbitExchange.EVENTS, "study.*");
+    await this.channel.bindQueue(
+      RabbitQueue.BACKEND,
+      RabbitExchange.EVENTS,
+      RabbitRoutingKey.INFERENCE_PENDING,
+    );
+    await this.channel.bindQueue(
+      RabbitQueue.BACKEND,
+      RabbitExchange.EVENTS,
+      RabbitRoutingKey.INFERENCE_COMPLETED,
+    );
+    await this.channel.bindQueue(
+      RabbitQueue.BACKEND,
+      RabbitExchange.EVENTS,
+      RabbitRoutingKey.STUDY_COMPLETED,
+    );
   }
 
   async getChannel(): Promise<amqp.Channel> {

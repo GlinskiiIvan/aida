@@ -1,5 +1,6 @@
 import sys
 import math
+import torch
 import time
 import uuid
 import os
@@ -105,6 +106,9 @@ def predict(
     total_images = len(images)
     total_batches = math.ceil(total_images / BATCH_SIZE)
 
+    DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
+    print(f"Using device: {DEVICE}")
+
     model_path = os.path.join(MODELS_DIR, "yolo", "bbox", "8x.pt")
     model = YOLO(model_path)
 
@@ -119,6 +123,7 @@ def predict(
             [img.path for img in batch],
             batch=BATCH_SIZE,
             verbose=False,
+            device=DEVICE,
         )
 
         batch_time = int((time.time() - start_time) * 1000)

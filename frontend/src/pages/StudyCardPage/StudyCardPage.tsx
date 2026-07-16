@@ -38,6 +38,10 @@ import clsx from "clsx";
 import type { CSSVars } from "../../ui/copmonents/types";
 import { useFullScreenImage } from "../../ui/copmonents/FullScreenImage/useFullScreenImage";
 
+import { WebSocketClient } from "../../core/ws/websocket.ts";
+import { useWebSocket } from "../../core/ws/useWebSocket.ts";
+import { type TaskMessageInferenceStudy } from "../../core/ws/websocket.types.ts";
+
 const StudyCardPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -225,6 +229,7 @@ const StudyCardPage = () => {
       isError: predictIsError,
       error: predictError,
       fulfilledTimeStamp: predictFulfilledTimeStamp,
+      data: predictData,
     },
   ] = inferenceApi.usePredictMutation();
   const [model, setModel] = React.useState<ModelsOptions | undefined>(undefined);
@@ -492,6 +497,31 @@ const StudyCardPage = () => {
   }, [predictionsData.fulfilledTimeStamp, activeImage, fullScreenImageModal.show]);
 
   // PREDICTION END /////////////////////////////////////////////////////////////////
+
+  // WS START ///////////////////////////////////////////////////////////////////
+  const [taskId, setTaskId] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (predictData?.taskId) {
+      setTaskId(predictData.taskId);
+    }
+  }, [predictData?.taskId]);
+
+  const socket = React.useMemo(
+    () => new WebSocketClient<TaskMessageInferenceStudy>(`ws://localhost:8002/ws/tasks/${taskId}`),
+    [taskId],
+  );
+
+  React.useEffect(() => {
+    socket.connect();
+
+    return () => socket.disconnect();
+  }, [socket]);
+
+  useWebSocket(socket, (message) => {
+    console.log(message);
+  });
+  // WS END ///////////////////////////////////////////////////////////////////
 
   if (!studyIsSuccess) {
     return <h1>Загрузка...</h1>;
@@ -891,4 +921,3 @@ const StudyCardPage = () => {
 };
 
 export default StudyCardPage;
-

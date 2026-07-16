@@ -1,23 +1,26 @@
-import { api } from '../api/api';
+import { api } from "../api/api";
 
 export type PredictionRunDto = {
-    readonly model: string;
-    readonly version: string;
+  readonly model: string;
+  readonly version: string;
+};
+
+interface PredictionResponse {
+  taskId: string;
+  status: string;
 }
 
 export const inferenceApi = api.injectEndpoints({
-    endpoints: (builder) => ({
-        predict: builder.mutation<Boolean, PredictionRunDto & {studyId: string}>({
-            query: ({studyId, ...body}) => ({
-                url: `inference/predict/${studyId}`,
-                method: 'POST',
-                body,
-            }),
-            invalidatesTags: [{type: 'inference', id: 'LIST'}],
-        }),
+  endpoints: (builder) => ({
+    predict: builder.mutation<PredictionResponse, PredictionRunDto & { studyId: string }>({
+      query: ({ studyId, ...body }) => ({
+        url: `inference/predict/${studyId}`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "inference", id: "LIST" }],
     }),
+  }),
 });
 
-export const {
-    usePredictMutation,
-} = inferenceApi;
+export const { usePredictMutation } = inferenceApi;

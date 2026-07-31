@@ -14,7 +14,7 @@ from .celery_app import celery
 from src.modules.ingestion.schema import UploadStudyDTO
 
 
-@celery.task(bind=True, name=TaskEnum.UPLOAD_STUDY)
+@celery.task(bind=True, name=TaskEnum.UPLOAD_STUDY, queue="upload")
 def upload_study_task(
     self: Task,
     dto,

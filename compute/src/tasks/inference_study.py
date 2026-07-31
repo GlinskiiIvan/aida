@@ -14,7 +14,7 @@ from .celery_app import celery
 from src.modules.inference import schema
 
 
-@celery.task(bind=True, name=TaskEnum.INFERENCE_STUDY)
+@celery.task(bind=True, name=TaskEnum.INFERENCE_STUDY, queue="inference")
 def inference_study_task(
     self: Task,
     dto,

@@ -1,5 +1,7 @@
 import asyncio
 from celery import Celery
+from kombu import Queue
+
 from celery.signals import worker_process_init
 from dotenv import load_dotenv
 
@@ -15,6 +17,13 @@ if REDIS_RESULT_BACKEND is None:
     raise RuntimeError("REDIS_RESULT_BACKEND is not set")
 
 celery = Celery("aida", broker=REDIS_BROKER_URL, backend=REDIS_RESULT_BACKEND)
+
+celery.conf.task_queues = (
+    Queue("upload"),
+    Queue("inference"),
+)
+
+celery.conf.task_default_queue = "default"
 
 celery.conf.update(
     worker_prefetch_multiplier=1,

@@ -16,6 +16,8 @@ services:
     command: pnpm run start
     depends_on:
       - postgres
+      - redis
+      - rabbitmq
     restart: unless-stopped
     networks:
       - backend
@@ -49,29 +51,43 @@ services:
     env_file:
       - ./compute/${COMPUTE_ENV}
     restart: unless-stopped
+    depends_on:
+      - redis
+      - rabbitmq
     networks:
       - backend
 
-  worker:
+  worker-upload:
     build:
       context: ./compute
-    command: celery -A src.tasks.celery_app worker --loglevel=info
+    command: celery -A src.tasks.celery_app worker -Q upload --concurrency=1 --pool=solo --hostname=upload@%h --loglevel=info
     volumes:
       - ./compute:/app
       - ./storage:/storage
     env_file:
       - ./compute/${COMPUTE_ENV}
     restart: unless-stopped
+    depends_on:
+      - redis
+      - rabbitmq
     networks:
       - backend
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities:
-                - gpu
+
+  worker-inference:
+    build:
+      context: ./compute
+    command: celery -A src.tasks.celery_app worker -Q inference --concurrency=1 --pool=solo --hostname=inference@%h --loglevel=info
+    volumes:
+      - ./compute:/app
+      - ./storage:/storage
+    env_file:
+      - ./compute/${COMPUTE_ENV}
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - rabbitmq
+    networks:
+      - backend
 
   redis:
     image: redis:7

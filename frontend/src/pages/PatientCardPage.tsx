@@ -351,6 +351,13 @@ const PatientCardPage = () => {
 
   useWebSocket(socket, (message) => {
     console.log(message);
+    if (message.status === "completed") {
+      const fetchPatientStudies = allStudiesDataQuery[0];
+      // fetchPatientStudies({ id: Number(id), pagination: { page: 1, pageSize: 15 } }, false);
+      setTimeout(() => {
+        fetchPatientStudies({ id: Number(id), pagination: { page: 1, pageSize: 15 } }, false);
+      }, 1000);
+    }
   });
   // WS END ///////////////////////////////////////////////////////////////////
 
@@ -560,4 +567,3 @@ const PatientCardPage = () => {
 };
 
 export default PatientCardPage;
-

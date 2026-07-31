@@ -93,8 +93,12 @@ export const studyApi = api.injectEndpoints({
           ? [
               ...result.data.map(({ id }) => ({ type: "studies" as const, id })),
               { type: "studies", id: "LIST" },
+              { type: "ingestion", id: "LIST" },
             ]
-          : [{ type: "studies", id: "LIST" }],
+          : [
+              { type: "studies", id: "LIST" },
+              { type: "ingestion", id: "LIST" },
+            ],
     }),
 
     findAllStudyRuns: builder.query<
@@ -128,8 +132,12 @@ export const studyApi = api.injectEndpoints({
           ? [
               ...result.data.map(({ id }) => ({ type: "studies" as const, id })),
               { type: "studies", id: "LIST" },
+              { type: "inference", id: "LIST" },
             ]
-          : [{ type: "studies", id: "LIST" }],
+          : [
+              { type: "studies", id: "LIST" },
+              { type: "inference", id: "LIST" },
+            ],
     }),
 
     findAllStudyImages: builder.query<
@@ -163,8 +171,12 @@ export const studyApi = api.injectEndpoints({
           ? [
               ...result.data.map(({ id }) => ({ type: "studies" as const, id })),
               { type: "studies", id: "LIST" },
+              { type: "ingestion", id: "LIST" },
             ]
-          : [{ type: "studies", id: "LIST" }],
+          : [
+              { type: "studies", id: "LIST" },
+              { type: "ingestion", id: "LIST" },
+            ],
     }),
 
     findOneStudy: builder.query<Study, number>({
@@ -209,4 +221,3 @@ export const {
   useUpdateStudyMutation,
   useRemoveStudyMutation,
 } = studyApi;
-

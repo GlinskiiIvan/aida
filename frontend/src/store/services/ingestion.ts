@@ -19,4 +19,3 @@ export const ingestionApi = api.injectEndpoints({
 });
 
 export const { useUploadStudyMutation } = ingestionApi;
-

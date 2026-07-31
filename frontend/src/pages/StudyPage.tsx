@@ -175,6 +175,13 @@ const StudyPage = () => {
 
   useWebSocket(socket, (message) => {
     console.log(message);
+    if (message.status === "completed") {
+      const fetchStudies = allDataQuery[0];
+      // fetchPatientStudies({ id: Number(id), pagination: { page: 1, pageSize: 15 } }, false);
+      setTimeout(() => {
+        fetchStudies({ pagination: { page: 1, pageSize: 6 } }, false);
+      }, 1000);
+    }
   });
   // WS END ///////////////////////////////////////////////////////////////////
 
@@ -278,4 +285,3 @@ const StudyPage = () => {
 };
 
 export default StudyPage;
-

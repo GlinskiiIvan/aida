@@ -520,6 +520,13 @@ const StudyCardPage = () => {
 
   useWebSocket(socket, (message) => {
     console.log(message);
+    if (message.status === "completed") {
+      const fetchRuns = predictionRunsQuery[0];
+      // fetchPatientStudies({ id: Number(id), pagination: { page: 1, pageSize: 15 } }, false);
+      setTimeout(() => {
+        fetchRuns({ id: Number(id), pagination: { page: 1, pageSize: 6 } }, false);
+      }, 1000);
+    }
   });
   // WS END ///////////////////////////////////////////////////////////////////
 

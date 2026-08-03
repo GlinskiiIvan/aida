@@ -1,4 +1,4 @@
-import { OrderItem, WhereOptions, Op, Includeable } from "sequelize";
+import { col, where, OrderItem, WhereOptions, Op, Includeable } from "sequelize";
 
 import { SortOrder, FilterOperator, SearchMode } from "./models";
 
@@ -57,7 +57,7 @@ export class QuerySort {
 
 export class QueryField {
   constructor(
-    public column: string,
+    public column: ReturnType<typeof col>,
     public relationships: Includeable[] = [],
     public filter?: QueryFilter,
     public search?: QuerySearch,
@@ -76,6 +76,22 @@ export class QueryField {
     return this.sort !== undefined;
   }
 
+  private buildComparisonExpression(value: unknown, operator?: symbol): WhereOptions {
+    if (!operator) {
+      return where(this.column, value);
+    }
+
+    return where(this.column, {
+      [operator]: value,
+    });
+  }
+
+  private buildLikeExpression(pattern: string): WhereOptions {
+    return where(this.column, {
+      [Op.iLike]: pattern,
+    });
+  }
+
   buildFilterExpression(value: unknown, operator?: FilterOperator): WhereOptions | undefined {
     if (!this.filter) {
       return undefined;
@@ -89,59 +105,35 @@ export class QueryField {
 
     switch (operator) {
       case FilterOperator.EQ:
-        return { [this.column as string]: value };
+        return this.buildComparisonExpression(value);
 
       case FilterOperator.GT:
-        return {
-          [this.column as string]: { [Op.gt]: value },
-        };
+        return this.buildComparisonExpression(value, Op.gt);
 
       case FilterOperator.GTE:
-        return {
-          [this.column as string]: { [Op.gte]: value },
-        };
+        return this.buildComparisonExpression(value, Op.gte);
 
       case FilterOperator.LT:
-        return {
-          [this.column as string]: { [Op.lt]: value },
-        };
+        return this.buildComparisonExpression(value, Op.lt);
 
       case FilterOperator.LTE:
-        return {
-          [this.column as string]: { [Op.lte]: value },
-        };
+        return this.buildComparisonExpression(value, Op.lte);
 
       case FilterOperator.CONTAINS:
-        return {
-          [this.column as string]: {
-            [Op.iLike]: `%${value}%`,
-          },
-        };
+        return this.buildLikeExpression(`%${String(value)}%`);
 
       case FilterOperator.STARTSWITH:
-        return {
-          [this.column as string]: {
-            [Op.iLike]: `${value}%`,
-          },
-        };
+        return this.buildLikeExpression(`${String(value)}%`);
 
       case FilterOperator.ENDSWITH:
-        return {
-          [this.column as string]: {
-            [Op.iLike]: `%${value}`,
-          },
-        };
+        return this.buildLikeExpression(`%${String(value)}`);
 
       case FilterOperator.IN:
         if (!Array.isArray(value)) {
           return undefined;
         }
 
-        return {
-          [this.column as string]: {
-            [Op.in]: value,
-          },
-        };
+        return this.buildComparisonExpression(value, Op.in);
     }
 
     throw new Error(`Unsupported filter operator: ${operator}`);
@@ -160,28 +152,16 @@ export class QueryField {
 
     switch (mode) {
       case SearchMode.EXACT:
-        return { [this.column as string]: value };
+        return this.buildComparisonExpression(value);
 
       case SearchMode.CONTAINS:
-        return {
-          [this.column as string]: {
-            [Op.iLike]: `%${value}%`,
-          },
-        };
+        return this.buildLikeExpression(`%${value}%`);
 
       case SearchMode.STARTSWITH:
-        return {
-          [this.column as string]: {
-            [Op.iLike]: `${value}%`,
-          },
-        };
+        return this.buildLikeExpression(`${value}%`);
 
       case SearchMode.ENDSWITH:
-        return {
-          [this.column as string]: {
-            [Op.iLike]: `%${value}`,
-          },
-        };
+        return this.buildLikeExpression(`%${value}`);
     }
 
     throw new Error(`Unsupported search mode: ${mode}`);

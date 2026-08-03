@@ -1,4 +1,4 @@
-import { OrderItem, WhereOptions, Op } from "sequelize";
+import { OrderItem, WhereOptions, Op, Includeable } from "sequelize";
 
 import { SortOrder, FilterOperator, SearchMode } from "./models";
 
@@ -58,7 +58,7 @@ export class QuerySort {
 export class QueryField {
   constructor(
     public column: string,
-    public relationships: unknown[] = [],
+    public relationships: Includeable[] = [],
     public filter?: QueryFilter,
     public search?: QuerySearch,
     public sort?: QuerySort,

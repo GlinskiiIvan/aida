@@ -1,12 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from "@nestjs/common";
 import { InstanceImageService } from "./instance-image.service";
 import { CreateInstanceImageDto } from "./dto/create-instance-image.dto";
 import { UpdateInstanceImageDto } from "./dto/update-instance-image.dto";
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiQuery } from "@nestjs/swagger";
 import { Permissions } from "src/decorators/permissions.decorator";
 import { PermissionsGuard } from "src/guards/permissions.guard";
 import { InstanceImage } from "./entities/instance-image.entity";
 import { Prediction } from "src/prediction/entities/prediction.entity";
+
+import { QueryParamsPipe } from "../common/query/query-params.pipe";
+import { QueryParams } from "../common/query/schemas";
 
 @ApiBearerAuth("token")
 @ApiTags("Инстанс изображения")
@@ -24,10 +37,19 @@ export class InstanceImageController {
 
   @ApiOperation({ summary: "Получение всех инстансов изображений" })
   @ApiResponse({ status: 200, type: [InstanceImage] })
+  @ApiQuery({
+    name: "q",
+    required: false,
+    type: String,
+    description:
+      "QueryParams в формате Base64 URL-safe JSON. Содержит поиск, фильтрацию, сортировку и пагинацию.",
+    example:
+      "eyJzZWFyY2giOnsiYnkiOiJpbWFnZU5hbWUiLCJ2YWx1ZSI6IlUwMDAwMDAyLnBuZyIsIm1vZGUiOiJleGFjdCJ9fQ",
+  })
   @Permissions("instance-image:read")
   @Get()
-  findAll() {
-    return this.instanceImageService.findAll();
+  findAll(@Query("q", QueryParamsPipe) params: QueryParams) {
+    return this.instanceImageService.findAll(params);
   }
 
   @ApiOperation({ summary: "Получение инстанса изображения по id" })

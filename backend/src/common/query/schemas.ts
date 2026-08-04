@@ -136,6 +136,7 @@ export class QueryParams {
   @Type(() => FilterGroup)
   filters: FilterGroup = new FilterGroup();
 
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SortParams)

@@ -13,7 +13,9 @@ export function decodeQuery(encoded: string): QueryParams {
 
     const data = JSON.parse(decoded);
 
-    const params = plainToInstance(QueryParams, data);
+    const params = plainToInstance(QueryParams, data, {
+      exposeDefaultValues: true,
+    });
 
     const errors = validateSync(params);
 

@@ -8,6 +8,10 @@ export function applySorting(
   params: QueryParams,
   config: QueryConfig,
 ): FindOptions {
+  if (params.sorting.length === 0) {
+    return options;
+  }
+
   const expressions: OrderItem[] = [];
 
   for (const sortParams of params.sorting) {

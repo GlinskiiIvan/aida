@@ -1,4 +1,4 @@
-import { FindOptions } from "sequelize";
+import { FindOptions, CountOptions } from "sequelize";
 
 import { collectRelationships, applyRelationships } from "./relationships";
 import { applyFilters } from "./filters";
@@ -9,13 +9,25 @@ import { applyPagination } from "./pagination";
 import { QueryParams } from "./schemas";
 import { QueryConfig } from "./config";
 
+export type QueryOptions = {
+  query: FindOptions;
+  countOptions: CountOptions;
+};
+
 export function applyQuery(
-  options: FindOptions,
   config: QueryConfig,
   params?: QueryParams,
-): FindOptions {
+  options: FindOptions = {},
+): QueryOptions {
   if (!params) {
-    return options;
+    return {
+      query: options,
+      countOptions: {
+        where: options.where,
+        include: options.include,
+        distinct: true,
+      },
+    };
   }
 
   const relationships = collectRelationships(params, config);
@@ -25,7 +37,17 @@ export function applyQuery(
   query = applyFilters(query, params, config);
   query = applySearch(query, params, config);
   query = applySorting(query, params, config);
-  // query = applyPagination(query, params);
 
-  return query;
+  const countOptions: CountOptions = {
+    where: query.where,
+    include: query.include,
+    distinct: true,
+  };
+
+  query = applyPagination(query, params);
+
+  return {
+    query,
+    countOptions,
+  };
 }

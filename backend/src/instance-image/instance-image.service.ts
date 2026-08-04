@@ -4,11 +4,20 @@ import { UpdateInstanceImageDto } from "./dto/update-instance-image.dto";
 import { InjectModel } from "@nestjs/sequelize";
 import { InstanceImage } from "./entities/instance-image.entity";
 import { SeriesService } from "src/series/series.service";
-import { FindOptions, Includeable, Transaction } from "sequelize";
+import { FindOptions, Includeable, Transaction, CountOptions } from "sequelize";
 import { Prediction } from "src/prediction/entities/prediction.entity";
 import * as path from "path";
 import { buildResultData, FindAllServiceParams } from "src/utils";
 import { Series } from "src/series/entities/series.entity";
+
+import { QueryConfig } from "../common/query/config";
+import { QueryParams } from "../common/query/schemas";
+import { applyQuery } from "../common/query/query";
+import { applyPagination } from "../common/query/pagination";
+import { buildResult } from "../common/query/result";
+import { collectRelationships } from "../common/query/relationships";
+
+import { imageQueryConfig } from "./entities/query";
 
 @Injectable()
 export class InstanceImageService {
@@ -50,11 +59,20 @@ export class InstanceImageService {
     }
   }
 
-  async findAll() {
+  async findAll(params: QueryParams) {
+    console.log("params: ", params);
+
     try {
-      return await this.repository.findAll({
+      let options: FindOptions = {
         order: [["instanceNumber", "ASC"]],
-      });
+      };
+
+      const { query, countOptions } = applyQuery(imageQueryConfig, params, options);
+
+      const total = await this.repository.count(countOptions);
+      const rows = await this.repository.findAll(query);
+
+      return buildResult(rows, total, params);
     } catch (error) {
       const msg = `Ошибка при получении всех инстансов изображений. ${error.message}`;
       console.log(msg);

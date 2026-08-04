@@ -1,30 +1,30 @@
-type ResponseStatus = "success" | "error" | "accepted";
+export type ResponseStatus = "success" | "error" | "accepted";
 
-type TaskStatus = "pending" | "processing" | "completed" | "failed";
+export type TaskStatus = "pending" | "processing" | "completed" | "failed";
 
-type ErrorMeta<TErrorCode extends string = string> = {
+export type ErrorMeta<TErrorCode extends string = string> = {
   code: TErrorCode;
   field?: string;
   details?: unknown;
 };
 
-type PaginationMeta = {
+export type PaginationMeta = {
   total_items: number;
   total_pages: number;
   current_page: number;
 };
 
-type NotificationLevel = "success" | "warning" | "error" | "info";
-type NotificationPresentation = "toast" | "progress" | "dialog" | "banner";
+export type NotificationLevel = "success" | "warning" | "error" | "info";
+export type NotificationPresentation = "toast" | "progress" | "dialog" | "banner";
 
-type NotificationMeta = {
+export type NotificationMeta = {
   id?: string;
   level: NotificationLevel;
   presentation?: NotificationPresentation;
   duration?: number;
 };
 
-type ProcessState<
+export type ProcessState<
   TPayload = unknown,
   TStage extends string = string,
   TStep extends string = string,
@@ -40,7 +40,7 @@ type ProcessState<
   };
 };
 
-type ResponseEnvelope<
+export type ResponseEnvelope<
   TData = unknown,
   TCode extends string = string,
   TErrorCode extends string = string,

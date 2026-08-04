@@ -10,12 +10,11 @@ import * as path from "path";
 import { buildResultData, FindAllServiceParams } from "src/utils";
 import { Series } from "src/series/entities/series.entity";
 
-import { QueryConfig } from "../common/query/config";
 import { QueryParams } from "../common/query/schemas";
 import { applyQuery } from "../common/query/query";
-import { applyPagination } from "../common/query/pagination";
-import { buildResult } from "../common/query/result";
-import { collectRelationships } from "../common/query/relationships";
+import { getResolvedPagination } from "../common/query/pagination";
+
+import { createResponse } from "../common/response";
 
 import { imageQueryConfig } from "./entities/query";
 
@@ -68,11 +67,16 @@ export class InstanceImageService {
       };
 
       const { query, countOptions } = applyQuery(imageQueryConfig, params, options);
-
       const total = await this.repository.count(countOptions);
+      const { page, page_size } = getResolvedPagination(total, params);
       const rows = await this.repository.findAll(query);
 
-      return buildResult(rows, total, params);
+      const response = createResponse<InstanceImage[]>();
+      return response
+        .success("instance_image.getAll.success")
+        .data(rows)
+        .pagination(total, page_size, page)
+        .build();
     } catch (error) {
       const msg = `Ошибка при получении всех инстансов изображений. ${error.message}`;
       console.log(msg);

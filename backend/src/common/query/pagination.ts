@@ -1,6 +1,6 @@
 import { FindOptions } from "sequelize";
 
-import { QueryParams } from "./schemas";
+import { QueryParams, ResolvedPagination } from "./schemas";
 
 export function applyPagination(options: FindOptions, params?: QueryParams): FindOptions {
   if (!params) {
@@ -15,5 +15,12 @@ export function applyPagination(options: FindOptions, params?: QueryParams): Fin
     ...options,
     offset: params.pagination.offset,
     limit: params.pagination.page_size,
+  };
+}
+
+export function getResolvedPagination(total: number, params?: QueryParams): ResolvedPagination {
+  return {
+    page: params?.pagination.page ?? 1,
+    page_size: params?.pagination.page_size ?? (total || 1),
   };
 }

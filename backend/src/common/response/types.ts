@@ -1,6 +1,4 @@
-export type ResponseStatus = "success" | "error" | "accepted";
-
-export type TaskStatus = "pending" | "processing" | "completed" | "failed";
+import { ResponseStatus, TaskStatus, NotificationLevel, NotificationPresentation } from "./enums";
 
 export type ErrorMeta<TErrorCode extends string = string> = {
   code: TErrorCode;
@@ -13,9 +11,6 @@ export type PaginationMeta = {
   total_pages: number;
   current_page: number;
 };
-
-export type NotificationLevel = "success" | "warning" | "error" | "info";
-export type NotificationPresentation = "toast" | "progress" | "dialog" | "banner";
 
 export type NotificationMeta = {
   id?: string;

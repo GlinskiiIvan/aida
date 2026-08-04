@@ -85,6 +85,11 @@ export class PaginationParams {
   }
 }
 
+export type ResolvedPagination = {
+  page: number;
+  page_size: number;
+};
+
 /* -------------------- Search -------------------- */
 
 @ValidatorConstraint({ name: "searchByOrFields", async: false })

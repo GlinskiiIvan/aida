@@ -32,7 +32,7 @@ export class ResponseBuilder<
   pagination(total: number, page_size: number, page: number): this {
     this.envelope.pagination = {
       total_items: total,
-      total_pages: page_size ? Math.ceil(total / page_size) : 1,
+      total_pages: total === 0 ? 1 : Math.ceil(total / page_size),
       current_page: page,
     };
     return this;

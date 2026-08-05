@@ -11,8 +11,7 @@ import { buildResultData, FindAllServiceParams } from "src/utils";
 import { Series } from "src/series/entities/series.entity";
 
 import { QueryParams } from "../common/query/schemas";
-import { applyQuery } from "../common/query/query";
-import { getResolvedPagination } from "../common/query/pagination";
+import { executeQueryResponse } from "../common/query/executor";
 
 import { createResponse } from "../common/response";
 
@@ -66,16 +65,22 @@ export class InstanceImageService {
         order: [["instanceNumber", "ASC"]],
       };
 
-      const { query, countOptions } = applyQuery(imageQueryConfig, params, options);
-      const total = await this.repository.count(countOptions);
-      const { page, page_size } = getResolvedPagination(total, params);
-      const rows = await this.repository.findAll(query);
+      const { data, resolvedPageination } = await executeQueryResponse(
+        this.repository,
+        imageQueryConfig,
+        params,
+        options,
+      );
 
       const response = createResponse<InstanceImage[]>();
       return response
         .success("instance_image.getAll.success")
-        .data(rows)
-        .pagination(total, page_size, page)
+        .data(data)
+        .pagination(
+          resolvedPageination.total,
+          resolvedPageination.page_size,
+          resolvedPageination.page,
+        )
         .build();
     } catch (error) {
       const msg = `Ошибка при получении всех инстансов изображений. ${error.message}`;

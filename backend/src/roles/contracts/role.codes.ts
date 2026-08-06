@@ -32,6 +32,9 @@ export enum RoleCodes {
   FIND_ALL_USERS_SUCCESS = "role.findAllUsers.success",
   FIND_ALL_USERS_ERROR = "role.findAllUsers.error",
 
+  FIND_ALL_BY_USER_ID_SUCCESS = "role.findAllByUserId.success",
+  FIND_ALL_BY_USER_ID_ERROR = "role.findAllByUserId.error",
+
   UPDATE_PERMISSIONS_SUCCESS = "role.updatePermissions.success",
   UPDATE_PERMISSIONS_ERROR = "role.updatePermissions.error",
 

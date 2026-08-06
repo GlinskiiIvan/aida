@@ -4,30 +4,23 @@ import { UpdateInstanceImageDto } from "./dto/update-instance-image.dto";
 import { InjectModel } from "@nestjs/sequelize";
 import { InstanceImage } from "./entities/instance-image.entity";
 import { SeriesService } from "src/series/series.service";
-import { FindOptions, Includeable, Transaction, CountOptions } from "sequelize";
-import { Prediction } from "src/prediction/entities/prediction.entity";
+import { FindOptions, Transaction } from "sequelize";
 import * as path from "path";
-import { buildResultData, FindAllServiceParams } from "src/utils";
 import { Series } from "src/series/entities/series.entity";
 
 import { QueryParams, executeQueryResponse } from "../common/query";
 import { createResponse } from "../common/response";
 
-import { imageQueryConfig } from "./contracts";
+import { imageQueryConfig, InstanceImageCodes } from "./contracts";
+import { PredictionService } from "src/prediction/prediction.service";
 
 @Injectable()
 export class InstanceImageService {
   constructor(
     @InjectModel(InstanceImage) private repository: typeof InstanceImage,
     @Inject(forwardRef(() => SeriesService)) private seriesService: SeriesService,
+    private predictionService: PredictionService,
   ) {}
-
-  private attributesModel = [];
-
-  private includePredictions: Includeable = {
-    model: Prediction,
-    as: "predictions",
-  };
 
   async create(dto: CreateInstanceImageDto) {
     try {
@@ -37,7 +30,8 @@ export class InstanceImageService {
       instance.imagePath = path.join(series.path, dto.imageName);
       await instance.save();
 
-      return instance;
+      const response = createResponse<InstanceImage, InstanceImageCodes>();
+      return response.success(InstanceImageCodes.CREATE_SUCCESS).data(instance).build();
     } catch (error) {
       const msg = `Ошибка при создании инстанса изображения. ${error.message}`;
       console.log(msg);
@@ -70,9 +64,9 @@ export class InstanceImageService {
         options,
       );
 
-      const response = createResponse<InstanceImage[]>();
+      const response = createResponse<InstanceImage[], InstanceImageCodes>();
       return response
-        .success("instance_image.getAll.success")
+        .success(InstanceImageCodes.FIND_ALL_SUCCESS)
         .data(data)
         .pagination(
           resolvedPageination.total,
@@ -87,32 +81,84 @@ export class InstanceImageService {
     }
   }
 
-  async findAllByStudyId(studyId: number, params: FindAllServiceParams) {
-    const { rows, count } = await this.repository.findAndCountAll({
-      limit: params?.pageSize || undefined,
-      offset: params?.offset || undefined,
+  async findAllByStudyId(studyId: number, params: QueryParams) {
+    console.log("params: ", params);
 
+    let options: FindOptions = {
       include: [
         {
           model: Series,
           as: "series",
-          required: true,
           where: { studyId },
+          required: true,
         },
       ],
-
       order: [
         [{ model: Series, as: "series" }, "id", "ASC"],
         ["instanceNumber", "ASC"],
       ],
-    });
+    };
 
-    return buildResultData({
-      rows,
-      count,
-      page: params?.page || undefined,
-      limit: params?.pageSize || undefined,
-    });
+    const { data, resolvedPageination } = await executeQueryResponse(
+      this.repository,
+      imageQueryConfig,
+      params,
+      options,
+    );
+
+    const response = createResponse<InstanceImage[], InstanceImageCodes>();
+    return response
+      .success(InstanceImageCodes.FIND_ALL_BY_STUDY_ID_SUCCESS)
+      .data(data)
+      .pagination(
+        resolvedPageination.total,
+        resolvedPageination.page_size,
+        resolvedPageination.page,
+      )
+      .build();
+  }
+
+  async findAllBySeriesId(seriesId: string, params: QueryParams) {
+    console.log("params: ", params);
+
+    let options: FindOptions = {
+      where: { seriesId },
+      order: [
+        [{ model: Series, as: "series" }, "id", "ASC"],
+        ["instanceNumber", "ASC"],
+      ],
+    };
+
+    const { data, resolvedPageination } = await executeQueryResponse(
+      this.repository,
+      imageQueryConfig,
+      params,
+      options,
+    );
+
+    const response = createResponse<InstanceImage[], InstanceImageCodes>();
+    return response
+      .success(InstanceImageCodes.FIND_ALL_BY_SERIES_ID_SUCCESS)
+      .data(data)
+      .pagination(
+        resolvedPageination.total,
+        resolvedPageination.page_size,
+        resolvedPageination.page,
+      )
+      .build();
+  }
+
+  async findAllPredictions(id: number, params: QueryParams) {
+    try {
+      const instance = await this.findOneOrThrow(id);
+      const predictions = await this.predictionService.findAllByImageId(id, params);
+
+      return predictions;
+    } catch (error) {
+      const msg = `Ошибка при получении всех предсказаний инстанса изображения по id. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
   }
 
   async findOneOrThrow(id: number, options?: Omit<FindOptions<InstanceImage>, "where">) {
@@ -126,22 +172,11 @@ export class InstanceImageService {
   async findOne(id: number) {
     try {
       const instance = await this.findOneOrThrow(id);
-      return instance;
+
+      const response = createResponse<InstanceImage, InstanceImageCodes>();
+      return response.success(InstanceImageCodes.FIND_ONE_SUCCESS).data(instance).build();
     } catch (error) {
       const msg = `Ошибка при получении инстанса изображения по id. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  async findAllPredictions(id: number) {
-    try {
-      const instance = await this.findOneOrThrow(id, {
-        include: [this.includePredictions],
-      });
-      return instance.predictions;
-    } catch (error) {
-      const msg = `Ошибка при получении всех предсказаний инстанса изображения по id. ${error.message}`;
       console.log(msg);
       throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
@@ -154,7 +189,9 @@ export class InstanceImageService {
         where: { id },
         returning: true,
       });
-      return updatedRows[0];
+
+      const response = createResponse<InstanceImage, InstanceImageCodes>();
+      return response.success(InstanceImageCodes.UPDATE_SUCCESS).data(updatedRows[0]).build();
     } catch (error) {
       const msg = `Ошибка при обновлении инстанса изображения. ${error.message}`;
       console.log(msg);
@@ -166,7 +203,9 @@ export class InstanceImageService {
     try {
       await this.findOneOrThrow(id);
       await this.repository.destroy({ where: { id } });
-      return true;
+
+      const response = createResponse<Boolean, InstanceImageCodes>();
+      return response.success(InstanceImageCodes.REMOVE_SUCCESS).data(true).build();
     } catch (error) {
       const msg = `Ошибка при мягком удалении инстанса изображения. ${error.message}`;
       console.log(msg);
@@ -177,7 +216,9 @@ export class InstanceImageService {
   async forceRemove(id: number) {
     try {
       await this.repository.destroy({ where: { id }, force: true });
-      return true;
+
+      const response = createResponse<Boolean, InstanceImageCodes>();
+      return response.success(InstanceImageCodes.FORCE_REMOVE_SUCCESS).data(true).build();
     } catch (error) {
       const msg = `Ошибка при жестком удалении инстанса изображения. ${error.message}`;
       console.log(msg);
@@ -188,7 +229,9 @@ export class InstanceImageService {
   async restore(id: number) {
     try {
       await this.repository.restore({ where: { id } });
-      return true;
+
+      const response = createResponse<Boolean, InstanceImageCodes>();
+      return response.success(InstanceImageCodes.RESTORE_SUCCESS).data(true).build();
     } catch (error) {
       const msg = `Ошибка при восстановлении инстанса изображения после мягкого удаления. ${error.message}`;
       console.log(msg);

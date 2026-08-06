@@ -1,80 +1,80 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { SeriesService } from './series.service';
-import { CreateSeriesDto } from './dto/create-series.dto';
-import { UpdateSeriesDto } from './dto/update-series.dto';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Series } from './entities/series.entity';
-import { Permissions } from 'src/decorators/permissions.decorator';
-import { PermissionsGuard } from 'src/guards/permissions.guard';
-import { InstanceImage } from 'src/instance-image/entities/instance-image.entity';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from "@nestjs/common";
+import { SeriesService } from "./series.service";
+import { CreateSeriesDto } from "./dto/create-series.dto";
+import { UpdateSeriesDto } from "./dto/update-series.dto";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { Series } from "./entities/series.entity";
+import { Permissions } from "src/decorators/permissions.decorator";
+import { InstanceImage } from "src/instance-image/entities/instance-image.entity";
+import { QueryParams, QueryParamsPipe } from "../common/query";
 
-@ApiBearerAuth('token')
-@ApiTags('Серия')
-@Controller('series')
+@ApiBearerAuth("token")
+@ApiTags("Серия")
+@Controller("series")
 export class SeriesController {
   constructor(private readonly seriesService: SeriesService) {}
 
-  @ApiOperation({ summary: 'Создание серии' })
+  @ApiOperation({ summary: "Создание серии" })
   @ApiResponse({ status: 200, type: Series })
-  @Permissions('series:create')
+  @Permissions("series:create")
   @Post()
   create(@Body() dto: CreateSeriesDto) {
     return this.seriesService.create(dto);
   }
 
-  @ApiOperation({ summary: 'Получение всех серий' })
+  @ApiOperation({ summary: "Получение всех серий" })
   @ApiResponse({ status: 200, type: [Series] })
-  @Permissions('series:read')
+  @Permissions("series:read")
   @Get()
-  findAll() {
-    return this.seriesService.findAll();
+  findAll(@Query("q", QueryParamsPipe) params: QueryParams) {
+    return this.seriesService.findAll(params);
   }
 
-  @ApiOperation({ summary: 'Получение серии по id' })
+  @ApiOperation({ summary: "Получение серии по id" })
   @ApiResponse({ status: 200, type: Series })
-  @Permissions('series:read')
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Permissions("series:read")
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.seriesService.findOne(id);
   }
 
-  @ApiOperation({ summary: 'Получение всех изображений серии по id' })
+  @ApiOperation({ summary: "Получение всех изображений серии по id" })
   @ApiResponse({ status: 200, type: [InstanceImage] })
-  @Permissions('series:read')
-  @Get(':id/images')
-  findAllImages(@Param('id') id: string) {
-    return this.seriesService.findAllImages(id);
+  @Permissions("series:read")
+  @Get(":id/images")
+  findAllImages(@Param("id") id: string, @Query("q", QueryParamsPipe) params: QueryParams) {
+    return this.seriesService.findAllImages(id, params);
   }
 
-  @ApiOperation({ summary: 'Обновление серии' })
+  @ApiOperation({ summary: "Обновление серии" })
   @ApiResponse({ status: 200, type: Series })
-  @Permissions('series:update')
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateSeriesDto) {
+  @Permissions("series:update")
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() dto: UpdateSeriesDto) {
     return this.seriesService.update(id, dto);
   }
 
-  @ApiOperation({ summary: 'Восстановление серии после мягкого удаления' })
+  @ApiOperation({ summary: "Восстановление серии после мягкого удаления" })
   @ApiResponse({ status: 200, type: Boolean })
-  @Permissions('series:delete')
-  @Patch(':id/restore')
-  restore(@Param('id') id: string) {
+  @Permissions("series:delete")
+  @Patch(":id/restore")
+  restore(@Param("id") id: string) {
     return this.seriesService.restore(id);
   }
 
-  @ApiOperation({ summary: 'Мягкое удаление серии' })
+  @ApiOperation({ summary: "Мягкое удаление серии" })
   @ApiResponse({ status: 200, type: Boolean })
-  @Permissions('series:delete')
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Permissions("series:delete")
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.seriesService.remove(id);
   }
 
-  @ApiOperation({ summary: 'Жесткое удаление серии' })
+  @ApiOperation({ summary: "Жесткое удаление серии" })
   @ApiResponse({ status: 200, type: Boolean })
-  @Permissions('series:delete')
-  @Delete(':id/force')
-  forceRemove(@Param('id') id: string) {
+  @Permissions("series:delete")
+  @Delete(":id/force")
+  forceRemove(@Param("id") id: string) {
     return this.seriesService.forceRemove(id);
   }
 }

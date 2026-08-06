@@ -5,6 +5,9 @@ export enum PatientCodes {
   FIND_ALL_SUCCESS = "patient.findAll.success",
   FIND_ALL_ERROR = "patient.findAll.error",
 
+  FIND_ALL_BY_DOCTOR_ID_SUCCESS = "patient.findAllByDoctorId.success",
+  FIND_ALL_BY_DOCTOR_ID_ERROR = "patient.findAllByDoctorId.error",
+
   FIND_ONE_SUCCESS = "patient.findOne.success",
   FIND_ONE_ERROR = "patient.findOne.error",
 

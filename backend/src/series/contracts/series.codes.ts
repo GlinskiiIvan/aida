@@ -26,6 +26,9 @@ export enum SeriesCodes {
   BULK_CREATE_SUCCESS = "series.bulkCreate.success",
   BULK_CREATE_ERROR = "series.bulkCreate.error",
 
+  FIND_ALL_BY_STUDY_ID_SUCCESS = "series.findAllByStudyId.success",
+  FIND_ALL_BY_STUDY_ID_ERROR = "series.findAllByStudyId.error",
+
   FIND_ALL_IMAGES_SUCCESS = "series.findAllImages.success",
   FIND_ALL_IMAGES_ERROR = "series.findAllImages.error",
 }

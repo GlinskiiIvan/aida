@@ -1,25 +1,13 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Query,
-} from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from "@nestjs/common";
 import { InstanceImageService } from "./instance-image.service";
 import { CreateInstanceImageDto } from "./dto/create-instance-image.dto";
 import { UpdateInstanceImageDto } from "./dto/update-instance-image.dto";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiQuery } from "@nestjs/swagger";
 import { Permissions } from "src/decorators/permissions.decorator";
-import { PermissionsGuard } from "src/guards/permissions.guard";
 import { InstanceImage } from "./entities/instance-image.entity";
 import { Prediction } from "src/prediction/entities/prediction.entity";
 
-import { QueryParamsPipe } from "../common/query/query-params.pipe";
-import { QueryParams } from "../common/query/schemas";
+import { QueryParams, QueryParamsPipe } from "../common/query";
 
 @ApiBearerAuth("token")
 @ApiTags("Инстанс изображения")
@@ -64,8 +52,8 @@ export class InstanceImageController {
   @ApiResponse({ status: 200, type: [Prediction] })
   @Permissions("instance-image:read")
   @Get(":id")
-  findAllPredictions(@Param("id") id: string) {
-    return this.instanceImageService.findAllPredictions(+id);
+  findAllPredictions(@Param("id") id: string, @Query("q", QueryParamsPipe) params: QueryParams) {
+    return this.instanceImageService.findAllPredictions(+id, params);
   }
 
   @ApiOperation({ summary: "Обновление инстанса изображения" })

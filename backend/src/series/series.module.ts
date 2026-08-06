@@ -1,16 +1,18 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { SeriesService } from './series.service';
-import { SeriesController } from './series.controller';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { Series } from './entities/series.entity';
-import { StudyModule } from 'src/study/study.module';
+import { forwardRef, Module } from "@nestjs/common";
+import { SeriesService } from "./series.service";
+import { SeriesController } from "./series.controller";
+import { SequelizeModule } from "@nestjs/sequelize";
+import { Series } from "./entities/series.entity";
+import { StudyModule } from "src/study/study.module";
+import { InstanceImageModule } from "src/instance-image/instance-image.module";
 
 @Module({
   controllers: [SeriesController],
   providers: [SeriesService],
   imports: [
-    SequelizeModule.forFeature([Series]), 
+    SequelizeModule.forFeature([Series]),
     forwardRef(() => StudyModule),
+    InstanceImageModule,
   ],
   exports: [SeriesService],
 })

@@ -5,6 +5,9 @@ export enum UserCodes {
   FIND_ALL_SUCCESS = "user.findAll.success",
   FIND_ALL_ERROR = "user.findAll.error",
 
+  FIND_ALL_BY_ROLE_ID_SUCCESS = "user.findAllByRoleId.success",
+  FIND_ALL_BY_ROLE_ID_ERROR = "user.findAllByRoleId.error",
+
   FIND_ONE_SUCCESS = "user.findOne.success",
   FIND_ONE_ERROR = "user.findOne.error",
 

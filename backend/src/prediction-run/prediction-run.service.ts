@@ -3,15 +3,13 @@ import { CreatePredictionRunDto } from "./dto/create-prediction-run.dto";
 import { UpdatePredictionRunDto } from "./dto/update-prediction-run.dto";
 import { InjectModel } from "@nestjs/sequelize";
 import { PredictionRun } from "./entities/prediction-run.entity";
-import { SeriesService } from "src/series/series.service";
-import { Series } from "src/series/entities/series.entity";
-import { Doctor } from "src/doctor/entities/doctor.entity";
-import { DoctorService } from "src/doctor/doctor.service";
-import { Prediction } from "src/prediction/entities/prediction.entity";
-import { FindOptions, Includeable, Transaction } from "sequelize";
+import { FindOptions, Transaction } from "sequelize";
 import { StudyService } from "src/study/study.service";
-import { buildOrder, buildResultData, buildWhere, FindAllServiceParams } from "src/utils";
 import { PredictionService } from "src/prediction/prediction.service";
+
+import { QueryParams, executeQueryResponse } from "../common/query";
+import { createResponse } from "../common/response";
+import { predictionRunQueryConfig, PredictionRunCodes } from "./contracts";
 
 @Injectable()
 export class PredictionRunService {
@@ -19,15 +17,7 @@ export class PredictionRunService {
     @InjectModel(PredictionRun) private repository: typeof PredictionRun,
     @Inject(forwardRef(() => StudyService)) private studyService: StudyService,
     @Inject(forwardRef(() => PredictionService)) private predictionService: PredictionService,
-    private doctorServise: DoctorService,
   ) {}
-
-  private attributesModel = [];
-
-  private includePredictions: Includeable = {
-    model: Prediction,
-    as: "predictions",
-  };
 
   async create(dto: CreatePredictionRunDto) {
     try {
@@ -35,7 +25,9 @@ export class PredictionRunService {
       // await this.doctorServise.findOneOrThrow(dto.createdById);
 
       const run = await this.repository.create(dto);
-      return run;
+
+      const response = createResponse<PredictionRun, PredictionRunCodes>();
+      return response.success(PredictionRunCodes.CREATE_SUCCESS).data(run).build();
     } catch (error) {
       const msg = `Ошибка при создании запуска предсказания. ${error.message}`;
       console.log(msg);
@@ -43,9 +35,31 @@ export class PredictionRunService {
     }
   }
 
-  async findAll() {
+  async findAll(params: QueryParams) {
+    console.log("params: ", params);
+
     try {
-      return await this.repository.findAll();
+      let options: FindOptions = {
+        order: [["created_at", "DESC"]],
+      };
+
+      const { data, resolvedPageination } = await executeQueryResponse(
+        this.repository,
+        predictionRunQueryConfig,
+        params,
+        options,
+      );
+
+      const response = createResponse<PredictionRun[], PredictionRunCodes>();
+      return response
+        .success(PredictionRunCodes.FIND_ALL_SUCCESS)
+        .data(data)
+        .pagination(
+          resolvedPageination.total,
+          resolvedPageination.page_size,
+          resolvedPageination.page,
+        )
+        .build();
     } catch (error) {
       const msg = `Ошибка при получении всех запусков предсказания. ${error.message}`;
       console.log(msg);
@@ -53,32 +67,32 @@ export class PredictionRunService {
     }
   }
 
-  async findAllByStudyId(studyId: number, params: FindAllServiceParams) {
+  async findAllByStudyId(studyId: number, params: QueryParams) {
+    console.log("params: ", params);
+
     try {
-      const whereParams = buildWhere<PredictionRun>({
-        dateFrom: params.dateFrom,
-        dateTo: params.dateTo,
-        filterBy: params.filterBy,
-        filterValue: params.filterValue,
-      });
-      const orderParams = buildOrder({
-        sortBy: params.sortBy,
-        sortOrder: params.sortOrder,
-      });
+      let options: FindOptions = {
+        where: { studyId },
+        order: [["created_at", "DESC"]],
+      };
 
-      const { rows: studies, count } = await this.repository.findAndCountAll({
-        where: { studyId, ...whereParams },
-        order: orderParams,
-        limit: params.pageSize || undefined,
-        offset: params.offset || undefined,
-      });
+      const { data, resolvedPageination } = await executeQueryResponse(
+        this.repository,
+        predictionRunQueryConfig,
+        params,
+        options,
+      );
 
-      return buildResultData<PredictionRun>({
-        rows: studies,
-        page: params.page,
-        limit: params.pageSize,
-        count,
-      });
+      const response = createResponse<PredictionRun[], PredictionRunCodes>();
+      return response
+        .success(PredictionRunCodes.FIND_ALL_BY_STUDY_ID_SUCCESS)
+        .data(data)
+        .pagination(
+          resolvedPageination.total,
+          resolvedPageination.page_size,
+          resolvedPageination.page,
+        )
+        .build();
     } catch (error) {
       const msg = `Ошибка при получении всех запусков предсказания. ${error.message}`;
       console.log(msg);
@@ -86,10 +100,40 @@ export class PredictionRunService {
     }
   }
 
-  async findAllPredictions(id: number, params: FindAllServiceParams) {
-    try {
-      console.log("id", id);
+  async findAllByUserId(userId: number, params: QueryParams) {
+    console.log("params: ", params);
 
+    try {
+      let options: FindOptions = {
+        where: { createdById: userId },
+        order: [["created_at", "DESC"]],
+      };
+
+      const { data, resolvedPageination } = await executeQueryResponse(
+        this.repository,
+        predictionRunQueryConfig,
+        params,
+        options,
+      );
+
+      const response = createResponse<PredictionRun[], PredictionRunCodes>();
+      return response
+        .success(PredictionRunCodes.FIND_ALL_BY_USER_ID_SUCCESS)
+        .data(data)
+        .pagination(
+          resolvedPageination.total,
+          resolvedPageination.page_size,
+          resolvedPageination.page,
+        )
+        .build();
+    } catch (error) {
+      const msg = `Ошибка при получении всех запусков предсказания. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+  async findAllPredictions(id: number, params: QueryParams) {
+    try {
       const run = await this.findOneOrThrow(id);
       const predictions = await this.predictionService.findAllByRunId(id, params);
 
@@ -112,7 +156,9 @@ export class PredictionRunService {
   async findOne(id: number) {
     try {
       const run = await this.findOneOrThrow(id);
-      return run;
+
+      const response = createResponse<PredictionRun, PredictionRunCodes>();
+      return response.success(PredictionRunCodes.FIND_ONE_SUCCESS).data(run).build();
     } catch (error) {
       const msg = `Ошибка при получении запуска предсказания по id. ${error.message}`;
       console.log(msg);
@@ -128,7 +174,9 @@ export class PredictionRunService {
         returning: true,
         transaction,
       });
-      return updatedRows[0];
+
+      const response = createResponse<PredictionRun, PredictionRunCodes>();
+      return response.success(PredictionRunCodes.UPDATE_SUCCESS).data(updatedRows[0]).build();
     } catch (error) {
       const msg = `Ошибка при обновлении запуска предсказания. ${error.message}`;
       console.log(msg);
@@ -139,7 +187,9 @@ export class PredictionRunService {
   async restore(id: number) {
     try {
       await this.repository.restore({ where: { id } });
-      return true;
+
+      const response = createResponse<Boolean, PredictionRunCodes>();
+      return response.success(PredictionRunCodes.RESTORE_SUCCESS).data(true).build();
     } catch (error) {
       const msg = `Ошибка при восстановлении запуска предсказания после мягкого удаления. ${error.message}`;
       console.log(msg);
@@ -151,7 +201,9 @@ export class PredictionRunService {
     try {
       await this.findOneOrThrow(id);
       await this.repository.destroy({ where: { id } });
-      return true;
+
+      const response = createResponse<Boolean, PredictionRunCodes>();
+      return response.success(PredictionRunCodes.REMOVE_SUCCESS).data(true).build();
     } catch (error) {
       const msg = `Ошибка при мягком удалении запуска предсказания. ${error.message}`;
       console.log(msg);
@@ -162,7 +214,9 @@ export class PredictionRunService {
   async forceRemove(id: number) {
     try {
       await this.repository.destroy({ where: { id }, force: true });
-      return true;
+
+      const response = createResponse<Boolean, PredictionRunCodes>();
+      return response.success(PredictionRunCodes.FORCE_REMOVE_SUCCESS).data(true).build();
     } catch (error) {
       const msg = `Ошибка при жестком удалении запуска предсказания. ${error.message}`;
       console.log(msg);

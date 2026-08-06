@@ -1,14 +1,15 @@
-import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CreatePatientDto } from './dto/create-patient.dto';
-import { UpdatePatientDto } from './dto/update-patient.dto';
-import { InjectModel } from '@nestjs/sequelize';
-import { Patient } from './entities/patient.entity';
-import { DoctorService } from 'src/doctor/doctor.service';
-import { Doctor } from 'src/doctor/entities/doctor.entity';
-import { Study } from 'src/study/entities/study.entity';
-import { FindOptions, Includeable, Op } from 'sequelize';
-import { buildOrder, buildResultData, buildWhere, FindAllServiceParams } from 'src/utils';
-import { StudyService } from 'src/study/study.service';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { CreatePatientDto } from "./dto/create-patient.dto";
+import { UpdatePatientDto } from "./dto/update-patient.dto";
+import { InjectModel } from "@nestjs/sequelize";
+import { Patient } from "./entities/patient.entity";
+import { DoctorService } from "src/doctor/doctor.service";
+import { FindOptions } from "sequelize";
+import { StudyService } from "src/study/study.service";
+
+import { QueryParams, executeQueryResponse } from "../common/query";
+import { createResponse } from "../common/response";
+import { patientQueryConfig, PatientCodes } from "./contracts";
 
 @Injectable()
 export class PatientService {
@@ -17,19 +18,6 @@ export class PatientService {
     @Inject(forwardRef(() => StudyService)) private studyService: StudyService,
     private doctorService: DoctorService,
   ) {}
-
-  private attributesModel = [];
-
-  private includeDoctor: Includeable = {
-    model: Doctor,
-    as: 'doctor',
-    attributes: ['id', 'fullName'],
-  };
-
-  private includeStudies: Includeable = {
-    model: Study, 
-    as: 'studies'
-  };
 
   async create(dto: CreatePatientDto, userId: number) {
     try {
@@ -41,64 +29,97 @@ export class PatientService {
         doctorId: doctor.id,
       });
 
-      return patient;
+      const response = createResponse<Patient, PatientCodes>();
+      return response.success(PatientCodes.CREATE_SUCCESS).data(patient).build();
     } catch (error) {
-        const msg = `Ошибка при создании пациента. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST)
+      const msg = `Ошибка при создании пациента. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
-  async findAll(params: FindAllServiceParams) {
+  async findAll(params: QueryParams) {
+    console.log("params: ", params);
+
     try {
-      const whereParams = buildWhere<Patient>({
-        dateFrom: params.dateFrom,
-        dateTo: params.dateTo,
-        filterBy: params.filterBy,
-        filterValue: params.filterValue,
-      });
-      const orderParams = buildOrder({
-        sortBy: params.sortBy, 
-        sortOrder: params.sortOrder
-      });
-      
-      const { rows: patients, count } = await this.repository.findAndCountAll({
-        where: whereParams,
-        order: orderParams,
-        limit: params.pageSize || undefined,
-        offset: params.offset || undefined,
-      });
-      
-      return buildResultData<Patient>({
-        rows: patients,
-        page: params.page,
-        limit: params.pageSize,
-        count,
-      });
+      let options: FindOptions = {
+        order: [["created_at", "DESC"]],
+      };
+
+      const { data, resolvedPageination } = await executeQueryResponse(
+        this.repository,
+        patientQueryConfig,
+        params,
+        options,
+      );
+
+      const response = createResponse<Patient[], PatientCodes>();
+      return response
+        .success(PatientCodes.FIND_ALL_SUCCESS)
+        .data(data)
+        .pagination(
+          resolvedPageination.total,
+          resolvedPageination.page_size,
+          resolvedPageination.page,
+        )
+        .build();
     } catch (error) {
-        const msg = `Ошибка при получении всех пациентов. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST)
+      const msg = `Ошибка при получении всех пациентов. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
-  async findAllStudies(id: number, params: FindAllServiceParams) {
+  async findAllByDoctorId(doctorId: number, params: QueryParams) {
+    console.log("params: ", params);
+
+    try {
+      let options: FindOptions = {
+        where: { doctorId },
+        order: [["created_at", "DESC"]],
+      };
+
+      const { data, resolvedPageination } = await executeQueryResponse(
+        this.repository,
+        patientQueryConfig,
+        params,
+        options,
+      );
+
+      const response = createResponse<Patient[], PatientCodes>();
+      return response
+        .success(PatientCodes.FIND_ALL_BY_DOCTOR_ID_SUCCESS)
+        .data(data)
+        .pagination(
+          resolvedPageination.total,
+          resolvedPageination.page_size,
+          resolvedPageination.page,
+        )
+        .build();
+    } catch (error) {
+      const msg = `Ошибка при получении всех пациентов. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async findAllStudies(id: number, params: QueryParams) {
     try {
       const patient = await this.findOneOrThrow(id);
       const studies = await this.studyService.findAllByPatientId(id, params);
-      
+
       return studies;
     } catch (error) {
-        const msg = `Ошибка при получении всех исследований пациента. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST)
+      const msg = `Ошибка при получении всех исследований пациента. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async findOneOrThrow(id: number, options?: Omit<FindOptions<Patient>, "where">) {
     const patient = await this.repository.findByPk(id, options);
-    if(!patient) {
-      throw new HttpException(`Пациент не найден.`, HttpStatus.NOT_FOUND)
+    if (!patient) {
+      throw new HttpException(`Пациент не найден.`, HttpStatus.NOT_FOUND);
     }
     return patient;
   }
@@ -106,11 +127,13 @@ export class PatientService {
   async findOne(id: number) {
     try {
       const patient = await this.findOneOrThrow(id);
-      return patient;
+
+      const response = createResponse<Patient, PatientCodes>();
+      return response.success(PatientCodes.FIND_ONE_SUCCESS).data(patient).build();
     } catch (error) {
-        const msg = `Ошибка при получении пациента. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST)
+      const msg = `Ошибка при получении пациента. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -119,53 +142,61 @@ export class PatientService {
       await this.findOneOrThrow(id);
       const [_, updatedRows] = await this.repository.update(
         {
-          ...dto, 
-          birthDate: dto.birthDate ? new Date(dto.birthDate) : undefined
+          ...dto,
+          birthDate: dto.birthDate ? new Date(dto.birthDate) : undefined,
         },
         {
-          where: {id}, 
-          returning: true
-        }
+          where: { id },
+          returning: true,
+        },
       );
-      return updatedRows[0];
+
+      const response = createResponse<Patient, PatientCodes>();
+      return response.success(PatientCodes.UPDATE_SUCCESS).data(updatedRows[0]).build();
     } catch (error) {
-        const msg = `Ошибка при обновлении пациента. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST)
+      const msg = `Ошибка при обновлении пациента. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async remove(id: number) {
     try {
       await this.findOneOrThrow(id);
-      await this.repository.destroy({where: {id}});
-      return true;
+      await this.repository.destroy({ where: { id } });
+
+      const response = createResponse<Boolean, PatientCodes>();
+      return response.success(PatientCodes.REMOVE_SUCCESS).data(true).build();
     } catch (error) {
-        const msg = `Ошибка при мягком удалении пациента. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST)
+      const msg = `Ошибка при мягком удалении пациента. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async forceRemove(id: number) {
     try {
-      await this.repository.destroy({where: {id}, force: true});
-      return true;
+      await this.repository.destroy({ where: { id }, force: true });
+
+      const response = createResponse<Boolean, PatientCodes>();
+      return response.success(PatientCodes.FORCE_REMOVE_SUCCESS).data(true).build();
     } catch (error) {
-        const msg = `Ошибка при жестком удалении пациента. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST)
+      const msg = `Ошибка при жестком удалении пациента. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async restore(id: number) {
     try {
-      await this.repository.restore({where: {id}});
-      return true;
+      await this.repository.restore({ where: { id } });
+
+      const response = createResponse<Boolean, PatientCodes>();
+      return response.success(PatientCodes.RESTORE_SUCCESS).data(true).build();
     } catch (error) {
-        const msg = `Ошибка при востановлении пациента. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST)
+      const msg = `Ошибка при востановлении пациента. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 }

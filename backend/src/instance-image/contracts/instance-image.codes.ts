@@ -29,6 +29,9 @@ export enum InstanceImageCodes {
   FIND_ALL_BY_STUDY_ID_SUCCESS = "instance_image.findAllByStudyId.success",
   FIND_ALL_BY_STUDY_ID_ERROR = "instance_image.findAllByStudyId.error",
 
+  FIND_ALL_BY_SERIES_ID_SUCCESS = "instance_image.findAllBySeriesId.success",
+  FIND_ALL_BY_SERIES_ID_ERROR = "instance_image.findAllBySeriesId.error",
+
   FIND_ALL_PREDICTIONS_SUCCESS = "instance_image.findAllPredictions.success",
   FIND_ALL_PREDICTIONS_ERROR = "instance_image.findAllPredictions.error",
 }

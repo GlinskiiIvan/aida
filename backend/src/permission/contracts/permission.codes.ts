@@ -26,6 +26,9 @@ export enum PermissionCodes {
   FIND_ONE_BY_VALUE_SUCCESS = "permission.findOneByValue.success",
   FIND_ONE_BY_VALUE_ERROR = "permission.findOneByValue.error",
 
+  FIND_ALL_BY_ROLE_ID_SUCCESS = "permission.findAllByRoleId.success",
+  FIND_ALL_BY_ROLE_ID_ERROR = "permission.findAllByRoleId.error",
+
   COUNT_SUCCESS = "permission.count.success",
   COUNT_ERROR = "permission.count.error",
 }

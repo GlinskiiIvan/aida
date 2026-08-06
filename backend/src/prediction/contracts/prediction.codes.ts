@@ -26,6 +26,9 @@ export enum PredictionCodes {
   BULK_CREATE_SUCCESS = "prediction.bulkCreate.success",
   BULK_CREATE_ERROR = "prediction.bulkCreate.error",
 
+  FIND_ALL_BY_IMAGE_ID_SUCCESS = "prediction.findAllByImageId.success",
+  FIND_ALL_BY_IMAGE_ID_ERROR = "prediction.findAllByImageId.error",
+
   FIND_ALL_BY_RUN_ID_SUCCESS = "prediction.findAllByRunId.success",
   FIND_ALL_BY_RUN_ID_ERROR = "prediction.findAllByRunId.error",
 }

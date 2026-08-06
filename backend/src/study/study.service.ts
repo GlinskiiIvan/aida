@@ -5,13 +5,15 @@ import { Patient } from "src/patient/entities/patient.entity";
 import { InjectModel } from "@nestjs/sequelize";
 import { Study } from "./entities/study.entity";
 import { PatientService } from "src/patient/patient.service";
-import { Series } from "src/series/entities/series.entity";
 import { FindOptions, Includeable, Transaction } from "sequelize";
 import * as path from "path";
-import { PredictionRun } from "src/prediction-run/entities/prediction-run.entity";
-import { buildOrder, buildResultData, buildWhere, FindAllServiceParams } from "src/utils";
 import { PredictionRunService } from "src/prediction-run/prediction-run.service";
 import { InstanceImageService } from "src/instance-image/instance-image.service";
+
+import { QueryParams, executeQueryResponse } from "../common/query";
+import { createResponse } from "../common/response";
+import { studyQueryConfig, StudyCodes } from "./contracts";
+import { SeriesService } from "src/series/series.service";
 
 @Injectable()
 export class StudyService {
@@ -22,25 +24,12 @@ export class StudyService {
     private predictionRunService: PredictionRunService,
     @Inject(forwardRef(() => InstanceImageService))
     private instanceImageService: InstanceImageService,
+    private seriesService: SeriesService,
   ) {}
-
-  private attributesModel = [];
 
   private includePatient: Includeable = {
     model: Patient,
     as: "patient",
-  };
-
-  private includeSeries: Includeable = {
-    model: Series,
-    as: "series",
-    separate: true,
-    order: [["seriesNumber", "ASC"]],
-  };
-
-  private includeRuns: Includeable = {
-    model: PredictionRun,
-    as: "runs",
   };
 
   async create(dto: CreateStudyDto) {
@@ -59,7 +48,8 @@ export class StudyService {
       );
       await study.save();
 
-      return study;
+      const response = createResponse<Study, StudyCodes>();
+      return response.success(StudyCodes.CREATE_SUCCESS).data(study).build();
     } catch (error) {
       const msg = `Ошибка при создании исследования. ${error.message}`;
       console.log(msg);
@@ -67,32 +57,31 @@ export class StudyService {
     }
   }
 
-  async findAll(params: FindAllServiceParams) {
+  async findAll(params: QueryParams) {
+    console.log("params: ", params);
+
     try {
-      const whereParams = buildWhere<Study>({
-        dateFrom: params.dateFrom,
-        dateTo: params.dateTo,
-        filterBy: params.filterBy,
-        filterValue: params.filterValue,
-      });
-      const orderParams = buildOrder({
-        sortBy: params.sortBy,
-        sortOrder: params.sortOrder,
-      });
+      let options: FindOptions = {
+        order: [["created_at", "DESC"]],
+      };
 
-      const { rows: studies, count } = await this.repository.findAndCountAll({
-        where: whereParams,
-        order: orderParams,
-        limit: params.pageSize || undefined,
-        offset: params.offset || undefined,
-      });
+      const { data, resolvedPageination } = await executeQueryResponse(
+        this.repository,
+        studyQueryConfig,
+        params,
+        options,
+      );
 
-      return buildResultData<Study>({
-        rows: studies,
-        page: params.page,
-        limit: params.pageSize,
-        count,
-      });
+      const response = createResponse<Study[], StudyCodes>();
+      return response
+        .success(StudyCodes.FIND_ALL_SUCCESS)
+        .data(data)
+        .pagination(
+          resolvedPageination.total,
+          resolvedPageination.page_size,
+          resolvedPageination.page,
+        )
+        .build();
     } catch (error) {
       const msg = `Ошибка при получении всех исследований. ${error.message}`;
       console.log(msg);
@@ -100,32 +89,32 @@ export class StudyService {
     }
   }
 
-  async findAllByPatientId(patientId: number, params: FindAllServiceParams) {
+  async findAllByPatientId(patientId: number, params: QueryParams) {
+    console.log("params: ", params);
+
     try {
-      const whereParams = buildWhere<Study>({
-        dateFrom: params.dateFrom,
-        dateTo: params.dateTo,
-        filterBy: params.filterBy,
-        filterValue: params.filterValue,
-      });
-      const orderParams = buildOrder({
-        sortBy: params.sortBy,
-        sortOrder: params.sortOrder,
-      });
+      let options: FindOptions = {
+        where: { patientId },
+        order: [["created_at", "DESC"]],
+      };
 
-      const { rows: studies, count } = await this.repository.findAndCountAll({
-        where: { patientId, ...whereParams },
-        order: orderParams,
-        limit: params.pageSize || undefined,
-        offset: params.offset || undefined,
-      });
+      const { data, resolvedPageination } = await executeQueryResponse(
+        this.repository,
+        studyQueryConfig,
+        params,
+        options,
+      );
 
-      return buildResultData<Study>({
-        rows: studies,
-        page: params.page,
-        limit: params.pageSize,
-        count,
-      });
+      const response = createResponse<Study[], StudyCodes>();
+      return response
+        .success(StudyCodes.FIND_ALL_BY_PATIENT_ID_SUCCESS)
+        .data(data)
+        .pagination(
+          resolvedPageination.total,
+          resolvedPageination.page_size,
+          resolvedPageination.page,
+        )
+        .build();
     } catch (error) {
       const msg = `Ошибка при получении всех исследований. ${error.message}`;
       console.log(msg);
@@ -133,12 +122,12 @@ export class StudyService {
     }
   }
 
-  async findAllSeries(id: number) {
+  async findAllSeries(id: number, params: QueryParams) {
     try {
-      const study = await this.findOneOrThrow(id, {
-        include: [this.includeSeries],
-      });
-      return study.series;
+      const study = await this.findOneOrThrow(id);
+      const series = await this.seriesService.findAllByStudyId(id, params);
+
+      return series;
     } catch (error) {
       const msg = `Ошибка при получении всех серий исследования по id. ${error.message}`;
       console.log(msg);
@@ -146,7 +135,7 @@ export class StudyService {
     }
   }
 
-  async findAllRuns(id: number, params: FindAllServiceParams) {
+  async findAllRuns(id: number, params: QueryParams) {
     try {
       const study = await this.findOneOrThrow(id);
       const runs = await this.predictionRunService.findAllByStudyId(id, params);
@@ -159,7 +148,7 @@ export class StudyService {
     }
   }
 
-  async findAllImages(id: number, params: FindAllServiceParams) {
+  async findAllImages(id: number, params: QueryParams) {
     try {
       const study = await this.findOneOrThrow(id);
       const images = await this.instanceImageService.findAllByStudyId(id, params);
@@ -185,7 +174,9 @@ export class StudyService {
       const study = await this.findOneOrThrow(id, {
         include: [this.includePatient],
       });
-      return study;
+
+      const response = createResponse<Study, StudyCodes>();
+      return response.success(StudyCodes.FIND_ONE_SUCCESS).data(study).build();
     } catch (error) {
       const msg = `Ошибка при получении исследования по id. ${error.message}`;
       console.log(msg);
@@ -207,7 +198,9 @@ export class StudyService {
           transaction,
         },
       );
-      return updatedRows[0];
+
+      const response = createResponse<Study, StudyCodes>();
+      return response.success(StudyCodes.UPDATE_SUCCESS).data(updatedRows[0]).build();
     } catch (error) {
       console.error(error);
       const msg = `Ошибка при обновлении исследования. ${error.message}`;
@@ -219,7 +212,9 @@ export class StudyService {
   async restore(id: number) {
     try {
       await this.repository.restore({ where: { id } });
-      return true;
+
+      const response = createResponse<Boolean, StudyCodes>();
+      return response.success(StudyCodes.RESTORE_SUCCESS).data(true).build();
     } catch (error) {
       const msg = `Ошибка при восстановлении исследования после мягкого удаления. ${error.message}`;
       console.log(msg);
@@ -231,7 +226,9 @@ export class StudyService {
     try {
       await this.findOneOrThrow(id);
       await this.repository.destroy({ where: { id } });
-      return true;
+
+      const response = createResponse<Boolean, StudyCodes>();
+      return response.success(StudyCodes.REMOVE_SUCCESS).data(true).build();
     } catch (error) {
       const msg = `Ошибка при мягком удалении исследования. ${error.message}`;
       console.log(msg);
@@ -242,7 +239,9 @@ export class StudyService {
   async forceRemove(id: number) {
     try {
       await this.repository.destroy({ where: { id }, force: true });
-      return true;
+
+      const response = createResponse<Boolean, StudyCodes>();
+      return response.success(StudyCodes.FORCE_REMOVE_SUCCESS).data(true).build();
     } catch (error) {
       const msg = `Ошибка при жестком удалении исследования. ${error.message}`;
       console.log(msg);

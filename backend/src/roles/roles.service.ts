@@ -1,75 +1,75 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
-import { InjectModel } from '@nestjs/sequelize';
-import { Role } from './entities/role.entity';
-import { User } from 'src/users/entities/user.entity';
-import { FindOptions, Includeable } from 'sequelize';
-import { buildOrder, buildResultData, buildWhere, FindAllServiceParams } from 'src/utils';
-import { Permission } from 'src/permission/entities/permission.entity';
-import { UpdatePermissionsDto } from './dto/update-permissions.dto';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { CreateRoleDto } from "./dto/create-role.dto";
+import { UpdateRoleDto } from "./dto/update-role.dto";
+import { InjectModel } from "@nestjs/sequelize";
+import { Role } from "./entities/role.entity";
+import { User } from "src/users/entities/user.entity";
+import { FindOptions } from "sequelize";
+import { UpdatePermissionsDto } from "./dto/update-permissions.dto";
+
+import { QueryParams, executeQueryResponse } from "../common/query";
+import { createResponse } from "../common/response";
+import { roleQueryConfig, RoleCodes } from "./contracts";
+import { PermissionService } from "src/permission/permission.service";
+import { UsersService } from "src/users/users.service";
 
 @Injectable()
 export class RolesService {
   constructor(
-    @InjectModel(Role) private repository: typeof Role
+    @InjectModel(Role) private repository: typeof Role,
+    private permissionService: PermissionService,
+    private userService: UsersService,
   ) {}
-
-  private includeUsers: Includeable = {
-    model: User,
-    as: 'users',
-  }
-
-  private includePermissions: Includeable = {
-    model: Permission,
-    as: 'permissions',
-    attributes: ['id', 'value', 'description'],
-  }
 
   async create(dto: CreateRoleDto) {
     const candidate = await this.repository.findOne({
       where: { description: dto.description },
     });
-    
+
     if (candidate) {
-      throw new HttpException('Ошибка при создании роли. Роль с таким описанием уже существует.', HttpStatus.BAD_REQUEST,);
+      throw new HttpException(
+        "Ошибка при создании роли. Роль с таким описанием уже существует.",
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     try {
-      return await this.repository.create(dto);
+      const role = await this.repository.create(dto);
+
+      const response = createResponse<Role, RoleCodes>();
+      return response.success(RoleCodes.CREATE_SUCCESS).data(role).build();
     } catch (error) {
-        const msg = `Ошибка при создании роли. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при создании роли. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
-  async findAll(params: FindAllServiceParams) {
+  async findAll(params: QueryParams) {
+    console.log("params: ", params);
+
     try {
-      const whereParams = buildWhere<Role>({
-        dateFrom: params.dateFrom,
-        dateTo: params.dateTo,
-        filterBy: params.filterBy,
-        filterValue: params.filterValue,
-      });
-      const orderParams = buildOrder({
-        sortBy: params.sortBy, 
-        sortOrder: params.sortOrder
-      });
+      let options: FindOptions = {
+        order: [["created_at", "DESC"]],
+      };
 
-      const { rows: roles, count } = await this.repository.findAndCountAll({
-        where: whereParams,
-        order: orderParams,
-        limit: params.pageSize || undefined,
-        offset: params.offset || undefined,
-      });
+      const { data, resolvedPageination } = await executeQueryResponse(
+        this.repository,
+        roleQueryConfig,
+        params,
+        options,
+      );
 
-      return buildResultData<Role>({
-        rows: roles,
-        page: params.page,
-        limit: params.pageSize,
-        count,
-      });
+      const response = createResponse<Role[], RoleCodes>();
+      return response
+        .success(RoleCodes.FIND_ALL_SUCCESS)
+        .data(data)
+        .pagination(
+          resolvedPageination.total,
+          resolvedPageination.page_size,
+          resolvedPageination.page,
+        )
+        .build();
     } catch (error) {
       const msg = `Ошибка при получении всех ролей. ${error.message}`;
       console.log(msg);
@@ -77,58 +77,101 @@ export class RolesService {
     }
   }
 
-  async findAllPermissions(roleId: number) {
-    try {
-      const role = await this.findOneOrThrow(roleId, {
-        include: [this.includePermissions]
-      });
+  async findAllByUserId(userId: number, params: QueryParams) {
+    console.log("params: ", params);
 
-      return role.permissions;
+    try {
+      let options: FindOptions = {
+        include: [
+          {
+            model: User,
+            as: "users",
+            where: { id: userId },
+            through: { attributes: [] },
+            required: true,
+          },
+        ],
+        order: [["created_at", "DESC"]],
+      };
+
+      const { data, resolvedPageination } = await executeQueryResponse(
+        this.repository,
+        roleQueryConfig,
+        params,
+        options,
+      );
+
+      const response = createResponse<Role[], RoleCodes>();
+      return response
+        .success(RoleCodes.FIND_ALL_BY_USER_ID_SUCCESS)
+        .data(data)
+        .pagination(
+          resolvedPageination.total,
+          resolvedPageination.page_size,
+          resolvedPageination.page,
+        )
+        .build();
     } catch (error) {
-        const msg = `Ошибка при получении разрешений роли по id. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при получении всех ролей. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async findAllUsers(id: number, params: QueryParams) {
+    try {
+      const role = await this.findOneOrThrow(id);
+      const users = await this.userService.findAllByRoleId(id, params);
+
+      return users;
+    } catch (error) {
+      const msg = `Ошибка при получении всех пользователей роли. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async findAllPermissions(roleId: number, params: QueryParams) {
+    try {
+      const role = await this.findOneOrThrow(roleId);
+      const permissions = await this.permissionService.findAllByRoleId(roleId, params);
+
+      return permissions;
+    } catch (error) {
+      const msg = `Ошибка при получении разрешений роли по id. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async findOneOrThrow(id: number, options?: Omit<FindOptions<Role>, "where">) {
     const role = await this.repository.findByPk(id, options);
-    if(!role) {
-      throw new HttpException('Роль не найдена.', HttpStatus.NOT_FOUND);
+    if (!role) {
+      throw new HttpException("Роль не найдена.", HttpStatus.NOT_FOUND);
     }
     return role;
   }
 
   async findOne(id: number) {
     try {
-      return await this.findOneOrThrow(id);
+      const role = await this.findOneOrThrow(id);
+
+      const response = createResponse<Role, RoleCodes>();
+      return response.success(RoleCodes.FIND_ONE_SUCCESS).data(role).build();
     } catch (error) {
-        const msg = `Ошибка при получении роли по id. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при получении роли по id. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async findOneByValue(value: string) {
     try {
-      return await this.repository.findOne({ where: {value} });
+      return await this.repository.findOne({ where: { value } });
     } catch (error) {
-        const msg = `Ошибка при получении роли по значению. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  async findAllUsers(id: number) {
-    try {
-      const role = await this.findOneOrThrow(id, {
-        include: [this.includeUsers],
-      });
-      return role.users;
-    } catch (error) {
-        const msg = `Ошибка при получении всех пользователей роли. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при получении роли по значению. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -136,60 +179,70 @@ export class RolesService {
     try {
       await this.findOneOrThrow(id);
       const [_, updatedRows] = await this.repository.update(updateRoleDto, {
-        where: {id}, 
+        where: { id },
         returning: true,
       });
-      return updatedRows[0];
+
+      const response = createResponse<Role, RoleCodes>();
+      return response.success(RoleCodes.UPDATE_SUCCESS).data(updatedRows[0]).build();
     } catch (error) {
-        const msg = `Ошибка при обновлении роли. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при обновлении роли. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async updatePermissions(role_id: number, dto: UpdatePermissionsDto) {
     try {
       const role = await this.findOneOrThrow(role_id);
-      await role.$set('permissions', dto.permissions);
-      return true;
+      await role.$set("permissions", dto.permissions);
+
+      const response = createResponse<Boolean, RoleCodes>();
+      return response.success(RoleCodes.UPDATE_PERMISSIONS_SUCCESS).data(true).build();
     } catch (error) {
-        const msg = `Ошибка при обновлении роли. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при обновлении роли. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async restore(id: number) {
     try {
-      await this.repository.restore({ where: {id} });
-      return true;
+      await this.repository.restore({ where: { id } });
+
+      const response = createResponse<Boolean, RoleCodes>();
+      return response.success(RoleCodes.RESTORE_SUCCESS).data(true).build();
     } catch (error) {
-        const msg = `Ошибка при восстановлении после мягкого удаления роли. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при восстановлении после мягкого удаления роли. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async remove(id: number) {
     try {
       await this.findOneOrThrow(id);
-      await this.repository.destroy({ where: {id} });
-      return true;
+      await this.repository.destroy({ where: { id } });
+
+      const response = createResponse<Boolean, RoleCodes>();
+      return response.success(RoleCodes.REMOVE_SUCCESS).data(true).build();
     } catch (error) {
-        const msg = `Ошибка при мягком удалении роли. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при мягком удалении роли. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
   async forceRemove(id: number) {
     try {
-      await this.repository.destroy({ where: {id}, force: true });
-      return true;
+      await this.repository.destroy({ where: { id }, force: true });
+
+      const response = createResponse<Boolean, RoleCodes>();
+      return response.success(RoleCodes.FORCE_REMOVE_SUCCESS).data(true).build();
     } catch (error) {
-        const msg = `Ошибка при жестком удалении роли. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка при жестком удалении роли. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -197,9 +250,9 @@ export class RolesService {
     try {
       return (await this.repository.findAndCountAll()).count;
     } catch (error) {
-        const msg = `Ошибка подсчете ролей. ${error.message}`;
-        console.log(msg);
-        throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      const msg = `Ошибка подсчете ролей. ${error.message}`;
+      console.log(msg);
+      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
     }
   }
 }

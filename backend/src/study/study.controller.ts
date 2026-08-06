@@ -1,26 +1,14 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Query,
-} from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from "@nestjs/common";
 import { StudyService } from "./study.service";
 import { CreateStudyDto } from "./dto/create-study.dto";
 import { UpdateStudyDto } from "./dto/update-study.dto";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Study } from "./entities/study.entity";
 import { Permissions } from "src/decorators/permissions.decorator";
-import { PermissionsGuard } from "src/guards/permissions.guard";
 import { Series } from "src/series/entities/series.entity";
 import { PredictionRun } from "src/prediction-run/entities/prediction-run.entity";
-import { FindAllQueryDto } from "src/utils/dto/findAllQuery.dto";
-import { buildFindAllParams } from "src/utils";
 import { InstanceImage } from "src/instance-image/entities/instance-image.entity";
+import { QueryParams, QueryParamsPipe } from "../common/query";
 
 @ApiBearerAuth("token")
 @ApiTags("Исследование")
@@ -40,8 +28,7 @@ export class StudyController {
   @ApiResponse({ status: 200, type: [Study] })
   @Permissions("study:read")
   @Get()
-  findAll(@Query() query: FindAllQueryDto) {
-    const params = buildFindAllParams(query);
+  findAll(@Query("q", QueryParamsPipe) params: QueryParams) {
     return this.studyService.findAll(params);
   }
 
@@ -57,16 +44,15 @@ export class StudyController {
   @ApiResponse({ status: 200, type: [Series] })
   @Permissions("study:read")
   @Get(":id/series")
-  findAllSeries(@Param("id") id: string) {
-    return this.studyService.findAllSeries(+id);
+  findAllSeries(@Param("id") id: string, @Query("q", QueryParamsPipe) params: QueryParams) {
+    return this.studyService.findAllSeries(+id, params);
   }
 
   @ApiOperation({ summary: "Получение всех запусков предсказаний исследования по id" })
   @ApiResponse({ status: 200, type: [PredictionRun] })
   @Permissions("study:read")
   @Get(":id/runs")
-  findAllRuns(@Param("id") id: string, @Query() query: FindAllQueryDto) {
-    const params = buildFindAllParams(query);
+  findAllRuns(@Param("id") id: string, @Query("q", QueryParamsPipe) params: QueryParams) {
     return this.studyService.findAllRuns(+id, params);
   }
 
@@ -74,8 +60,7 @@ export class StudyController {
   @ApiResponse({ status: 200, type: [InstanceImage] })
   @Permissions("study:read")
   @Get(":id/images")
-  findAllImages(@Param("id") id: string, @Query() query: FindAllQueryDto) {
-    const params = buildFindAllParams(query);
+  findAllImages(@Param("id") id: string, @Query("q", QueryParamsPipe) params: QueryParams) {
     return this.studyService.findAllImages(+id, params);
   }
 

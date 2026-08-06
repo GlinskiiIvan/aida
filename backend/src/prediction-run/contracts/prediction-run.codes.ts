@@ -26,6 +26,9 @@ export enum PredictionRunCodes {
   FIND_ALL_BY_STUDY_ID_SUCCESS = "prediction_run.findAllByStudyId.success",
   FIND_ALL_BY_STUDY_ID_ERROR = "prediction_run.findAllByStudyId.error",
 
+  FIND_ALL_BY_USER_ID_SUCCESS = "prediction_run.findAllByUserId.success",
+  FIND_ALL_BY_USER_ID_ERROR = "prediction_run.findAllByUseerId.error",
+
   FIND_ALL_PREDICTIONS_SUCCESS = "prediction_run.findAllPredictions.success",
   FIND_ALL_PREDICTIONS_ERROR = "prediction_run.findAllPredictions.error",
 }

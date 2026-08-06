@@ -40,8 +40,12 @@ export const predictionRunQueryConfig = new QueryConfig({
   "study.seriesCount": fields.numberField("study.seriesCount", [StudyRel]),
   "study.imagesCount": fields.numberField("study.imagesCount", [StudyRel]),
   "study.note": fields.stringField("study.note", [StudyRel]),
+  "study.created_at": fields.datetimeField("study.created_at", [StudyRel]),
+  "study.updated_at": fields.datetimeField("study.updated_at", [StudyRel]),
 
   "createdBy.id": fields.numberField("createdBy.id", [UserRel]),
   "createdBy.email": fields.stringField("createdBy.email", [UserRel]),
   "createdBy.banReason": fields.stringField("createdBy.banReason", [UserRel]),
+  "createdBy.created_at": fields.datetimeField("createdBy.created_at", [UserRel]),
+  "createdBy.updated_at": fields.datetimeField("createdBy.updated_at", [UserRel]),
 });

@@ -37,4 +37,6 @@ export const studyQueryConfig = new QueryConfig({
   "patient.phone": fields.stringField("patient.phone", [PatientRel]),
   "patient.email": fields.stringField("patient.email", [PatientRel]),
   "patient.note": fields.stringField("patient.note", [PatientRel]),
+  "patient.created_at": fields.datetimeField("patient.created_at", [PatientRel]),
+  "patient.updated_at": fields.datetimeField("patient.updated_at", [PatientRel]),
 });

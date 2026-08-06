@@ -25,4 +25,6 @@ export const doctorQueryConfig = new QueryConfig({
   "user.id": fields.numberField("user.id", [UserRel]),
   "user.email": fields.stringField("user.email", [UserRel]),
   "user.banReason": fields.stringField("user.banReason", [UserRel]),
+  "user.created_at": fields.datetimeField("user.created_at", [UserRel]),
+  "user.updated_at": fields.datetimeField("user.updated_at", [UserRel]),
 });

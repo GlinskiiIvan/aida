@@ -30,10 +30,14 @@ export const predictionQueryConfig = new QueryConfig({
   "run.model": fields.stringField("run.model", [PredictionRunRel]),
   "run.version": fields.stringField("run.version", [PredictionRunRel]),
   "run.status": fields.enumField("run.status", [PredictionRunRel]),
+  "run.created_at": fields.datetimeField("run.created_at", [PredictionRunRel]),
+  "run.updated_at": fields.datetimeField("run.updated_at", [PredictionRunRel]),
 
   "image.id": fields.numberField("image.id", [InstanceImageRel]),
   "image.seriesId": fields.numberField("image.seriesId", [InstanceImageRel]),
   "image.imageName": fields.stringField("image.imageName", [InstanceImageRel]),
   "image.imagePath": fields.stringField("image.imagePath", [InstanceImageRel]),
   "image.instanceNumber": fields.numberField("image.instanceNumber", [InstanceImageRel]),
+  "image.created_at": fields.datetimeField("image.created_at", [InstanceImageRel]),
+  "image.updated_at": fields.datetimeField("image.updated_at", [InstanceImageRel]),
 });

@@ -20,13 +20,16 @@ export const patientQueryConfig = new QueryConfig({
   updated_at: fields.datetimeField("updated_at"),
 
   "doctor.id": fields.numberField("doctor.id", [DoctorRel]),
+  "doctor.userId": fields.numberField("doctor.userId", [DoctorRel]),
   "doctor.fullName": fields.stringField("doctor.fullName", [DoctorRel]),
   "doctor.birthDate": fields.datetimeField("doctor.birthDate", [DoctorRel]),
   "doctor.gender": fields.enumField("doctor.gender", [DoctorRel]),
   "doctor.phone": fields.stringField("doctor.phone", [DoctorRel]),
-  "doctor.ontactEmail": fields.stringField("doctor.contactEmail", [DoctorRel]),
+  "doctor.contactEmail": fields.stringField("doctor.contactEmail", [DoctorRel]),
   "doctor.specialization": fields.stringField("doctor.specialization", [DoctorRel]),
   "doctor.department": fields.stringField("doctor.department", [DoctorRel]),
   "doctor.licenseNumber": fields.stringField("doctor.licenseNumber", [DoctorRel]),
   "doctor.note": fields.stringField("doctor.note", [DoctorRel]),
+  "doctor.created_at": fields.datetimeField("doctor.created_at", [DoctorRel]),
+  "doctor.updated_at": fields.datetimeField("doctor.updated_at", [DoctorRel]),
 });

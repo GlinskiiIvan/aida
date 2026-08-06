@@ -15,7 +15,7 @@ import { executeQueryResponse } from "../common/query/executor";
 
 import { createResponse } from "../common/response";
 
-import { imageQueryConfig } from "./entities/query";
+import { imageQueryConfig } from "./contracts";
 
 @Injectable()
 export class InstanceImageService {

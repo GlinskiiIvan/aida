@@ -1,16 +1,21 @@
-export * from "./config";
 export * from "./executor";
-export * from "./features";
-export * from "./fields";
-export * from "./filters";
-export * from "./models";
-export * from "./pagination";
-export * from "./parser";
-export * from "./presets";
+
+export * from "./config";
 export * from "./query-params.pipe";
-export * from "./query";
-export * from "./relationships";
+
 export * from "./result";
+
+export * from "./models";
 export * from "./schemas";
-export * from "./search";
-export * from "./sorting";
+
+export * as features from "./features";
+export * as fields from "./fields";
+export * as presets from "./presets";
+
+// export * from "./query";
+// export * from "./parser";
+// export * from "./relationships";
+// export * from "./sorting";
+// export * from "./search";
+// export * from "./filters";
+// export * from "./pagination";

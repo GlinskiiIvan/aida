@@ -1,5 +1,4 @@
-import { QueryConfig } from "src/common/query";
-import * as fields from "src/common/query/fields";
+import { QueryConfig, fields } from "src/common/query";
 
 export const userQueryConfig = new QueryConfig({
   id: fields.numberField("id"),

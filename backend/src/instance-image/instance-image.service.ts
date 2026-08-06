@@ -10,9 +10,7 @@ import * as path from "path";
 import { buildResultData, FindAllServiceParams } from "src/utils";
 import { Series } from "src/series/entities/series.entity";
 
-import { QueryParams } from "../common/query/schemas";
-import { executeQueryResponse } from "../common/query/executor";
-
+import { QueryParams, executeQueryResponse } from "../common/query";
 import { createResponse } from "../common/response";
 
 import { imageQueryConfig } from "./contracts";

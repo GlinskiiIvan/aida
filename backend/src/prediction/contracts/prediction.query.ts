@@ -1,5 +1,4 @@
-import { QueryConfig } from "src/common/query";
-import * as fields from "src/common/query/fields";
+import { QueryConfig, fields } from "src/common/query";
 
 import { PredictionRun } from "../../prediction-run/entities/prediction-run.entity";
 import { InstanceImage } from "../../instance-image/entities/instance-image.entity";

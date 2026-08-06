@@ -1,5 +1,4 @@
-import { QueryConfig } from "src/common/query";
-import * as fields from "src/common/query/fields";
+import { QueryConfig, fields } from "src/common/query";
 
 import { Study } from "../../study/entities/study.entity";
 import { User } from "../../users/entities/user.entity";

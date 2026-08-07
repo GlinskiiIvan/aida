@@ -24,3 +24,22 @@ export enum NotificationPresentation {
   DIALOG = "dialog",
   BANNER = "banner",
 }
+
+export enum ValidationCodes {
+  REQUIRED = "validation.required",
+  STRING = "validation.string",
+  NUMBER = "validation.number",
+  EMAIL = "validation.email",
+  PHONE = "validation.phone",
+  DATE = "validation.date",
+  ENUM = "validation.enum",
+  BOOLEAN = "validation.boolean",
+  ARRAY = "validation.array",
+  OBJECT = "validation.object",
+  UUID = "validation.uuid",
+  MIN_LENGTH = "validation.min_length",
+  MAX_LENGTH = "validation.max_length",
+  MIN = "validation.min",
+  MAX = "validation.max",
+  INVALID = "validation.invalid",
+}

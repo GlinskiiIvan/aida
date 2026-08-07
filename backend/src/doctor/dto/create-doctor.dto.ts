@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 import {
   IsDateString,
   IsEmail,
@@ -7,72 +7,73 @@ import {
   IsOptional,
   IsPhoneNumber,
   IsString,
-} from 'class-validator';
-import { Gender } from 'src/common/enums';
+} from "class-validator";
+import { Gender } from "src/common/enums";
+import { enums } from "src/common/response";
+import { DoctorCodes } from "../contracts";
 
 export class CreateDoctorDto {
-  @ApiProperty({ example: 1, description: 'Уникальный ID пользователя' })
-  @IsNumber({}, { message: 'Должно быть числом' })
+  static validationCode = DoctorCodes.CREATE_ERROR;
+
+  @ApiProperty({ example: 1, description: "Уникальный ID пользователя" })
+  @IsNumber({}, { context: { code: enums.ValidationCodes.NUMBER } })
   readonly userId: number;
 
   @ApiProperty({
-    example: 'Глинский Иван Николаевич',
-    description: 'Полное имя',
+    example: "Глинский Иван Николаевич",
+    description: "Полное имя",
   })
-  @IsString({ message: 'Должно быть строкой' })
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
   readonly fullName: string;
 
-  @ApiProperty({ example: '1894-10-04', description: 'Дата рождения' })
-  @IsDateString(
-    {},
-    { message: 'Должно быть корректной датой в формате YYYY-MM-DD' },
-  )
+  @ApiProperty({ example: "1894-10-04", description: "Дата рождения" })
+  @IsDateString({}, { context: { code: enums.ValidationCodes.DATE } })
   readonly birthDate: string;
 
   @ApiProperty({
-    example: 'male',
-    description: 'Пол',
-    enum: ['male', 'female'],
+    example: "male",
+    description: "Пол",
+    enum: ["male", "female"],
   })
-  @IsEnum(Gender, { message: 'Должно быть одним из опредленных значений' })
+  @IsEnum(Gender, { context: { code: enums.ValidationCodes.ENUM } })
   readonly gender: Gender;
 
-  @ApiProperty({ example: '+77714563464', description: 'Номер телефона' })
-  @IsPhoneNumber('KZ', { message: 'Некорректный номер телефона' })
+  @ApiProperty({ example: "+77714563464", description: "Номер телефона" })
+  @IsPhoneNumber("KZ", { context: { code: enums.ValidationCodes.PHONE } })
   readonly phone: string;
 
   @ApiProperty({
-    example: 'doctor@mail.ru',
-    description: 'Email для связи',
+    example: "doctor@mail.ru",
+    description: "Email для связи",
     required: false,
   })
   @IsOptional()
-  @IsEmail({}, { message: 'Некорректный email' })
+  @IsEmail({}, { context: { code: enums.ValidationCodes.EMAIL } })
   readonly contactEmail?: string;
 
-  @ApiProperty({ example: 'Ортопедия', description: 'Специализация' })
-  @IsString({ message: 'Должно быть строкой' })
+  @ApiProperty({ example: "Ортопедия", description: "Специализация" })
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
   readonly specialization: string;
 
-  @ApiProperty({ example: 'Хирургическое', description: 'Отделение' })
-  @IsString({ message: 'Должно быть строкой' })
+  @ApiProperty({ example: "Хирургическое", description: "Отделение" })
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
   readonly department: string;
 
   @ApiProperty({
-    example: 'KN-202345',
-    description: 'Номер лицензии',
+    example: "KN-202345",
+    description: "Номер лицензии",
     required: false,
   })
   @IsOptional()
-  @IsString({ message: 'Должно быть строкой' })
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
   readonly licenseNumber?: string;
 
   @ApiProperty({
-    example: 'Опыт работы 10 лет, специализация на коленных операциях',
-    description: 'Заметка',
+    example: "Опыт работы 10 лет, специализация на коленных операциях",
+    description: "Заметка",
     required: false,
   })
   @IsOptional()
-  @IsString({ message: 'Должно быть строкой' })
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
   readonly note?: string;
 }

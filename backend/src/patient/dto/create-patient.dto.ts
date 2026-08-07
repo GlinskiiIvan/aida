@@ -1,31 +1,43 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDateString, IsEmail, IsEnum, IsNumber, IsOptional, IsPhoneNumber, IsString } from "class-validator";
+import {
+  IsDateString,
+  IsEmail,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsPhoneNumber,
+  IsString,
+} from "class-validator";
 import { Gender } from "src/common/enums";
+import { enums } from "src/common/response";
+import { PatientCodes } from "../contracts";
 
 export class CreatePatientDto {
-    @ApiProperty({ example: 'Глинский Иван Николаевич', description: 'Полное имя', })
-    @IsString({ message: 'fullName должно быть строкой' })
-    readonly fullName: string;
+  static validationCode = PatientCodes.CREATE_ERROR;
 
-    @ApiProperty({ example: '1894-10-04', description: 'Дата рождения' })
-    @IsDateString( {}, { message: 'birthDate должна быть корректной датой в формате YYYY-MM-DD' }, )
-    readonly birthDate: string;
+  @ApiProperty({ example: "Глинский Иван Николаевич", description: "Полное имя" })
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
+  readonly fullName: string;
 
-    @ApiProperty({ example: 'male', description: 'Пол', enum: Object.values(Gender), })
-    @IsEnum(Gender, { message: `gender должен быть одним из значений: ${Object.values(Gender).join(', ')}` })
-    readonly gender: Gender;
+  @ApiProperty({ example: "1894-10-04", description: "Дата рождения" })
+  @IsDateString({}, { context: { code: enums.ValidationCodes.DATE } })
+  readonly birthDate: string;
 
-    @ApiProperty({ example: '+77714563464', description: 'Номер телефона' })
-    @IsPhoneNumber('KZ', { message: 'phone должен быть корректным номером телефона Казахстана, например +77001234567' })
-    readonly phone: string;
+  @ApiProperty({ example: "male", description: "Пол", enum: Object.values(Gender) })
+  @IsEnum(Gender, { context: { code: enums.ValidationCodes.ENUM } })
+  readonly gender: Gender;
 
-    @ApiProperty({ example: 'doctor@mail.ru', description: 'Email для связи', required: false, })
-    @IsOptional()
-    @IsEmail({}, { message: 'email должен быть корректным адресом электронной почты' })
-    readonly email?: string;
+  @ApiProperty({ example: "+77714563464", description: "Номер телефона" })
+  @IsPhoneNumber("KZ", { context: { code: enums.ValidationCodes.PHONE } })
+  readonly phone: string;
 
-    @ApiProperty({ example: 'Странные колени', description: 'Заметка', required: false, })
-    @IsOptional()
-    @IsString({ message: 'note должно быть строкой' })
-    readonly note?: string;
+  @ApiProperty({ example: "doctor@mail.ru", description: "Email для связи", required: false })
+  @IsOptional()
+  @IsEmail({}, { context: { code: enums.ValidationCodes.EMAIL } })
+  readonly email?: string;
+
+  @ApiProperty({ example: "Странные колени", description: "Заметка", required: false })
+  @IsOptional()
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
+  readonly note?: string;
 }

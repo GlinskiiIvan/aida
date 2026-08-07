@@ -1,18 +1,26 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDateString, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
-import { Modality, Status } from "src/common/enums";
+import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { Status } from "src/common/enums";
+import { enums } from "src/common/response";
+import { StudyCodes } from "../contracts";
 
 export class CreateStudyDto {
-    @ApiProperty({ example: 1, description: 'Уникальный ID пациента' })
-    @IsNumber({}, { message: 'patientId должен быть числом' })
-    readonly patientId: number;
+  static validationCode = StudyCodes.CREATE_ERROR;
 
-    @ApiProperty({ example: Status.Completed, description: 'Статус обработки', enum: Object.values(Status) })
-    @IsEnum(Status, { message: `status должен быть одним из значений: ${Object.values(Status).join(', ')}` })
-    readonly status: Status;
+  @ApiProperty({ example: 1, description: "Уникальный ID пациента" })
+  @IsNumber({}, { context: { code: enums.ValidationCodes.NUMBER } })
+  readonly patientId: number;
 
-    @ApiProperty({ example: 'Странные колени', description: 'Заметка', required: false, })
-    @IsOptional()
-    @IsString({ message: 'note должно быть строкой' })
-    readonly note?: string;
+  @ApiProperty({
+    example: Status.Completed,
+    description: "Статус обработки",
+    enum: Object.values(Status),
+  })
+  @IsEnum(Status, { context: { code: enums.ValidationCodes.ENUM } })
+  readonly status: Status;
+
+  @ApiProperty({ example: "Странные колени", description: "Заметка", required: false })
+  @IsOptional()
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
+  readonly note?: string;
 }

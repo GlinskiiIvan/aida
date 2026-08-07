@@ -1,23 +1,27 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsUUID, IsNumber, IsString } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
+import { enums } from "src/common/response";
+import { PredictionRunCodes } from "../contracts";
 
 export class CreatePredictionRunDto {
+  static validationCode = PredictionRunCodes.CREATE_ERROR;
+
   @ApiProperty({
     example: 1,
     description: "Уникальный ID исследования",
   })
-  @IsNumber({}, { message: "studyId должен быть числом" })
+  @IsNumber({}, { context: { code: enums.ValidationCodes.NUMBER } })
   readonly studyId: number;
 
   @ApiProperty({ example: 1, description: "Уникальный ID того кто запустил предсказание" })
-  @IsNumber({}, { message: "createdById должен быть числом" })
+  @IsNumber({}, { context: { code: enums.ValidationCodes.NUMBER } })
   readonly createdById: number;
 
   @ApiProperty({ example: "YOLO", description: "Модель" })
-  @IsString({ message: "model должна быть строкой" })
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
   readonly model: string;
 
   @ApiProperty({ example: "8l", description: "Версия" })
-  @IsString({ message: "version должна быть строкой" })
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
   readonly version: string;
 }

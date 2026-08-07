@@ -1,12 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsString } from "class-validator";
+import { enums } from "src/common/response";
+import { InferenceCodes } from "../contracts";
 
 export class PredictionRunDto {
-    @ApiProperty({ example: 'YOLO-bbox', description: 'ИИ модель', })
-    @IsString({ message: 'model должна быть строкой' })
-    readonly model: string;
+  static validationCode = InferenceCodes.PREDICT_ERROR;
 
-    @ApiProperty({ example: '8x', description: 'Версия модели', })
-    @IsString({ message: 'version должна быть строкой' })
-    readonly version: string;
+  @ApiProperty({ example: "YOLO-bbox", description: "ИИ модель" })
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
+  readonly model: string;
+
+  @ApiProperty({ example: "8x", description: "Версия модели" })
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
+  readonly version: string;
 }
+

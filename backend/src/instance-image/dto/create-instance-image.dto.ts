@@ -1,12 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsUUID, IsNumber, IsObject, IsOptional, IsString } from "class-validator";
+import { enums } from "src/common/response";
+import { InstanceImageCodes } from "../contracts";
 
 export class CreateInstanceImageDto {
+  static validationCode = InstanceImageCodes.CREATE_ERROR;
+
   @ApiProperty({
     example: "0197f3f7-8d9b-7f4a-b2c1-5d8e9a7c4f21",
     description: "Уникальный ID серии",
   })
-  @IsUUID("7", { message: "seriesId должен быть корректным UUIDv7" })
+  @IsUUID("7", { context: { code: enums.ValidationCodes.UUID } })
   readonly seriesId: string;
 
   @ApiProperty({
@@ -15,11 +19,11 @@ export class CreateInstanceImageDto {
     required: false,
   })
   @IsOptional()
-  @IsString({ message: "imageName должно быть строкой" })
+  @IsString({ context: { code: enums.ValidationCodes.STRING } })
   readonly imageName?: string | null;
 
   @ApiProperty({ example: 4, description: "Последоватльный номер изображения в серии" })
-  @IsNumber({}, { message: "instanceNumber должен быть числом" })
+  @IsNumber({}, { context: { code: enums.ValidationCodes.NUMBER } })
   instanceNumber: number;
 
   @ApiProperty({
@@ -42,6 +46,6 @@ export class CreateInstanceImageDto {
     description:
       "Сырые метаданные конкретного изображения (Instance) в DICOM. Включает все ключевые теги уровня изображения, такие как позиция, ориентация, размеры и параметры пикселей.",
   })
-  @IsObject({ message: "rawMetadata должно быть объектом" })
+  @IsObject({ context: { code: enums.ValidationCodes.OBJECT } })
   readonly rawMetadata: JSON;
 }

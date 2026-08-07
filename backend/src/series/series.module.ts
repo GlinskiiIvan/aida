@@ -12,7 +12,7 @@ import { InstanceImageModule } from "src/instance-image/instance-image.module";
   imports: [
     SequelizeModule.forFeature([Series]),
     forwardRef(() => StudyModule),
-    InstanceImageModule,
+    forwardRef(() => InstanceImageModule),
   ],
   exports: [SeriesService],
 })

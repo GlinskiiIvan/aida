@@ -16,7 +16,7 @@ export class PatientService {
   constructor(
     @InjectModel(Patient) private repository: typeof Patient,
     @Inject(forwardRef(() => StudyService)) private studyService: StudyService,
-    private doctorService: DoctorService,
+    @Inject(forwardRef(() => DoctorService)) private doctorService: DoctorService,
   ) {}
 
   async create(dto: CreatePatientDto, userId: number) {

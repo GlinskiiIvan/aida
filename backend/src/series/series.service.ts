@@ -17,7 +17,7 @@ export class SeriesService {
   constructor(
     @InjectModel(Series) private repository: typeof Series,
     @Inject(forwardRef(() => StudyService)) private studyServise: StudyService,
-    private imageService: InstanceImageService,
+    @Inject(forwardRef(() => InstanceImageService)) private imageService: InstanceImageService,
   ) {}
 
   async create(dto: CreateSeriesDto) {

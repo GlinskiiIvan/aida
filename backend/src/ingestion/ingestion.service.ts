@@ -47,11 +47,11 @@ export class IngestionService {
     let study: Study | null = null;
 
     try {
-      study = await this.studyService.create({
+      ({ data: study } = await this.studyService.create({
         patientId: dto.patientId,
         note: dto.note,
         status: Status.Processing,
-      });
+      }));
 
       const data = await this.ingestionStudy(dicomZip, study.id, study.path);
 

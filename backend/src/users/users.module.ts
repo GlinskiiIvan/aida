@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
 import { SequelizeModule } from "@nestjs/sequelize";
@@ -11,7 +11,11 @@ import { PredictionRunModule } from "src/prediction-run/prediction-run.module";
 @Module({
   controllers: [UsersController],
   providers: [UsersService],
-  imports: [SequelizeModule.forFeature([User, Role, UserRoles]), RolesModule, PredictionRunModule],
+  imports: [
+    SequelizeModule.forFeature([User, Role, UserRoles]),
+    forwardRef(() => RolesModule),
+    PredictionRunModule,
+  ],
   exports: [UsersService],
 })
 export class UsersModule {}

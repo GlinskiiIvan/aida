@@ -4,12 +4,12 @@ import {
   Injectable,
   Logger,
   UnauthorizedException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { User } from 'src/users/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
-import * as bcrypt from 'bcryptjs';
+} from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { CreateUserDto } from "src/users/dto/create-user.dto";
+import { User } from "src/users/entities/user.entity";
+import { UsersService } from "src/users/users.service";
+import * as bcrypt from "bcryptjs";
 
 @Injectable()
 export class AuthService {
@@ -35,11 +35,11 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign(payload, {
         secret: process.env.ACCESS_SECRET,
-        expiresIn: '1h',
+        expiresIn: "1h",
       }),
       refreshToken: this.jwtService.sign(payload, {
         secret: process.env.REFRESH_SECRET,
-        expiresIn: '7d',
+        expiresIn: "7d",
       }),
     };
   }
@@ -47,7 +47,7 @@ export class AuthService {
   private async updateRefreshToken(user: User) {
     const tokens = await this.generateTokens(user);
     const hashRefreshToken = await bcrypt.hash(tokens.refreshToken, 5);
-    await this.usersService.update(user.id, {refreshToken: hashRefreshToken});
+    await this.usersService.update(user.id, { refreshToken: hashRefreshToken });
 
     return tokens;
   }
@@ -55,14 +55,11 @@ export class AuthService {
   async registration(userDto: CreateUserDto) {
     const candidate = await this.usersService.findOneByEmail(userDto.email);
     if (candidate) {
-      throw new HttpException(
-        'Пользователь с таким email существует',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException("Пользователь с таким email существует", HttpStatus.BAD_REQUEST);
     }
 
     const hashPassword = await bcrypt.hash(userDto.password, 5);
-    const user = await this.usersService.create({
+    const { data: user } = await this.usersService.create({
       ...userDto,
       password: hashPassword,
     });
@@ -81,19 +78,16 @@ export class AuthService {
     const user = await this.usersService.findOneByEmail(userDto.email);
     if (!user) {
       throw new UnauthorizedException({
-        message: 'Некорректный емайл или пароль',
+        message: "Некорректный емайл или пароль",
       });
     }
 
-    const passwordEquals = await bcrypt.compare(
-      userDto.password,
-      user.password,
-    );
+    const passwordEquals = await bcrypt.compare(userDto.password, user.password);
     if (user && passwordEquals) {
       return user;
     }
     throw new UnauthorizedException({
-      message: 'Некорректный емайл или пароль',
+      message: "Некорректный емайл или пароль",
     });
   }
 
@@ -111,18 +105,18 @@ export class AuthService {
   }
 
   async logout(userId: number) {
-    const user = await this.usersService.findOne(userId);
-    await this.usersService.update(userId, {refreshToken: null});
+    const { data: user } = await this.usersService.findOne(userId);
+    await this.usersService.update(userId, { refreshToken: null });
 
-    this.logger.log(`Выход из системы: `, {id: user.id, email: user.email});
+    this.logger.log(`Выход из системы: `, { id: user.id, email: user.email });
     return true;
   }
 
   async refresh(refreshToken: string) {
-    console.log('refreshToken', refreshToken);
-    
+    console.log("refreshToken", refreshToken);
+
     if (!refreshToken) {
-      throw new UnauthorizedException('Нет refresh токена');
+      throw new UnauthorizedException("Нет refresh токена");
     }
 
     let userData: any;
@@ -132,18 +126,15 @@ export class AuthService {
         secret: process.env.REFRESH_SECRET,
       });
     } catch (e) {
-      throw new UnauthorizedException('Неверный refresh токен');
+      throw new UnauthorizedException("Неверный refresh токен");
     }
 
-    const user = await this.usersService.findOne(userData.id);
+    const { data: user } = await this.usersService.findOne(userData.id);
 
-    const refreshTokenEquals = await bcrypt.compare(
-      refreshToken,
-      user.refreshToken,
-    );
+    const refreshTokenEquals = await bcrypt.compare(refreshToken, user.refreshToken);
 
-    if(!user || !refreshTokenEquals) {
-      throw new UnauthorizedException('Неверный refresh токен');
+    if (!user || !refreshTokenEquals) {
+      throw new UnauthorizedException("Неверный refresh токен");
     }
 
     const tokens = await this.updateRefreshToken(user);

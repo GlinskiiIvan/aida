@@ -73,7 +73,7 @@ export class PermissionService {
             required: true,
           },
         ],
-        order: [["created_at", "DESC"]],
+        order: [["createdAt", "DESC"]],
       };
 
       const { data, resolvedPageination } = await executeQueryResponse(

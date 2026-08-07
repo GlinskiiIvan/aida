@@ -31,12 +31,12 @@ export class InferenceService {
 
       const requestId = uuidv7();
 
-      run = await this.predictionRunService.create({
+      ({ data: run } = await this.predictionRunService.create({
         studyId: studyId,
         createdById: createdById,
         model: dto.model,
         version: dto.version,
-      });
+      }));
 
       await this.rabbitPublisher.publish(RabbitRoutingKey.INFERENCE_REQUEST, {
         requestId,

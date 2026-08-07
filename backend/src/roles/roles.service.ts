@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { forwardRef, HttpException, HttpStatus, Injectable, Inject } from "@nestjs/common";
 import { CreateRoleDto } from "./dto/create-role.dto";
 import { UpdateRoleDto } from "./dto/update-role.dto";
 import { InjectModel } from "@nestjs/sequelize";
@@ -17,8 +17,8 @@ import { UsersService } from "src/users/users.service";
 export class RolesService {
   constructor(
     @InjectModel(Role) private repository: typeof Role,
+    @Inject(forwardRef(() => UsersService)) private userService: UsersService,
     private permissionService: PermissionService,
-    private userService: UsersService,
   ) {}
 
   async create(dto: CreateRoleDto) {

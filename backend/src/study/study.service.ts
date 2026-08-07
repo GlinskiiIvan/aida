@@ -24,7 +24,7 @@ export class StudyService {
     private predictionRunService: PredictionRunService,
     @Inject(forwardRef(() => InstanceImageService))
     private instanceImageService: InstanceImageService,
-    private seriesService: SeriesService,
+    @Inject(forwardRef(() => SeriesService)) private seriesService: SeriesService,
   ) {}
 
   private includePatient: Includeable = {

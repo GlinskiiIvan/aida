@@ -16,7 +16,7 @@ import { SeriesModule } from "src/series/series.module";
     forwardRef(() => PatientModule),
     forwardRef(() => PredictionRunModule),
     forwardRef(() => InstanceImageModule),
-    SeriesModule,
+    forwardRef(() => SeriesModule),
   ],
   exports: [StudyService],
 })

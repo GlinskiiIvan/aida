@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { forwardRef, HttpException, HttpStatus, Injectable, Inject } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { InjectModel } from "@nestjs/sequelize";
@@ -19,7 +19,7 @@ import { PredictionRunService } from "src/prediction-run/prediction-run.service"
 export class UsersService {
   constructor(
     @InjectModel(User) private repository: typeof User,
-    private roleService: RolesService,
+    @Inject(forwardRef(() => RolesService)) private roleService: RolesService,
     private predictionRunService: PredictionRunService,
   ) {}
 

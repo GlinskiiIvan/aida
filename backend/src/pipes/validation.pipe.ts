@@ -12,6 +12,14 @@ type ValidationDtoClass = {
 
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
+  private toValidate(metatype?: ValidationDtoClass): boolean {
+    if (!metatype) return false;
+
+    const types: ValidationDtoClass[] = [String, Boolean, Number, Array, Object];
+
+    return !types.includes(metatype);
+  }
+
   private mapErrors(errors: ValidationError[]): ErrorMeta[] {
     const result: ErrorMeta[] = [];
 
@@ -44,7 +52,11 @@ export class ValidationPipe implements PipeTransform<any> {
   async transform(value: any, metadata: ArgumentMetadata) {
     const metatype = metadata.metatype as ValidationDtoClass | undefined;
 
-    if (!metatype) {
+    if (!this.toValidate(metatype)) {
+      return value;
+    }
+
+    if (value === undefined || value === null) {
       return value;
     }
 

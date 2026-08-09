@@ -216,11 +216,6 @@ const StudyCardPage = () => {
       model: "YOLO",
       version: "8x",
     },
-    {
-      label: "YOLOv5su",
-      model: "YOLO",
-      version: "5su",
-    },
   ];
 
   const predictionModal = useModal("predictionModal");
@@ -920,6 +915,7 @@ const StudyCardPage = () => {
             }
           >
             <Select
+              dropdownMode="sticky"
               value={model}
               onChangeValue={(val) => setModel(val)}
               options={modelsOptions}

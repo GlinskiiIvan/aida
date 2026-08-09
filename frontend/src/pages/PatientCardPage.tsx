@@ -33,6 +33,8 @@ import { WebSocketClient } from "../core/ws/websocket.ts";
 import { useWebSocket } from "../core/ws/useWebSocket.ts";
 import { type TaskMessageIngestionStudy } from "../core/ws/websocket.types.ts";
 
+import { enums } from "../common/response";
+
 const PatientCardPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -41,7 +43,7 @@ const PatientCardPage = () => {
   const { id } = useParams();
 
   const {
-    data: patient,
+    data: response,
     refetch,
     isSuccess: patientIsSuccess,
     fulfilledTimeStamp: patientFulfilledTimeStamp,
@@ -65,8 +67,9 @@ const PatientCardPage = () => {
     },
   ] = patientApi.useUpdatePatientMutation();
 
+  const patient = response?.status === enums.ResponseStatus.SUCCESS ? response.data : undefined;
+
   const patientInfoList: InfoListOption[] = [
-    { key: t("entities.patient.fields.doctor"), value: patient?.doctorId },
     { key: t("entities.patient.fields.fullName"), value: patient?.fullName },
     { key: t("entities.patient.fields.birthDate"), value: patient?.birthDate },
     { key: t("entities.patient.fields.gender"), value: patient?.gender },

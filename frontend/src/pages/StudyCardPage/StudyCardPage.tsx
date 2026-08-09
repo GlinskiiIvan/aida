@@ -41,6 +41,7 @@ import { useFullScreenImage } from "../../ui/copmonents/FullScreenImage/useFullS
 import { WebSocketClient } from "../../core/ws/websocket.ts";
 import { useWebSocket } from "../../core/ws/useWebSocket.ts";
 import { type TaskMessageInferenceStudy } from "../../core/ws/websocket.types.ts";
+import { enums } from "../../common/response";
 
 const StudyCardPage = () => {
   const { t } = useTranslation();
@@ -49,7 +50,7 @@ const StudyCardPage = () => {
   const { id } = useParams();
 
   const {
-    data: study,
+    data: response,
     refetch,
     isSuccess: studyIsSuccess,
     fulfilledTimeStamp: studyFulfilledTimeStamp,
@@ -73,10 +74,12 @@ const StudyCardPage = () => {
     },
   ] = studyApi.useUpdateStudyMutation();
 
+  const study = response?.status === enums.ResponseStatus.SUCCESS ? response.data : undefined;
+
   const [studyInfoList, setStudyInfoList] = React.useState<InfoListOption[][]>([]);
 
   React.useEffect(() => {
-    if (studyIsSuccess && study.status === "completed") {
+    if (studyIsSuccess && study?.status === "completed") {
       setStudyInfoList([
         [
           { key: t("entities.study.fields.status"), value: study?.status },
@@ -229,9 +232,13 @@ const StudyCardPage = () => {
       isError: predictIsError,
       error: predictError,
       fulfilledTimeStamp: predictFulfilledTimeStamp,
-      data: predictData,
+      data: resultPredict,
     },
   ] = inferenceApi.usePredictMutation();
+
+  const predictData =
+    resultPredict?.status === enums.ResponseStatus.SUCCESS ? resultPredict.data : undefined;
+
   const [model, setModel] = React.useState<ModelsOptions | undefined>(undefined);
 
   const canSubmitPredictionRun =
@@ -341,7 +348,7 @@ const StudyCardPage = () => {
   const isActiveImage = (id: number) => id === activeImage?.id;
 
   React.useEffect(() => {
-    if (studyIsSuccess && study.status === "completed") {
+    if (studyIsSuccess && study?.status === "completed") {
       imagesTrigger({ id: Number(id) });
     }
   }, [studyFulfilledTimeStamp]);
@@ -536,16 +543,16 @@ const StudyCardPage = () => {
 
   return (
     <>
-      {studyIsSuccess && study.status === "pending" && (
+      {studyIsSuccess && study?.status === "pending" && (
         <h1>Исследование загружено, следующий этап обработка...</h1>
       )}
-      {studyIsSuccess && study.status === "processing" && (
+      {studyIsSuccess && study?.status === "processing" && (
         <h1>Исследование ещё обрабатывается...</h1>
       )}
-      {studyIsSuccess && study.status === "failed" && (
+      {studyIsSuccess && study?.status === "failed" && (
         <h1>В процессе обработки исследования что то пошло не так...</h1>
       )}
-      {studyIsSuccess && study.status === "completed" && (
+      {studyIsSuccess && study?.status === "completed" && (
         <Page
           decorativeIcon="INFO"
           title={t("pages.studyCard.title")}

@@ -11,6 +11,8 @@ import { firstValueFrom } from "rxjs";
 import FormData from "form-data";
 import { Sequelize } from "sequelize-typescript";
 import { StudyProcessedDto } from "./dto/study-processed.dto";
+import { createResponse } from "../common/response";
+import { IngestionCodes } from "./contracts";
 
 @Injectable()
 export class IngestionService {
@@ -40,7 +42,10 @@ export class IngestionService {
       }),
     );
 
-    return data;
+    return createResponse<unknown, IngestionCodes>()
+      .success(IngestionCodes.INGESTION_STUDY_ACCEPTED)
+      .data(data)
+      .build();
   }
 
   async processStudy(dto: UploadStudyDto, dicomZip: Express.Multer.File) {

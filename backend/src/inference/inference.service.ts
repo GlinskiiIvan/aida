@@ -9,6 +9,8 @@ import { RabbitPublisher } from "src/rabbit/rabbit.publisher";
 import { RabbitRoutingKey } from "src/rabbit/rabbit.constants";
 import { Sequelize } from "sequelize-typescript";
 import { RabbitRpcService } from "src/rabbit/rabbit-rpc.service";
+import { createResponse } from "../common/response";
+import { InferenceCodes } from "./contracts";
 
 import { v7 as uuidv7 } from "uuid";
 
@@ -48,18 +50,24 @@ export class InferenceService {
 
       const response = await this.rabbitRpc.wait(requestId);
       if (response) {
-        return {
-          taskId: response.taskId,
-          status: "pending",
-        };
+        return createResponse<unknown, InferenceCodes>()
+          .success(InferenceCodes.PREDICT_ACCEPTED)
+          .data({
+            taskId: response.taskId,
+            status: "pending",
+          })
+          .build();
       }
 
-      return {
-        taskId: null,
-        status: "queued",
-        message:
-          "Задача поставлена в очередь. Выполнение начнется после появления доступного обработчика.",
-      };
+      const result = createResponse<unknown, InferenceCodes>();
+
+      return result
+        .success(InferenceCodes.PREDICT_ACCEPTED)
+        .data({
+          taskId: null,
+          status: "queued",
+        })
+        .build();
     } catch (error) {
       if (run) {
         await this.predictionRunService.update(run.id, { status: Status.Failed });

@@ -18,8 +18,8 @@ export const predictionRunQueryConfig = new QueryConfig({
   model: fields.stringField("model"),
   version: fields.stringField("version"),
   status: fields.enumField("status"),
-  created_at: fields.datetimeField("created_at"),
-  updated_at: fields.datetimeField("updated_at"),
+  createdAt: fields.datetimeField("createdAt"),
+  updatedAt: fields.datetimeField("updatedAt"),
 
   "study.id": fields.numberField("study.id", [StudyRel]),
   "study.patientId": fields.numberField("study.patientId", [StudyRel]),
@@ -39,12 +39,12 @@ export const predictionRunQueryConfig = new QueryConfig({
   "study.seriesCount": fields.numberField("study.seriesCount", [StudyRel]),
   "study.imagesCount": fields.numberField("study.imagesCount", [StudyRel]),
   "study.note": fields.stringField("study.note", [StudyRel]),
-  "study.created_at": fields.datetimeField("study.created_at", [StudyRel]),
-  "study.updated_at": fields.datetimeField("study.updated_at", [StudyRel]),
+  "study.createdAt": fields.datetimeField("study.createdAt", [StudyRel]),
+  "study.updatedAt": fields.datetimeField("study.updatedAt", [StudyRel]),
 
   "createdBy.id": fields.numberField("createdBy.id", [UserRel]),
   "createdBy.email": fields.stringField("createdBy.email", [UserRel]),
   "createdBy.banReason": fields.stringField("createdBy.banReason", [UserRel]),
-  "createdBy.created_at": fields.datetimeField("createdBy.created_at", [UserRel]),
-  "createdBy.updated_at": fields.datetimeField("createdBy.updated_at", [UserRel]),
+  "createdBy.createdAt": fields.datetimeField("createdBy.createdAt", [UserRel]),
+  "createdBy.updatedAt": fields.datetimeField("createdBy.updatedAt", [UserRel]),
 });

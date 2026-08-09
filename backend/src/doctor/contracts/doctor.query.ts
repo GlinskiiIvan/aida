@@ -18,12 +18,12 @@ export const doctorQueryConfig = new QueryConfig({
   department: fields.stringField("department"),
   licenseNumber: fields.stringField("licenseNumber"),
   note: fields.stringField("note"),
-  created_at: fields.datetimeField("created_at"),
-  updated_at: fields.datetimeField("updated_at"),
+  createdAt: fields.datetimeField("createdAt"),
+  updatedAt: fields.datetimeField("updatedAt"),
 
   "user.id": fields.numberField("user.id", [UserRel]),
   "user.email": fields.stringField("user.email", [UserRel]),
   "user.banReason": fields.stringField("user.banReason", [UserRel]),
-  "user.created_at": fields.datetimeField("user.created_at", [UserRel]),
-  "user.updated_at": fields.datetimeField("user.updated_at", [UserRel]),
+  "user.createdAt": fields.datetimeField("user.createdAt", [UserRel]),
+  "user.updatedAt": fields.datetimeField("user.updatedAt", [UserRel]),
 });

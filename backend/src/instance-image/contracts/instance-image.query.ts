@@ -12,8 +12,8 @@ export const imageQueryConfig = new QueryConfig({
   imageName: fields.stringField("imageName"),
   imagePath: fields.stringField("imagePath"),
   instanceNumber: fields.numberField("instanceNumber"),
-  created_at: fields.datetimeField("created_at"),
-  updated_at: fields.datetimeField("updated_at"),
+  createdAt: fields.datetimeField("createdAt"),
+  updatedAt: fields.datetimeField("updatedAt"),
 
   "series.id": fields.numberField("series.id", [SeriesRel]),
   "series.studyId": fields.numberField("series.studyId", [SeriesRel]),
@@ -25,6 +25,6 @@ export const imageQueryConfig = new QueryConfig({
   "series.path": fields.stringField("series.path", [SeriesRel]),
   "series.status": fields.enumField("series.status", [SeriesRel]),
   "series.description": fields.stringField("series.description", [SeriesRel]),
-  "series.created_at": fields.datetimeField("series.created_at", [SeriesRel]),
-  "series.updated_at": fields.datetimeField("series.updated_at", [SeriesRel]),
+  "series.createdAt": fields.datetimeField("series.createdAt", [SeriesRel]),
+  "series.updatedAt": fields.datetimeField("series.updatedAt", [SeriesRel]),
 });

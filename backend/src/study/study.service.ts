@@ -56,7 +56,7 @@ export class StudyService {
     console.log("params: ", params);
 
     let options: FindOptions = {
-      order: [["created_at", "DESC"]],
+      order: [["createdAt", "DESC"]],
     };
 
     const { data, resolvedPageination } = await executeQueryResponse(
@@ -83,7 +83,7 @@ export class StudyService {
 
     let options: FindOptions = {
       where: { patientId },
-      order: [["created_at", "DESC"]],
+      order: [["createdAt", "DESC"]],
     };
 
     const { data, resolvedPageination } = await executeQueryResponse(

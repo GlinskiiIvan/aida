@@ -44,7 +44,7 @@ export class RolesService {
     console.log("params: ", params);
 
     let options: FindOptions = {
-      order: [["created_at", "DESC"]],
+      order: [["createdAt", "DESC"]],
     };
 
     const { data, resolvedPageination } = await executeQueryResponse(
@@ -79,7 +79,7 @@ export class RolesService {
           required: true,
         },
       ],
-      order: [["created_at", "DESC"]],
+      order: [["createdAt", "DESC"]],
     };
 
     const { data, resolvedPageination } = await executeQueryResponse(

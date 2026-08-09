@@ -25,8 +25,8 @@ export const studyQueryConfig = new QueryConfig({
   seriesCount: fields.numberField("seriesCount"),
   imagesCount: fields.numberField("imagesCount"),
   note: fields.stringField("note"),
-  created_at: fields.datetimeField("created_at"),
-  updated_at: fields.datetimeField("updated_at"),
+  createdAt: fields.datetimeField("createdAt"),
+  updatedAt: fields.datetimeField("updatedAt"),
 
   "patient.id": fields.numberField("patient.id", [PatientRel]),
   "patient.doctorId": fields.numberField("patient.doctorId", [PatientRel]),
@@ -36,6 +36,6 @@ export const studyQueryConfig = new QueryConfig({
   "patient.phone": fields.stringField("patient.phone", [PatientRel]),
   "patient.email": fields.stringField("patient.email", [PatientRel]),
   "patient.note": fields.stringField("patient.note", [PatientRel]),
-  "patient.created_at": fields.datetimeField("patient.created_at", [PatientRel]),
-  "patient.updated_at": fields.datetimeField("patient.updated_at", [PatientRel]),
+  "patient.createdAt": fields.datetimeField("patient.createdAt", [PatientRel]),
+  "patient.updatedAt": fields.datetimeField("patient.updatedAt", [PatientRel]),
 });

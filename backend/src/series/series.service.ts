@@ -41,7 +41,7 @@ export class SeriesService {
     console.log("params: ", params);
 
     let options: FindOptions = {
-      order: [["created_at", "DESC"]],
+      order: [["createdAt", "DESC"]],
     };
 
     const { data, resolvedPageination } = await executeQueryResponse(
@@ -68,7 +68,7 @@ export class SeriesService {
 
     let options: FindOptions = {
       where: { studyId },
-      order: [["created_at", "DESC"]],
+      order: [["createdAt", "DESC"]],
     };
 
     const { data, resolvedPageination } = await executeQueryResponse(

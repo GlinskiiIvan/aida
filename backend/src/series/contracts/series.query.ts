@@ -17,8 +17,8 @@ export const seriesQueryConfig = new QueryConfig({
   path: fields.stringField("path"),
   status: fields.enumField("status"),
   description: fields.stringField("description"),
-  created_at: fields.datetimeField("created_at"),
-  updated_at: fields.datetimeField("updated_at"),
+  createdAt: fields.datetimeField("createdAt"),
+  updatedAt: fields.datetimeField("updatedAt"),
 
   "study.id": fields.numberField("study.id", [StudyRel]),
   "study.patientId": fields.numberField("study.patientId", [StudyRel]),
@@ -38,6 +38,6 @@ export const seriesQueryConfig = new QueryConfig({
   "study.seriesCount": fields.numberField("study.seriesCount", [StudyRel]),
   "study.imagesCount": fields.numberField("study.imagesCount", [StudyRel]),
   "study.note": fields.stringField("study.note", [StudyRel]),
-  "study.created_at": fields.datetimeField("study.created_at", [StudyRel]),
-  "study.updated_at": fields.datetimeField("study.updated_at", [StudyRel]),
+  "study.createdAt": fields.datetimeField("study.createdAt", [StudyRel]),
+  "study.updatedAt": fields.datetimeField("study.updatedAt", [StudyRel]),
 });

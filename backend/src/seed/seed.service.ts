@@ -1,12 +1,12 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { AuthService } from 'src/auth/auth.service';
-import { PermissionService } from 'src/permission/permission.service';
-import { RolesService } from 'src/roles/roles.service';
-import { UsersService } from 'src/users/users.service';
-import permissionsJson from './data/permissions.json';
-import { InjectModel } from '@nestjs/sequelize';
-import { Permission } from 'src/permission/entities/permission.entity';
-import { rolePermissionsSeed } from './seed.config';
+import { Injectable, OnModuleInit } from "@nestjs/common";
+import { AuthService } from "src/auth/auth.service";
+import { PermissionService } from "src/permission/permission.service";
+import { RolesService } from "src/roles/roles.service";
+import { UsersService } from "src/users/users.service";
+import permissionsJson from "./data/permissions.json";
+import { InjectModel } from "@nestjs/sequelize";
+import { Permission } from "src/permission/entities/permission.entity";
+import { rolePermissionsSeed } from "./seed.config";
 
 @Injectable()
 export class SeedService implements OnModuleInit {
@@ -31,12 +31,12 @@ export class SeedService implements OnModuleInit {
     if (count > 0) return;
 
     await this.rolesService.create({
-        value: 'admin',
-        description: 'Роль обладающая полным доступом'
+      value: "admin",
+      description: "Роль обладающая полным доступом",
     });
     await this.rolesService.create({
-        value: 'doctor',
-        description: 'Роль обладающая правами доктора'
+      value: "doctor",
+      description: "Роль обладающая правами доктора",
     });
   }
 
@@ -45,23 +45,23 @@ export class SeedService implements OnModuleInit {
 
     if (count > 0) return;
 
-    const admin = await this.authService.registration({
-        email: 'admin@admin.kz',
-        password: 'admin'
+    const { data: admin } = await this.authService.registration({
+      email: "admin@admin.kz",
+      password: "admin",
     });
 
     const adminRole = await this.rolesService.findOneByValue("admin");
 
     await this.usersService.addRole({
-        roleId: adminRole.id,
-        userId: admin.user.id
-    })
+      roleId: adminRole.id,
+      userId: admin.user.id,
+    });
   }
 
   private async seedPermissions() {
     const count = await this.permissionService.count();
 
-    if(count > 0) return;
+    if (count > 0) return;
 
     await this.permissionRepository.bulkCreate(permissionsJson);
   }
@@ -72,7 +72,7 @@ export class SeedService implements OnModuleInit {
 
       let permissionEntities = [];
 
-      if(perms.includes("*")) {
+      if (perms.includes("*")) {
         permissionEntities = await this.permissionRepository.findAll();
       } else {
         for (const element of perms) {
@@ -81,7 +81,7 @@ export class SeedService implements OnModuleInit {
         }
       }
 
-      await role.$set('permissions', permissionEntities);
+      await role.$set("permissions", permissionEntities);
     }
   }
 }

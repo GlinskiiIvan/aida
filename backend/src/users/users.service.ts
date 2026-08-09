@@ -1,4 +1,4 @@
-import { forwardRef, HttpException, HttpStatus, Injectable, Inject } from "@nestjs/common";
+import { forwardRef, HttpStatus, Injectable, Inject } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { InjectModel } from "@nestjs/sequelize";
@@ -10,6 +10,7 @@ import { UserBanDto } from "./dto/user-ban.dto";
 import { FindOptions, Includeable } from "sequelize";
 import { UpdateRolesDto } from "./dto/update-roles.dto";
 
+import { AppException } from "src/exceptions/app.exception";
 import { QueryParams, executeQueryResponse } from "../common/query";
 import { createResponse } from "../common/response";
 import { userQueryConfig, UserCodes } from "./contracts";
@@ -31,295 +32,196 @@ export class UsersService {
   };
 
   async create(dto: CreateUserDto) {
-    try {
-      const user = await this.repository.create(dto);
+    const user = await this.repository.create(dto);
 
-      const response = createResponse<User, UserCodes>();
-      return response.success(UserCodes.CREATE_SUCCESS).data(user).build();
-    } catch (error) {
-      const msg = `Ошибка при создании пользователя. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<User, UserCodes>();
+    return response.success(UserCodes.CREATE_SUCCESS).data(user).build();
   }
 
   async update(id: number, dto: UpdateUserDto) {
-    try {
-      const [_, updatedRows] = await this.repository.update(dto, {
-        where: { id },
-        returning: true,
-      });
+    const [_, updatedRows] = await this.repository.update(dto, {
+      where: { id },
+      returning: true,
+    });
 
-      const response = createResponse<User, UserCodes>();
-      return response.success(UserCodes.UPDATE_SUCCESS).data(updatedRows[0]).build();
-    } catch (error) {
-      const msg = `Ошибка при обновлении пользователя. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<User, UserCodes>();
+    return response.success(UserCodes.UPDATE_SUCCESS).data(updatedRows[0]).build();
   }
 
   async updateRoles(userId: number, dto: UpdateRolesDto) {
-    try {
-      const user = await this.findOneOrThrow(userId);
-      await user.$set("roles", dto.roles);
+    const user = await this.findOneOrThrow(userId);
+    await user.$set("roles", dto.roles);
 
-      const response = createResponse<Boolean, UserCodes>();
-      return response.success(UserCodes.UPDATE_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при обновлении ролей пользователя. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, UserCodes>();
+    return response.success(UserCodes.UPDATE_SUCCESS).data(true).build();
   }
 
   async restore(id: number) {
-    try {
-      await this.repository.restore({ where: { id } });
+    await this.repository.restore({ where: { id } });
 
-      const response = createResponse<Boolean, UserCodes>();
-      return response.success(UserCodes.RESTORE_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при восстановлении пользователя после мягкого удаления. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, UserCodes>();
+    return response.success(UserCodes.RESTORE_SUCCESS).data(true).build();
   }
 
   async findAll(params: QueryParams) {
     console.log("params: ", params);
 
-    try {
-      let options: FindOptions = {
-        order: [["created_at", "DESC"]],
-      };
+    let options: FindOptions = {
+      order: [["created_at", "DESC"]],
+    };
 
-      const { data, resolvedPageination } = await executeQueryResponse(
-        this.repository,
-        userQueryConfig,
-        params,
-        options,
-      );
+    const { data, resolvedPageination } = await executeQueryResponse(
+      this.repository,
+      userQueryConfig,
+      params,
+      options,
+    );
 
-      const response = createResponse<User[], UserCodes>();
-      return response
-        .success(UserCodes.FIND_ALL_SUCCESS)
-        .data(data)
-        .pagination(
-          resolvedPageination.total,
-          resolvedPageination.page_size,
-          resolvedPageination.page,
-        )
-        .build();
-    } catch (error) {
-      const msg = `Ошибка при получении всех пользователей. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<User[], UserCodes>();
+    return response
+      .success(UserCodes.FIND_ALL_SUCCESS)
+      .data(data)
+      .pagination(
+        resolvedPageination.total,
+        resolvedPageination.page_size,
+        resolvedPageination.page,
+      )
+      .build();
   }
 
   async findAllByRoleId(roleId: number, params: QueryParams) {
     console.log("params: ", params);
 
-    try {
-      let options: FindOptions = {
-        include: [
-          {
-            model: Role,
-            as: "roles",
-            where: { id: roleId },
-            through: { attributes: [] },
-            required: true,
-          },
-        ],
-        order: [["created_at", "DESC"]],
-      };
+    let options: FindOptions = {
+      include: [
+        {
+          model: Role,
+          as: "roles",
+          where: { id: roleId },
+          through: { attributes: [] },
+          required: true,
+        },
+      ],
+      order: [["created_at", "DESC"]],
+    };
 
-      const { data, resolvedPageination } = await executeQueryResponse(
-        this.repository,
-        userQueryConfig,
-        params,
-        options,
-      );
+    const { data, resolvedPageination } = await executeQueryResponse(
+      this.repository,
+      userQueryConfig,
+      params,
+      options,
+    );
 
-      const response = createResponse<User[], UserCodes>();
-      return response
-        .success(UserCodes.FIND_ALL_BY_ROLE_ID_SUCCESS)
-        .data(data)
-        .pagination(
-          resolvedPageination.total,
-          resolvedPageination.page_size,
-          resolvedPageination.page,
-        )
-        .build();
-    } catch (error) {
-      const msg = `Ошибка при получении всех пользователей. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<User[], UserCodes>();
+    return response
+      .success(UserCodes.FIND_ALL_BY_ROLE_ID_SUCCESS)
+      .data(data)
+      .pagination(
+        resolvedPageination.total,
+        resolvedPageination.page_size,
+        resolvedPageination.page,
+      )
+      .build();
   }
 
   async findAllRoles(id: number, params: QueryParams) {
-    try {
-      const user = await this.findOneOrThrow(id);
-      const roles = await this.roleService.findAllByUserId(id, params);
+    const user = await this.findOneOrThrow(id);
+    const roles = await this.roleService.findAllByUserId(id, params);
 
-      return roles;
-    } catch (error) {
-      const msg = `Ошибка при получении всех ролей пользователя по id. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    return roles;
   }
 
   async findAllRuns(id: number, params: QueryParams) {
-    try {
-      const user = await this.findOneOrThrow(id);
-      const runs = await this.predictionRunService.findAllByUserId(id, params);
+    const user = await this.findOneOrThrow(id);
+    const runs = await this.predictionRunService.findAllByUserId(id, params);
 
-      return runs;
-    } catch (error) {
-      const msg = `Ошибка при получении всех запусков предсказаний пользователя по id. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    return runs;
   }
 
   async findOneOrThrow(id: number, options?: Omit<FindOptions<User>, "where">) {
     const user = await this.repository.findByPk(id, options);
     if (!user) {
-      throw new HttpException("Пользователь не найден", HttpStatus.NOT_FOUND);
+      throw new AppException({
+        status: HttpStatus.NOT_FOUND,
+        code: UserCodes.FIND_ONE_OR_THROW_ERROR,
+      });
     }
     return user;
   }
 
   async findOne(id: number) {
-    try {
-      const user = await this.findOneOrThrow(id, {
-        include: [this.includeRoles],
-      });
+    const user = await this.findOneOrThrow(id, {
+      include: [this.includeRoles],
+    });
 
-      const response = createResponse<User, UserCodes>();
-      return response.success(UserCodes.FIND_ONE_SUCCESS).data(user).build();
-    } catch (error) {
-      const msg = `Ошибка при получении пользователя по id. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<User, UserCodes>();
+    return response.success(UserCodes.FIND_ONE_SUCCESS).data(user).build();
   }
 
   async findOneByEmail(email: string) {
-    try {
-      const user = await this.repository.findOne({
-        where: { email },
-        include: [this.includeRoles],
-      });
-      return user;
-    } catch (error) {
-      const msg = `Ошибка при получении пользователя по email. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const user = await this.repository.findOne({
+      where: { email },
+      include: [this.includeRoles],
+    });
+    return user;
   }
 
   async remove(id: number) {
-    try {
-      await this.findOneOrThrow(id);
-      await this.repository.destroy({ where: { id } });
+    await this.findOneOrThrow(id);
+    await this.repository.destroy({ where: { id } });
 
-      const response = createResponse<Boolean, UserCodes>();
-      return response.success(UserCodes.REMOVE_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при мягком удалении пользователя. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, UserCodes>();
+    return response.success(UserCodes.REMOVE_SUCCESS).data(true).build();
   }
 
   async forceRemove(id: number) {
-    try {
-      await this.repository.destroy({ where: { id }, force: true });
+    await this.repository.destroy({ where: { id }, force: true });
 
-      const response = createResponse<Boolean, UserCodes>();
-      return response.success(UserCodes.FORCE_REMOVE_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при жестком удалении пользователя. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, UserCodes>();
+    return response.success(UserCodes.FORCE_REMOVE_SUCCESS).data(true).build();
   }
 
   async addRole(dto: UserRoleDto) {
-    try {
-      const user = await this.findOneOrThrow(dto.userId);
-      const role = await this.roleService.findOneOrThrow(dto.roleId);
-      await user.$add("roles", role.id);
+    const user = await this.findOneOrThrow(dto.userId);
+    const role = await this.roleService.findOneOrThrow(dto.roleId);
+    await user.$add("roles", role.id);
 
-      const response = createResponse<Boolean, UserCodes>();
-      return response.success(UserCodes.ADD_ROLE_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при добавлении роли пользователю. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, UserCodes>();
+    return response.success(UserCodes.ADD_ROLE_SUCCESS).data(true).build();
   }
 
   async removeRole(dto: UserRoleDto) {
-    try {
-      const user = await this.findOneOrThrow(dto.userId);
-      const role = await this.roleService.findOneOrThrow(dto.roleId);
-      await user.$remove("roles", role.id);
+    const user = await this.findOneOrThrow(dto.userId);
+    const role = await this.roleService.findOneOrThrow(dto.roleId);
+    await user.$remove("roles", role.id);
 
-      const response = createResponse<Boolean, UserCodes>();
-      return response.success(UserCodes.REMOVE_ROLE_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при удалении роли у пользователя. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, UserCodes>();
+    return response.success(UserCodes.REMOVE_ROLE_SUCCESS).data(true).build();
   }
 
   async ban(dto: UserBanDto) {
-    try {
-      const user = await this.findOneOrThrow(dto.userId);
+    const user = await this.findOneOrThrow(dto.userId);
 
-      user.banned = true;
-      user.banReason = dto.banReason;
-      await user.save();
+    user.banned = true;
+    user.banReason = dto.banReason;
+    await user.save();
 
-      const response = createResponse<Boolean, UserCodes>();
-      return response.success(UserCodes.BAN_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при бане пользователя. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, UserCodes>();
+    return response.success(UserCodes.BAN_SUCCESS).data(true).build();
   }
 
   async unban(id: number) {
-    try {
-      const user = await this.findOneOrThrow(id);
+    const user = await this.findOneOrThrow(id);
 
-      user.banned = false;
-      user.banReason = null;
-      await user.save();
+    user.banned = false;
+    user.banReason = null;
+    await user.save();
 
-      const response = createResponse<Boolean, UserCodes>();
-      return response.success(UserCodes.UNBAN_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при снятии бана с пользователя. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, UserCodes>();
+    return response.success(UserCodes.UNBAN_SUCCESS).data(true).build();
   }
 
   async count() {
-    try {
-      return (await this.repository.findAndCountAll()).count;
-    } catch (error) {
-      const msg = `Ошибка подсчете пользователей. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    return (await this.repository.findAndCountAll()).count;
   }
 }

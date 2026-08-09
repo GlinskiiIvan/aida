@@ -42,4 +42,12 @@ export enum ValidationCodes {
   MIN = "validation.min",
   MAX = "validation.max",
   INVALID = "validation.invalid",
+  ERROR = "validation.error",
+}
+
+export enum CommonCodes {
+  INTERNAL_SERVER_ERROR = "common.internal_server_error",
+  UNKNOWN_OPERATION = "common.unknown_operation",
+  HTTP_ERROR = "common.http_error",
+  INVALID_QUERY_PARAMETER = "common.invalid_query_parameter",
 }

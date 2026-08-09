@@ -1,9 +1,11 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { JwtService } from "@nestjs/jwt";
 import { IS_PUBLIC_KEY } from "src/decorators/public.decorator";
 import { RolesService } from "src/roles/roles.service";
 import { QueryParams } from "src/common/query";
+import { AppException } from "src/exceptions/app.exception";
+import { AuthCodes } from "src/auth/contracts";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -27,9 +29,7 @@ export class AuthGuard implements CanActivate {
       const token = authHeader.split(" ")[1];
 
       if (bearer !== "Bearer" || !token) {
-        throw new UnauthorizedException({
-          message: "Пользователь не авторизован",
-        });
+        throw AppException.unauthorized(AuthCodes.AUTHENTICATION_REQUIRED);
       }
 
       const user = this.jwtService.verify(token, {
@@ -38,7 +38,10 @@ export class AuthGuard implements CanActivate {
 
       const roles = user.roles;
       const permissionsArrays = await Promise.all(
-        roles.map((role) => this.roleService.findAllPermissions(role.id, new QueryParams())),
+        roles.map(async (role) => {
+          const { data } = await this.roleService.findAllPermissions(role.id, new QueryParams());
+          return data ?? [];
+        }),
       );
 
       const permissions = [...new Set(permissionsArrays.flat().map((p) => p.value))];
@@ -50,9 +53,7 @@ export class AuthGuard implements CanActivate {
 
       return true;
     } catch (error) {
-      throw new UnauthorizedException({
-        message: "Пользователь не авторизован",
-      });
+      throw AppException.unauthorized(AuthCodes.AUTHENTICATION_REQUIRED);
     }
   }
 }

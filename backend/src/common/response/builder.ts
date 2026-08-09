@@ -53,6 +53,11 @@ export class ResponseBuilder<
     return this;
   }
 
+  traceId(id: string): this {
+    this.envelope.traceId = id;
+    return this;
+  }
+
   build(): ResponseEnvelope<TData, TCode, TErrorCode, TPayload, TStage, TStep> {
     return this.envelope;
   }

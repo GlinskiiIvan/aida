@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { PredictionRunDto } from "./dto/prediction-run.dto";
 import { StudyService } from "src/study/study.service";
 import { PredictionRunService } from "src/prediction-run/prediction-run.service";
@@ -64,9 +64,7 @@ export class InferenceService {
       if (run) {
         await this.predictionRunService.update(run.id, { status: Status.Failed });
       }
-      const msg = `Ошибка при выполнении предсказания исследовния. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+      throw error;
     }
   }
 

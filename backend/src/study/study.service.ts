@@ -1,4 +1,4 @@
-import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { forwardRef, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { CreateStudyDto } from "./dto/create-study.dto";
 import { UpdateStudyDto } from "./dto/update-study.dto";
 import { Patient } from "src/patient/entities/patient.entity";
@@ -10,6 +10,7 @@ import * as path from "path";
 import { PredictionRunService } from "src/prediction-run/prediction-run.service";
 import { InstanceImageService } from "src/instance-image/instance-image.service";
 
+import { AppException } from "src/exceptions/app.exception";
 import { QueryParams, executeQueryResponse } from "../common/query";
 import { createResponse } from "../common/response";
 import { studyQueryConfig, StudyCodes } from "./contracts";
@@ -33,219 +34,155 @@ export class StudyService {
   };
 
   async create(dto: CreateStudyDto) {
-    try {
-      await this.patientServise.findOneOrThrow(dto.patientId);
+    await this.patientServise.findOneOrThrow(dto.patientId);
 
-      const study = await this.repository.create(dto);
+    const study = await this.repository.create(dto);
 
-      study.path = path.join(
-        "/",
-        "storage",
-        `patients`,
-        `${dto.patientId}`,
-        `studies`,
-        `${study.id}`,
-      );
-      await study.save();
+    study.path = path.join(
+      "/",
+      "storage",
+      `patients`,
+      `${dto.patientId}`,
+      `studies`,
+      `${study.id}`,
+    );
+    await study.save();
 
-      const response = createResponse<Study, StudyCodes>();
-      return response.success(StudyCodes.CREATE_SUCCESS).data(study).build();
-    } catch (error) {
-      const msg = `Ошибка при создании исследования. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Study, StudyCodes>();
+    return response.success(StudyCodes.CREATE_SUCCESS).data(study).build();
   }
 
   async findAll(params: QueryParams) {
     console.log("params: ", params);
 
-    try {
-      let options: FindOptions = {
-        order: [["created_at", "DESC"]],
-      };
+    let options: FindOptions = {
+      order: [["created_at", "DESC"]],
+    };
 
-      const { data, resolvedPageination } = await executeQueryResponse(
-        this.repository,
-        studyQueryConfig,
-        params,
-        options,
-      );
+    const { data, resolvedPageination } = await executeQueryResponse(
+      this.repository,
+      studyQueryConfig,
+      params,
+      options,
+    );
 
-      const response = createResponse<Study[], StudyCodes>();
-      return response
-        .success(StudyCodes.FIND_ALL_SUCCESS)
-        .data(data)
-        .pagination(
-          resolvedPageination.total,
-          resolvedPageination.page_size,
-          resolvedPageination.page,
-        )
-        .build();
-    } catch (error) {
-      const msg = `Ошибка при получении всех исследований. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Study[], StudyCodes>();
+    return response
+      .success(StudyCodes.FIND_ALL_SUCCESS)
+      .data(data)
+      .pagination(
+        resolvedPageination.total,
+        resolvedPageination.page_size,
+        resolvedPageination.page,
+      )
+      .build();
   }
 
   async findAllByPatientId(patientId: number, params: QueryParams) {
     console.log("params: ", params);
 
-    try {
-      let options: FindOptions = {
-        where: { patientId },
-        order: [["created_at", "DESC"]],
-      };
+    let options: FindOptions = {
+      where: { patientId },
+      order: [["created_at", "DESC"]],
+    };
 
-      const { data, resolvedPageination } = await executeQueryResponse(
-        this.repository,
-        studyQueryConfig,
-        params,
-        options,
-      );
+    const { data, resolvedPageination } = await executeQueryResponse(
+      this.repository,
+      studyQueryConfig,
+      params,
+      options,
+    );
 
-      const response = createResponse<Study[], StudyCodes>();
-      return response
-        .success(StudyCodes.FIND_ALL_BY_PATIENT_ID_SUCCESS)
-        .data(data)
-        .pagination(
-          resolvedPageination.total,
-          resolvedPageination.page_size,
-          resolvedPageination.page,
-        )
-        .build();
-    } catch (error) {
-      const msg = `Ошибка при получении всех исследований. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Study[], StudyCodes>();
+    return response
+      .success(StudyCodes.FIND_ALL_BY_PATIENT_ID_SUCCESS)
+      .data(data)
+      .pagination(
+        resolvedPageination.total,
+        resolvedPageination.page_size,
+        resolvedPageination.page,
+      )
+      .build();
   }
 
   async findAllSeries(id: number, params: QueryParams) {
-    try {
-      const study = await this.findOneOrThrow(id);
-      const series = await this.seriesService.findAllByStudyId(id, params);
+    const study = await this.findOneOrThrow(id);
+    const series = await this.seriesService.findAllByStudyId(id, params);
 
-      return series;
-    } catch (error) {
-      const msg = `Ошибка при получении всех серий исследования по id. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    return series;
   }
 
   async findAllRuns(id: number, params: QueryParams) {
-    try {
-      const study = await this.findOneOrThrow(id);
-      const runs = await this.predictionRunService.findAllByStudyId(id, params);
+    const study = await this.findOneOrThrow(id);
+    const runs = await this.predictionRunService.findAllByStudyId(id, params);
 
-      return runs;
-    } catch (error) {
-      const msg = `Ошибка при получении всех запусков предсказаний исследования по id. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    return runs;
   }
 
   async findAllImages(id: number, params: QueryParams) {
-    try {
-      const study = await this.findOneOrThrow(id);
-      const images = await this.instanceImageService.findAllByStudyId(id, params);
+    const study = await this.findOneOrThrow(id);
+    const images = await this.instanceImageService.findAllByStudyId(id, params);
 
-      return images;
-    } catch (error) {
-      const msg = `Ошибка при получении всех изображений исследования по id. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    return images;
   }
 
   async findOneOrThrow(id: number, options?: Omit<FindOptions<Study>, "where">) {
     const study = await this.repository.findByPk(id, options);
     if (!study) {
-      throw new HttpException(`Исследование не найдено.`, HttpStatus.NOT_FOUND);
+      throw new AppException({
+        status: HttpStatus.NOT_FOUND,
+        code: StudyCodes.FIND_ONE_OR_THROW_ERROR,
+      });
     }
     return study;
   }
 
   async findOne(id: number) {
-    try {
-      const study = await this.findOneOrThrow(id, {
-        include: [this.includePatient],
-      });
+    const study = await this.findOneOrThrow(id, {
+      include: [this.includePatient],
+    });
 
-      const response = createResponse<Study, StudyCodes>();
-      return response.success(StudyCodes.FIND_ONE_SUCCESS).data(study).build();
-    } catch (error) {
-      const msg = `Ошибка при получении исследования по id. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Study, StudyCodes>();
+    return response.success(StudyCodes.FIND_ONE_SUCCESS).data(study).build();
   }
 
   async update(id: number, dto: UpdateStudyDto, transaction?: Transaction) {
-    try {
-      await this.findOneOrThrow(id);
-      const [_, updatedRows] = await this.repository.update(
-        {
-          ...dto,
-          studyDateTime: dto.studyDateTime ? new Date(dto.studyDateTime) : undefined,
-        },
-        {
-          where: { id },
-          returning: true,
-          transaction,
-        },
-      );
+    await this.findOneOrThrow(id);
+    const [_, updatedRows] = await this.repository.update(
+      {
+        ...dto,
+        studyDateTime: dto.studyDateTime ? new Date(dto.studyDateTime) : undefined,
+      },
+      {
+        where: { id },
+        returning: true,
+        transaction,
+      },
+    );
 
-      const response = createResponse<Study, StudyCodes>();
-      return response.success(StudyCodes.UPDATE_SUCCESS).data(updatedRows[0]).build();
-    } catch (error) {
-      console.error(error);
-      const msg = `Ошибка при обновлении исследования. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Study, StudyCodes>();
+    return response.success(StudyCodes.UPDATE_SUCCESS).data(updatedRows[0]).build();
   }
 
   async restore(id: number) {
-    try {
-      await this.repository.restore({ where: { id } });
+    await this.repository.restore({ where: { id } });
 
-      const response = createResponse<Boolean, StudyCodes>();
-      return response.success(StudyCodes.RESTORE_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при восстановлении исследования после мягкого удаления. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, StudyCodes>();
+    return response.success(StudyCodes.RESTORE_SUCCESS).data(true).build();
   }
 
   async remove(id: number) {
-    try {
-      await this.findOneOrThrow(id);
-      await this.repository.destroy({ where: { id } });
+    await this.findOneOrThrow(id);
+    await this.repository.destroy({ where: { id } });
 
-      const response = createResponse<Boolean, StudyCodes>();
-      return response.success(StudyCodes.REMOVE_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при мягком удалении исследования. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, StudyCodes>();
+    return response.success(StudyCodes.REMOVE_SUCCESS).data(true).build();
   }
 
   async forceRemove(id: number) {
-    try {
-      await this.repository.destroy({ where: { id }, force: true });
+    await this.repository.destroy({ where: { id }, force: true });
 
-      const response = createResponse<Boolean, StudyCodes>();
-      return response.success(StudyCodes.FORCE_REMOVE_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при жестком удалении исследования. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, StudyCodes>();
+    return response.success(StudyCodes.FORCE_REMOVE_SUCCESS).data(true).build();
   }
 }

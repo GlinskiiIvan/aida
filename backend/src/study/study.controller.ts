@@ -9,6 +9,8 @@ import { Series } from "src/series/entities/series.entity";
 import { PredictionRun } from "src/prediction-run/entities/prediction-run.entity";
 import { InstanceImage } from "src/instance-image/entities/instance-image.entity";
 import { QueryParams, QueryParamsPipe } from "../common/query";
+import { OperationCode } from "src/decorators/operation-code.decorator";
+import { StudyCodes } from "./contracts";
 
 @ApiBearerAuth("token")
 @ApiTags("Исследование")
@@ -19,6 +21,7 @@ export class StudyController {
   @ApiOperation({ summary: "Создание исследования" })
   @ApiResponse({ status: 200, type: Study })
   @Permissions("study:create")
+  @OperationCode(StudyCodes.CREATE_ERROR)
   @Post()
   create(@Body() dto: CreateStudyDto) {
     return this.studyService.create(dto);
@@ -27,6 +30,7 @@ export class StudyController {
   @ApiOperation({ summary: "Получение всех исследований" })
   @ApiResponse({ status: 200, type: [Study] })
   @Permissions("study:read")
+  @OperationCode(StudyCodes.FIND_ALL_ERROR)
   @Get()
   findAll(@Query("q", QueryParamsPipe) params: QueryParams) {
     return this.studyService.findAll(params);
@@ -35,6 +39,7 @@ export class StudyController {
   @ApiOperation({ summary: "Получение исследования по id" })
   @ApiResponse({ status: 200, type: Study })
   @Permissions("study:read")
+  @OperationCode(StudyCodes.FIND_ONE_ERROR)
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.studyService.findOne(+id);
@@ -43,6 +48,7 @@ export class StudyController {
   @ApiOperation({ summary: "Получение всех серий исследования по id" })
   @ApiResponse({ status: 200, type: [Series] })
   @Permissions("study:read")
+  @OperationCode(StudyCodes.FIND_ALL_SERIES_ERROR)
   @Get(":id/series")
   findAllSeries(@Param("id") id: string, @Query("q", QueryParamsPipe) params: QueryParams) {
     return this.studyService.findAllSeries(+id, params);
@@ -51,6 +57,7 @@ export class StudyController {
   @ApiOperation({ summary: "Получение всех запусков предсказаний исследования по id" })
   @ApiResponse({ status: 200, type: [PredictionRun] })
   @Permissions("study:read")
+  @OperationCode(StudyCodes.FIND_ALL_RUNS_ERROR)
   @Get(":id/runs")
   findAllRuns(@Param("id") id: string, @Query("q", QueryParamsPipe) params: QueryParams) {
     return this.studyService.findAllRuns(+id, params);
@@ -59,6 +66,7 @@ export class StudyController {
   @ApiOperation({ summary: "Получение всех изображений исследования по id" })
   @ApiResponse({ status: 200, type: [InstanceImage] })
   @Permissions("study:read")
+  @OperationCode(StudyCodes.FIND_ALL_IMAGES_ERROR)
   @Get(":id/images")
   findAllImages(@Param("id") id: string, @Query("q", QueryParamsPipe) params: QueryParams) {
     return this.studyService.findAllImages(+id, params);
@@ -67,6 +75,7 @@ export class StudyController {
   @ApiOperation({ summary: "Обновление исследования" })
   @ApiResponse({ status: 200, type: Study })
   @Permissions("study:update")
+  @OperationCode(StudyCodes.UPDATE_ERROR)
   @Patch(":id")
   update(@Param("id") id: string, @Body() dto: UpdateStudyDto) {
     return this.studyService.update(+id, dto);
@@ -75,6 +84,7 @@ export class StudyController {
   @ApiOperation({ summary: "Восстановление исследования после мягкого удаления" })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions("study:delete")
+  @OperationCode(StudyCodes.RESTORE_ERROR)
   @Patch(":id/restore")
   restore(@Param("id") id: string) {
     return this.studyService.restore(+id);
@@ -83,6 +93,7 @@ export class StudyController {
   @ApiOperation({ summary: "Мягкое удаление исследования" })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions("study:delete")
+  @OperationCode(StudyCodes.REMOVE_ERROR)
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.studyService.remove(+id);
@@ -91,6 +102,7 @@ export class StudyController {
   @ApiOperation({ summary: "Жесткое удаление исследования" })
   @ApiResponse({ status: 200, type: Boolean })
   @Permissions("study:delete")
+  @OperationCode(StudyCodes.FORCE_REMOVE_ERROR)
   @Delete(":id/force")
   forceRemove(@Param("id") id: string) {
     return this.studyService.forceRemove(+id);

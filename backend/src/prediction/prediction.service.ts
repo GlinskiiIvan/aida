@@ -1,4 +1,4 @@
-import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { forwardRef, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { CreatePredictionDto } from "./dto/create-prediction.dto";
 import { UpdatePredictionDto } from "./dto/update-prediction.dto";
 import { InjectModel } from "@nestjs/sequelize";
@@ -8,6 +8,7 @@ import { PredictionRun } from "src/prediction-run/entities/prediction-run.entity
 import { FindOptions, Includeable, Transaction } from "sequelize";
 import { InstanceImageService } from "src/instance-image/instance-image.service";
 
+import { AppException } from "src/exceptions/app.exception";
 import { QueryParams, executeQueryResponse } from "../common/query";
 import { createResponse } from "../common/response";
 import { predictionQueryConfig, PredictionCodes } from "./contracts";
@@ -28,206 +29,149 @@ export class PredictionService {
   };
 
   async create(dto: CreatePredictionDto) {
-    try {
-      await this.predictionRunService.findOneOrThrow(dto.runId);
-      await this.instanceImageService.findOneOrThrow(dto.imageId);
+    await this.predictionRunService.findOneOrThrow(dto.runId);
+    await this.instanceImageService.findOneOrThrow(dto.imageId);
 
-      const prediction = await this.repository.create(dto);
+    const prediction = await this.repository.create(dto);
 
-      const response = createResponse<Prediction, PredictionCodes>();
-      return response.success(PredictionCodes.CREATE_SUCCESS).data(prediction).build();
-    } catch (error) {
-      const msg = `Ошибка при создании предсказания. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Prediction, PredictionCodes>();
+    return response.success(PredictionCodes.CREATE_SUCCESS).data(prediction).build();
   }
 
   async bulkCreate(data: Prediction[], transaction: Transaction) {
-    try {
-      return this.repository.bulkCreate(data, { transaction });
-    } catch (error) {
-      const msg = `Ошибка при создании всех предсказаний исследования. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    return this.repository.bulkCreate(data, { transaction });
   }
 
   async findAll(params: QueryParams) {
     console.log("params: ", params);
 
-    try {
-      let options: FindOptions = {
-        order: [["created_at", "DESC"]],
-      };
+    let options: FindOptions = {
+      order: [["created_at", "DESC"]],
+    };
 
-      const { data, resolvedPageination } = await executeQueryResponse(
-        this.repository,
-        predictionQueryConfig,
-        params,
-        options,
-      );
+    const { data, resolvedPageination } = await executeQueryResponse(
+      this.repository,
+      predictionQueryConfig,
+      params,
+      options,
+    );
 
-      const response = createResponse<Prediction[], PredictionCodes>();
-      return response
-        .success(PredictionCodes.FIND_ALL_SUCCESS)
-        .data(data)
-        .pagination(
-          resolvedPageination.total,
-          resolvedPageination.page_size,
-          resolvedPageination.page,
-        )
-        .build();
-    } catch (error) {
-      const msg = `Ошибка при получении всех предсказаний. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Prediction[], PredictionCodes>();
+    return response
+      .success(PredictionCodes.FIND_ALL_SUCCESS)
+      .data(data)
+      .pagination(
+        resolvedPageination.total,
+        resolvedPageination.page_size,
+        resolvedPageination.page,
+      )
+      .build();
   }
 
   async findAllByImageId(imageId: number, params: QueryParams) {
     console.log("params: ", params);
 
-    try {
-      let options: FindOptions = {
-        where: { imageId },
-        order: [["created_at", "DESC"]],
-      };
+    let options: FindOptions = {
+      where: { imageId },
+      order: [["created_at", "DESC"]],
+    };
 
-      const { data, resolvedPageination } = await executeQueryResponse(
-        this.repository,
-        predictionQueryConfig,
-        params,
-        options,
-      );
+    const { data, resolvedPageination } = await executeQueryResponse(
+      this.repository,
+      predictionQueryConfig,
+      params,
+      options,
+    );
 
-      const response = createResponse<Prediction[], PredictionCodes>();
-      return response
-        .success(PredictionCodes.FIND_ALL_BY_IMAGE_ID_SUCCESS)
-        .data(data)
-        .pagination(
-          resolvedPageination.total,
-          resolvedPageination.page_size,
-          resolvedPageination.page,
-        )
-        .build();
-    } catch (error) {
-      const msg = `Ошибка при получении всех предсказаний. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Prediction[], PredictionCodes>();
+    return response
+      .success(PredictionCodes.FIND_ALL_BY_IMAGE_ID_SUCCESS)
+      .data(data)
+      .pagination(
+        resolvedPageination.total,
+        resolvedPageination.page_size,
+        resolvedPageination.page,
+      )
+      .build();
   }
 
   async findAllByRunId(runId: number, params: QueryParams) {
     console.log("params: ", params);
 
-    try {
-      let options: FindOptions = {
-        where: { runId },
-        order: [["created_at", "DESC"]],
-      };
+    let options: FindOptions = {
+      where: { runId },
+      order: [["created_at", "DESC"]],
+    };
 
-      const { data, resolvedPageination } = await executeQueryResponse(
-        this.repository,
-        predictionQueryConfig,
-        params,
-        options,
-      );
+    const { data, resolvedPageination } = await executeQueryResponse(
+      this.repository,
+      predictionQueryConfig,
+      params,
+      options,
+    );
 
-      const response = createResponse<Prediction[], PredictionCodes>();
-      return response
-        .success(PredictionCodes.FIND_ALL_BY_RUN_ID_SUCCESS)
-        .data(data)
-        .pagination(
-          resolvedPageination.total,
-          resolvedPageination.page_size,
-          resolvedPageination.page,
-        )
-        .build();
-    } catch (error) {
-      const msg = `Ошибка при получении всех предсказаний для запуска по id. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Prediction[], PredictionCodes>();
+    return response
+      .success(PredictionCodes.FIND_ALL_BY_RUN_ID_SUCCESS)
+      .data(data)
+      .pagination(
+        resolvedPageination.total,
+        resolvedPageination.page_size,
+        resolvedPageination.page,
+      )
+      .build();
   }
 
   async findOneOrThrow(id: number, options?: Omit<FindOptions<Prediction>, "where">) {
     const prediction = await this.repository.findByPk(id, options);
     if (!prediction) {
-      throw new HttpException(`Предсказание не найдено.`, HttpStatus.NOT_FOUND);
+      throw new AppException({
+        status: HttpStatus.NOT_FOUND,
+        code: PredictionCodes.FIND_ONE_OR_THROW_ERROR,
+      });
     }
     return prediction;
   }
 
   async findOne(id: number) {
-    try {
-      const prediction = await this.findOneOrThrow(id, {
-        include: [this.includeRun],
-      });
+    const prediction = await this.findOneOrThrow(id, {
+      include: [this.includeRun],
+    });
 
-      const response = createResponse<Prediction, PredictionCodes>();
-      return response.success(PredictionCodes.FIND_ONE_SUCCESS).data(prediction).build();
-    } catch (error) {
-      const msg = `Ошибка при получении предсказания по id. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Prediction, PredictionCodes>();
+    return response.success(PredictionCodes.FIND_ONE_SUCCESS).data(prediction).build();
   }
 
   async update(id: number, dto: UpdatePredictionDto) {
-    try {
-      await this.findOneOrThrow(id);
-      const [_, updatedRows] = await this.repository.update(dto, {
-        where: { id },
-        returning: true,
-      });
+    await this.findOneOrThrow(id);
+    const [_, updatedRows] = await this.repository.update(dto, {
+      where: { id },
+      returning: true,
+    });
 
-      const response = createResponse<Prediction, PredictionCodes>();
-      return response.success(PredictionCodes.UPDATE_SUCCESS).data(updatedRows[0]).build();
-    } catch (error) {
-      const msg = `Ошибка при обновлении предсказания. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Prediction, PredictionCodes>();
+    return response.success(PredictionCodes.UPDATE_SUCCESS).data(updatedRows[0]).build();
   }
 
   async remove(id: number) {
-    try {
-      await this.findOneOrThrow(id);
-      await this.repository.destroy({ where: { id } });
+    await this.findOneOrThrow(id);
+    await this.repository.destroy({ where: { id } });
 
-      const response = createResponse<Boolean, PredictionCodes>();
-      return response.success(PredictionCodes.REMOVE_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при мягком удалении предсказания. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, PredictionCodes>();
+    return response.success(PredictionCodes.REMOVE_SUCCESS).data(true).build();
   }
 
   async forceRemove(id: number) {
-    try {
-      await this.repository.destroy({ where: { id }, force: true });
+    await this.repository.destroy({ where: { id }, force: true });
 
-      const response = createResponse<Boolean, PredictionCodes>();
-      return response.success(PredictionCodes.FORCE_REMOVE_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при жестком удалении предсказания. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, PredictionCodes>();
+    return response.success(PredictionCodes.FORCE_REMOVE_SUCCESS).data(true).build();
   }
 
   async restore(id: number) {
-    try {
-      await this.repository.restore({ where: { id } });
+    await this.repository.restore({ where: { id } });
 
-      const response = createResponse<Boolean, PredictionCodes>();
-      return response.success(PredictionCodes.RESTORE_SUCCESS).data(true).build();
-    } catch (error) {
-      const msg = `Ошибка при восстановлении предсказания после мягкого удаления. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
-    }
+    const response = createResponse<Boolean, PredictionCodes>();
+    return response.success(PredictionCodes.RESTORE_SUCCESS).data(true).build();
   }
 }

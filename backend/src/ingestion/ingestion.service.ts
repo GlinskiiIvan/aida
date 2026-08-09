@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { FilesService } from "src/files/files.service";
 import { InstanceImageService } from "src/instance-image/instance-image.service";
 import { SeriesService } from "src/series/series.service";
@@ -60,9 +60,8 @@ export class IngestionService {
       if (study) {
         await this.studyService.update(study.id, { status: Status.Failed });
       }
-      const msg = `Ошибка при обработке исследования. ${error.message}`;
-      console.log(msg);
-      throw new HttpException(msg, error.status || HttpStatus.BAD_REQUEST);
+
+      throw error;
     }
   }
 

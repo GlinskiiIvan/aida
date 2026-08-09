@@ -50,4 +50,5 @@ export type ResponseEnvelope<
   pagination?: PaginationMeta;
   notify?: NotificationMeta;
   process?: ProcessState<TPayload, TStage, TStep>;
+  traceId?: string;
 };

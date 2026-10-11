@@ -6,6 +6,7 @@ import {
   Select,
   Stack,
   TextField,
+  TaskNotifications,
   type ColumnTable,
   type SelectItem,
 } from "../ui/copmonents";
@@ -157,10 +158,14 @@ const StudyPage = () => {
   const [taskId, setTaskId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    if (uploadStudyMutation[1].data?.task_id) {
-      setTaskId(uploadStudyMutation[1].data?.task_id);
+    if (uploadStudyMutation[1].data?.data?.task_id) {
+      setTaskId(uploadStudyMutation[1].data?.data?.task_id);
     }
-  }, [uploadStudyMutation[1].data?.task_id]);
+  }, [uploadStudyMutation[1].data?.data?.task_id]);
+
+  React.useEffect(() => {
+    console.log("[UPLOAD RESPONSE]", uploadStudyMutation[1].data);
+  }, [uploadStudyMutation[1].data]);
 
   const socket = React.useMemo(
     () => new WebSocketClient<TaskMessageIngestionStudy>(`ws://localhost:8002/ws/tasks/${taskId}`),
@@ -191,6 +196,7 @@ const StudyPage = () => {
       title={t("pages.studies.title")}
       description={t("pages.studies.description")}
     >
+      <TaskNotifications socket={socket} />
       <ManagedTable
         blockPops={{
           title: t("entities.study.plural"),

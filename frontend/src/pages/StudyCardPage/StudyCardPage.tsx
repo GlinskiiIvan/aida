@@ -15,6 +15,9 @@ import {
   TBody,
   TextField,
   THead,
+  TaskNotifications,
+  ActionNotifications,
+  type ActionNotification,
   type ColumnTable,
   type SelectItem,
 } from "../../ui/copmonents";
@@ -27,6 +30,7 @@ import { addNotice } from "../../store/slices/notices";
 import { studyApi, type InstanceImage, type UpdateStudyDto } from "../../store/services/study";
 import { inferenceApi } from "../../store/services/inference";
 
+import { ResponseStatus } from "../../common/response/enums";
 import type { InfoListOption } from "../../ui/copmonents/InfoList/InfoList";
 import { formatedDate } from "../../utils";
 import { useModal } from "../../ui/copmonents/Modal/useModal";
@@ -62,6 +66,7 @@ const StudyCardPage = () => {
       isError: studyRemoveIsError,
       error: studyRemoveError,
       fulfilledTimeStamp: studyRemoveFulfilledTimeStamp,
+      data: removeData,
     },
   ] = studyApi.useRemoveStudyMutation();
   const [
@@ -71,6 +76,7 @@ const StudyCardPage = () => {
       isError: studyUpdateIsError,
       error: studyUpdateError,
       fulfilledTimeStamp: studyUpdateFulfilledTimeStamp,
+      data: updateData,
     },
   ] = studyApi.useUpdateStudyMutation();
 
@@ -532,12 +538,78 @@ const StudyCardPage = () => {
   });
   // WS END ///////////////////////////////////////////////////////////////////
 
+  const [actionNotifications, setActionNotifications] = React.useState<ActionNotification[]>([]);
+
+  const showActionNotification = (status: "completed" | "failed", message: string) => {
+    const id = Date.now() + Math.random();
+
+    setActionNotifications((current) =>
+      [
+        ...current,
+        {
+          id,
+          status,
+          title:
+            status === "completed" ? t("notification.type.success") : t("notification.type.error"),
+          message,
+        },
+      ].slice(-5),
+    );
+
+    window.setTimeout(() => {
+      setActionNotifications((current) => current.filter((item) => item.id !== id));
+    }, 5000);
+  };
+
+  const dismissActionNotification = (id: number) => {
+    setActionNotifications((current) => current.filter((item) => item.id !== id));
+  };
+
+  React.useEffect(() => {
+    if (studyUpdateIsError) {
+      console.log("Ошибка обновления исследования:", studyUpdateError);
+      showActionNotification("failed", t("pages.studyCard.notifications.updateError"));
+      return;
+    }
+
+    if (!updateData) return;
+
+    if (updateData.status === ResponseStatus.SUCCESS) {
+      showActionNotification("completed", t("pages.studyCard.notifications.updateSuccess"));
+    } else {
+      console.log("Ошибка обновления исследования:", updateData);
+      showActionNotification("failed", t("pages.studyCard.notifications.updateError"));
+    }
+  }, [updateData, studyUpdateIsError, studyUpdateError]);
+
+  React.useEffect(() => {
+    if (studyRemoveIsError) {
+      console.log("Ошибка удаления исследования:", studyRemoveError);
+      showActionNotification("failed", t("pages.studyCard.notifications.deleteError"));
+      return;
+    }
+
+    if (!removeData) return;
+
+    if (removeData.status === ResponseStatus.SUCCESS) {
+      showActionNotification("completed", t("pages.studyCard.notifications.deleteSuccess"));
+    } else {
+      console.log("Ошибка удаления исследования:", removeData);
+      showActionNotification("failed", t("pages.studyCard.notifications.deleteError"));
+    }
+  }, [removeData, studyRemoveIsError, studyRemoveError]);
+
   if (!studyIsSuccess) {
     return <h1>Загрузка...</h1>;
   }
 
   return (
     <>
+      <TaskNotifications socket={socket} />
+      <ActionNotifications
+        notifications={actionNotifications}
+        onDismiss={dismissActionNotification}
+      />
       {studyIsSuccess && study?.status === "pending" && (
         <h1>Исследование загружено, следующий этап обработка...</h1>
       )}

@@ -5,10 +5,13 @@ import {
   Select,
   Stack,
   TextField,
+  ActionNotifications,
+  type ActionNotification,
   type ColumnTable,
   type SelectItem,
 } from "../ui/copmonents";
 import { Gender } from "../common/enums";
+import { ResponseStatus } from "../common/response/enums";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../routes";
@@ -117,12 +120,103 @@ const PatientPage = () => {
     setRecordFields(initialRecordData);
   };
   // ACTIONS END ///////////////////////////////////////////////////////////////////
+  const [actionNotifications, setActionNotifications] = React.useState<ActionNotification[]>([]);
+
+  const showActionNotification = (status: "completed" | "failed", message: string) => {
+    const id = Date.now() + Math.random();
+
+    setActionNotifications((current) =>
+      [
+        ...current,
+        {
+          id,
+          status,
+          title:
+            status === "completed" ? t("notification.type.success") : t("notification.type.error"),
+          message,
+        },
+      ].slice(-5),
+    );
+
+    window.setTimeout(() => {
+      setActionNotifications((current) => current.filter((item) => item.id !== id));
+    }, 5000);
+  };
+
+  const dismissActionNotification = (id: number) => {
+    setActionNotifications((current) => current.filter((item) => item.id !== id));
+  };
+
+  React.useEffect(() => {
+    const result = createMutation[1];
+
+    if (result.isError) {
+      console.log("Ошибка создания пациента:", result.error);
+      showActionNotification("failed", t("pages.patients.notifications.createError"));
+      return;
+    }
+
+    const response = result.data;
+    if (!response) return;
+
+    if (response.status === ResponseStatus.SUCCESS) {
+      showActionNotification("completed", t("pages.patients.notifications.createSuccess"));
+    } else {
+      console.log("Ошибка создания пациента:", response);
+      showActionNotification("failed", t("pages.patients.notifications.createError"));
+    }
+  }, [createMutation[1].data, createMutation[1].isError]);
+
+  React.useEffect(() => {
+    const result = updateMutation[1];
+
+    if (result.isError) {
+      console.log("Ошибка обновления пациента:", result.error);
+      showActionNotification("failed", t("pages.patients.notifications.updateError"));
+      return;
+    }
+
+    const response = result.data;
+    if (!response) return;
+
+    if (response.status === ResponseStatus.SUCCESS) {
+      showActionNotification("completed", t("pages.patients.notifications.updateSuccess"));
+    } else {
+      console.log("Ошибка обновления пациента:", response);
+      showActionNotification("failed", t("pages.patients.notifications.updateError"));
+    }
+  }, [updateMutation[1].data, updateMutation[1].isError]);
+
+  React.useEffect(() => {
+    const result = removeMutation[1];
+
+    if (result.isError) {
+      console.log("Ошибка удаления пациента:", result.error);
+      showActionNotification("failed", t("pages.patients.notifications.deleteError"));
+      return;
+    }
+
+    const response = result.data;
+    if (!response) return;
+
+    if (response.status === ResponseStatus.SUCCESS) {
+      showActionNotification("completed", t("pages.patients.notifications.deleteSuccess"));
+    } else {
+      console.log("Ошибка удаления пациента:", response);
+      showActionNotification("failed", t("pages.patients.notifications.deleteError"));
+    }
+  }, [removeMutation[1].data, removeMutation[1].isError]);
+
   return (
     <Page
       decorativeIcon="INFO"
       title={t("pages.patients.title")}
       description={t("pages.patients.description")}
     >
+      <ActionNotifications
+        notifications={actionNotifications}
+        onDismiss={dismissActionNotification}
+      />
       <ManagedTable
         blockPops={{
           title: t("entities.patient.plural"),
@@ -221,4 +315,3 @@ const PatientPage = () => {
 };
 
 export default PatientPage;
-

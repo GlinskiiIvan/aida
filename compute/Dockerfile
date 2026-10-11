@@ -15,7 +15,13 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 
 #RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
-RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cu124
+#RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cu124
+RUN python -m pip install --no-cache-dir --upgrade pip setuptools wheel
+
+RUN python -m pip install --no-cache-dir \
+  torch==2.6.0 torchvision==0.21.0 \
+  --index-url https://pypi.org/simple \
+  --extra-index-url https://download.pytorch.org/whl/cu124
 
 RUN pip install --no-cache-dir -r requirements.txt
 

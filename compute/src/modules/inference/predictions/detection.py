@@ -200,4 +200,34 @@ def predict(
             },
         )
 
-    return predictions
+    image_tear_confidences = []
+
+    for prediction in predictions:
+        tear_confidences = [
+            item["confidence"]
+            for item in prediction["rawOutput"]
+            if item["class"] == ResultClass.Tear
+        ]
+
+        image_tear_confidences.append(max(tear_confidences, default=0.0))
+
+    # Эвристическая агрегация по всему исследованию.
+    # Чем больше уверенных обнаружений, тем выше итоговая оценка.
+    normal_score = 1.0
+    for confidence in image_tear_confidences:
+        normal_score *= 1.0 - confidence
+
+    tear_score = 1.0 - normal_score
+
+    score_sum = tear_score + normal_score
+
+    summary = {
+        "runId": run_id,
+        "tearProbability": round(tear_score / score_sum, 4),
+        "normalProbability": round(normal_score / score_sum, 4),
+    }
+
+    return {
+        "predictions": predictions,
+        "summary": summary,
+    }

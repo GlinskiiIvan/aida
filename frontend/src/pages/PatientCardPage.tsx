@@ -11,6 +11,9 @@ import {
   Select,
   Stack,
   TextField,
+  TaskNotifications,
+  ActionNotifications,
+  type ActionNotification,
   type ColumnTable,
   type SelectItem,
 } from "../ui/copmonents";
@@ -20,6 +23,7 @@ import type { InfoListOption } from "../ui/copmonents/InfoList/InfoList";
 import { useDispatch } from "react-redux";
 
 import { Gender } from "../common/enums";
+import { ResponseStatus } from "../common/response/enums";
 import { useModal } from "../ui/copmonents/Modal/useModal";
 import { formatedDate } from "../utils";
 import { ROUTES } from "../routes";
@@ -55,6 +59,7 @@ const PatientCardPage = () => {
       isError: removeIsError,
       error: removeError,
       fulfilledTimeStamp: removeFulfilledTimeStamp,
+      data: removeData,
     },
   ] = patientApi.useRemovePatientMutation();
   const [
@@ -64,6 +69,7 @@ const PatientCardPage = () => {
       isError: updateIsError,
       error: updateError,
       fulfilledTimeStamp: updateFulfilledTimeStamp,
+      data: updateData,
     },
   ] = patientApi.useUpdatePatientMutation();
 
@@ -336,10 +342,10 @@ const PatientCardPage = () => {
   const [taskId, setTaskId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    if (uploadStudyMutation[1].data?.task_id) {
-      setTaskId(uploadStudyMutation[1].data?.task_id);
+    if (uploadStudyMutation[1].data?.data?.task_id) {
+      setTaskId(uploadStudyMutation[1].data?.data?.task_id);
     }
-  }, [uploadStudyMutation[1].data?.task_id]);
+  }, [uploadStudyMutation[1].data?.data?.task_id]);
 
   const socket = React.useMemo(
     () => new WebSocketClient<TaskMessageIngestionStudy>(`ws://localhost:8002/ws/tasks/${taskId}`),
@@ -363,6 +369,67 @@ const PatientCardPage = () => {
     }
   });
   // WS END ///////////////////////////////////////////////////////////////////
+  //
+  const [actionNotifications, setActionNotifications] = React.useState<ActionNotification[]>([]);
+
+  const showActionNotification = (status: "completed" | "failed", message: string) => {
+    const id = Date.now() + Math.random();
+
+    setActionNotifications((current) =>
+      [
+        ...current,
+        {
+          id,
+          status,
+          title:
+            status === "completed" ? t("notification.type.success") : t("notification.type.error"),
+          message,
+        },
+      ].slice(-5),
+    );
+
+    window.setTimeout(() => {
+      setActionNotifications((current) => current.filter((item) => item.id !== id));
+    }, 5000);
+  };
+
+  const dismissActionNotification = (id: number) => {
+    setActionNotifications((current) => current.filter((item) => item.id !== id));
+  };
+
+  React.useEffect(() => {
+    if (updateIsError) {
+      console.log("Ошибка обновления пациента:", updateError);
+      showActionNotification("failed", t("pages.patientCard.notifications.updateError"));
+      return;
+    }
+
+    if (!updateData) return;
+
+    if (updateData.status === ResponseStatus.SUCCESS) {
+      showActionNotification("completed", t("pages.patientCard.notifications.updateSuccess"));
+    } else {
+      console.log("Ошибка обновления пациента:", updateData);
+      showActionNotification("failed", t("pages.patientCard.notifications.updateError"));
+    }
+  }, [updateData, updateIsError, updateError]);
+
+  React.useEffect(() => {
+    if (removeIsError) {
+      console.log("Ошибка удаления пациента:", removeError);
+      showActionNotification("failed", t("pages.patientCard.notifications.deleteError"));
+      return;
+    }
+
+    if (!removeData) return;
+
+    if (removeData.status === ResponseStatus.SUCCESS) {
+      showActionNotification("completed", t("pages.patientCard.notifications.deleteSuccess"));
+    } else {
+      console.log("Ошибка удаления пациента:", removeData);
+      showActionNotification("failed", t("pages.patientCard.notifications.deleteError"));
+    }
+  }, [removeData, removeIsError, removeError]);
 
   return (
     <Page
@@ -370,6 +437,11 @@ const PatientCardPage = () => {
       title={t("pages.patientCard.title")}
       description={t("pages.patientCard.description")}
     >
+      <TaskNotifications socket={socket} />
+      <ActionNotifications
+        notifications={actionNotifications}
+        onDismiss={dismissActionNotification}
+      />
       <Block
         title={patient?.fullName}
         decorativeIcon="INFO"

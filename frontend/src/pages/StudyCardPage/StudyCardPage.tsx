@@ -218,9 +218,19 @@ const StudyCardPage = () => {
 
   const modelsOptions: ModelsOptions[] = [
     {
+      label: "YOLOv8l",
+      model: "YOLO",
+      version: "8l",
+    },
+    {
       label: "YOLOv8x",
       model: "YOLO",
       version: "8x",
+    },
+    {
+      label: "YOLOv10x",
+      model: "YOLO",
+      version: "10x",
     },
   ];
 

@@ -99,7 +99,7 @@ def predict_old(
 def predict(
     task_id: str,
     run_id: int,
-    model_name: str,
+    model_version: str,
     images: list[schema.PredictionImageDTO],
 ):
     BATCH_SIZE = 16
@@ -109,7 +109,7 @@ def predict(
     DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {DEVICE}")
 
-    model_path = os.path.join(MODELS_DIR, "yolo", "bbox", "8x.pt")
+    model_path = os.path.join(MODELS_DIR, "yolo", "bbox", f"{model_version}.pt")
     model = YOLO(model_path)
 
     predictions = []

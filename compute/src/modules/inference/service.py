@@ -12,7 +12,7 @@ async def predict_study(task_id: str, dto: schema.PredictionRunDTO):
         result = detection.predict(
             task_id=task_id,
             run_id=dto.runId,
-            model_name=dto.model_name,
+            model_version=dto.model_version,
             images=dto.images,
         )
 

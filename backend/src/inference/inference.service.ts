@@ -44,7 +44,7 @@ export class InferenceService {
         requestId,
         runId: run.id,
         type: "det",
-        model_name: "yolo_8x",
+        model_version: dto.version,
         images: images.data.map((image) => ({ id: image.id, path: image.imagePath })),
       });
 

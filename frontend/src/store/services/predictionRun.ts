@@ -4,12 +4,32 @@ import { api } from "../api/api";
 import type { PredictionBase } from "./prediction";
 import { type ResponseEnvelope, enums } from "../../common/response";
 
+export interface PredictionSummary {
+  totalImages: number;
+
+  // Эвристические оценки, не клинические вероятности
+  tearProbability: number;
+  normalProbability: number;
+
+  // Статистика изображений
+  imagesWithTear: number;
+  normalImages: number;
+  imagesWithoutDetection: number;
+  unknownImages: number;
+
+  // Статистика обнаружений
+  tearDetections: number;
+  maxTearConfidence: number;
+  meanTearConfidence: number;
+}
+
 export type PredictionRun = {
   id: number;
   studyId: number;
   createdById: number;
   model: string;
   version: string;
+  summary: PredictionSummary | null;
   status: Status;
   createdAt: Date;
   updatedAt: Date;
@@ -53,6 +73,15 @@ export enum PredictionRunCodes {
 
 export const predictionRunApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    findPredictionRunById: builder.query<
+      ResponseEnvelope<PredictionRun, PredictionRunCodes>,
+      { id: number }
+    >({
+      query: ({ id }) => `prediction-run/${id}`,
+
+      providesTags: (_result, _error, { id }) => [{ type: "prediction-runs", id }],
+    }),
+
     findAllPredictionsByRun: builder.query<
       ResponseEnvelope<PredictionBase[], PredictionRunCodes>,
       FindAllParams & { runId: number }
@@ -99,5 +128,9 @@ export const predictionRunApi = api.injectEndpoints({
   }),
 });
 
-export const { useFindAllPredictionsByRunQuery, useLazyFindAllPredictionsByRunQuery } =
-  predictionRunApi;
+export const {
+  useFindPredictionRunByIdQuery,
+  useLazyFindPredictionRunByIdQuery,
+  useFindAllPredictionsByRunQuery,
+  useLazyFindAllPredictionsByRunQuery,
+} = predictionRunApi;

@@ -201,30 +201,61 @@ def predict(
         )
 
     image_tear_confidences = []
+    tear_detections = []
+    images_with_tear = 0
+    images_without_detection = 0
+    normal_images = 0
+    unknown_images = 0
 
     for prediction in predictions:
+        raw_output = prediction["rawOutput"]
+
         tear_confidences = [
             item["confidence"]
-            for item in prediction["rawOutput"]
+            for item in raw_output
             if item["class"] == ResultClass.Tear
         ]
 
         image_tear_confidences.append(max(tear_confidences, default=0.0))
 
-    # Эвристическая агрегация по всему исследованию.
-    # Чем больше уверенных обнаружений, тем выше итоговая оценка.
+        tear_detections.extend(tear_confidences)
+
+        if tear_confidences:
+            images_with_tear += 1
+
+        if not raw_output:
+            images_without_detection += 1
+
+        if prediction["resultClass"] == ResultClass.Normal:
+            normal_images += 1
+        elif prediction["resultClass"] is None:
+            unknown_images += 1
+
+    # Эвристическая агрегация по всему исследованию
     normal_score = 1.0
+
     for confidence in image_tear_confidences:
         normal_score *= 1.0 - confidence
 
     tear_score = 1.0 - normal_score
-
     score_sum = tear_score + normal_score
 
     summary = {
-        "runId": run_id,
+        "totalImages": total_images,
+        # Итоговые эвристические оценки
         "tearProbability": round(tear_score / score_sum, 4),
         "normalProbability": round(normal_score / score_sum, 4),
+        # Общая статистика исследования
+        "imagesWithTear": images_with_tear,
+        "normalImages": normal_images,
+        "imagesWithoutDetection": images_without_detection,
+        "unknownImages": unknown_images,
+        # Статистика обнаружений повреждения
+        "tearDetections": len(tear_detections),
+        "maxTearConfidence": round(max(tear_detections, default=0.0), 4),
+        "meanTearConfidence": round(sum(tear_detections) / len(tear_detections), 4)
+        if tear_detections
+        else 0.0,
     }
 
     return {

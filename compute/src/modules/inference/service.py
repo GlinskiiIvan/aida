@@ -16,7 +16,7 @@ async def predict_study(task_id: str, dto: schema.PredictionRunDTO):
             images=dto.images,
         )
 
-    body = {"runId": dto.runId, "predictions": result}
+    body = {"runId": dto.runId, "result": result}
 
     await rabbit_publisher.publish(
         routing_key=rabbit.RoutingKey.INFERENCE_COMPLETED, body=body

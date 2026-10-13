@@ -2,14 +2,11 @@
 
 .predictionWorkspace {
     width: 100%;
-    max-height: 500px;
+    // max-height: 500px;
 
-    .runs {
-        max-width: 30%;
-    }
     .viewer {
-        max-width: 70%;
-        max-height: inherit;
+        max-width: 100%;
+        max-height: 640px;
         height: 100%;
         .wrapper {
             max-height: inherit;

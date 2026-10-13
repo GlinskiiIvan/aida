@@ -345,6 +345,19 @@ export default {
         status: "Status",
         runnedAt: "Run date",
       },
+
+      summary: {
+        title: "Analysis Summary",
+        noRuns: "No analysis has been performed yet. Run inference to see the results.",
+        selectRun: "Select an analysis run.",
+        notCompleted: "Analysis is not yet complete. Current status: {{status}}",
+        noSummary: "Summary statistics are not available for this run.",
+        maxConfidence: "Maximum detection confidence",
+        meanConfidence: "Mean detection confidence",
+        totalImages: "Total images",
+        imagesWithTear: "Images with detections",
+        tearDetections: "Tear detections",
+      },
     },
   },
 

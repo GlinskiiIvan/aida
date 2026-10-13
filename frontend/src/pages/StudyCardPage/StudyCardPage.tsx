@@ -406,6 +406,8 @@ const StudyCardPage = () => {
 
   // PREDICTION START /////////////////////////////////////////////////////////////////
 
+  const summary = selectedRun?.summary;
+
   const [predictionsTrigger, predictionsData] =
     predictionRunApi.useLazyFindAllPredictionsByRunQuery();
 
@@ -455,33 +457,33 @@ const StudyCardPage = () => {
   const getBbox = (bbox: number[], imageSizes: ImageSizes) => {
     const normalized = getNormalizeBbox(bbox, imageSizes.naturalWidth, imageSizes.naturalHeight);
 
-    const position = {
-      left: normalized.x1 * imageSizes.clientWidth,
-      top: normalized.y1 * imageSizes.clientHeight,
-      width: normalized.x2 * imageSizes.clientWidth - normalized.x1 * imageSizes.clientWidth,
-      height: normalized.y2 * imageSizes.clientHeight - normalized.y1 * imageSizes.clientHeight,
+    return {
+      left: normalized.x1 * 100,
+      top: normalized.y1 * 100,
+      width: (normalized.x2 - normalized.x1) * 100,
+      height: (normalized.y2 - normalized.y1) * 100,
     };
-
-    return position;
   };
 
   const [overlays, setOverlays] = React.useState<ResultBboxOverlay[]>([]);
 
   const buildOverlays = (img: HTMLImageElement, results: ResultBbox[]) => {
+    const imageRect = img.getBoundingClientRect();
+    const containerRect = img.parentElement!.getBoundingClientRect();
+
     return results.map((item) => {
-      const overlay = getBbox(item?.bbox || [], {
-        naturalWidth: img.naturalWidth,
-        naturalHeight: img.naturalHeight,
-        clientWidth: img.clientWidth,
-        clientHeight: img.clientHeight,
-      });
+      const normalized = getNormalizeBbox(item.bbox, img.naturalWidth, img.naturalHeight);
+
+      const left = imageRect.left - containerRect.left;
+      const top = imageRect.top - containerRect.top;
+
       return {
         ...item,
         inlineStyleOverlay: {
-          "--top-overlay": `${overlay.top}px`,
-          "--left-overlay": `${overlay.left}px`,
-          "--width-overlay": `${overlay.width}px`,
-          "--height-overlay": `${overlay.height}px`,
+          "--top-overlay": `${top + normalized.y1 * imageRect.height}px`,
+          "--left-overlay": `${left + normalized.x1 * imageRect.width}px`,
+          "--width-overlay": `${(normalized.x2 - normalized.x1) * imageRect.width}px`,
+          "--height-overlay": `${(normalized.y2 - normalized.y1) * imageRect.height}px`,
           "--color-overlay":
             item.class === "normal"
               ? "var(--border-success)"
@@ -670,45 +672,6 @@ const StudyCardPage = () => {
             justify="center"
             align="flex-start"
           >
-            <ManagedTable
-              blockPops={{
-                title: t("entities.predictionRun.plural"),
-                fullWidth: true,
-                className: styles.runs,
-              }}
-              tableProps={{
-                table: {
-                  maxHeight: 500,
-                  fixedColumnWidth: true,
-                },
-                thead: {
-                  columns,
-                },
-                tbody: {
-                  rowKey: "id",
-                  columns,
-                  data: allpredictionRunsData,
-                  select: { selectedRow: selectedRun, onChange: setSelectedRun },
-                },
-              }}
-              filters={{
-                period: true,
-                searchFieldOptions,
-                sortedFieldOptions,
-              }}
-              hasPermissions={{
-                read: true,
-                create: true,
-                update: true,
-                delete: true,
-              }}
-              crudApiTable={{
-                getAllQuery: predictionRunsQuery,
-                limit: 15,
-                entityId: Number(id),
-              }}
-            ></ManagedTable>
-
             <Block fullWidth className={styles.viewer}>
               <Stack
                 className={styles.wrapper}
@@ -782,6 +745,104 @@ const StudyCardPage = () => {
                   </div>
                 </Stack>
               </Stack>
+            </Block>
+          </Stack>
+
+          <Stack
+            className={styles.predictionWorkspace}
+            direction="row"
+            gap="xl"
+            justify="center"
+            align="flex-start"
+            style={{ maxHeight: "500px" }}
+          >
+            <ManagedTable
+              blockPops={{
+                title: t("entities.predictionRun.plural"),
+                fullWidth: true,
+              }}
+              tableProps={{
+                table: {
+                  maxHeight: 500,
+                  fixedColumnWidth: true,
+                },
+                thead: {
+                  columns,
+                },
+                tbody: {
+                  rowKey: "id",
+                  columns,
+                  data: allpredictionRunsData,
+                  select: { selectedRow: selectedRun, onChange: setSelectedRun },
+                },
+              }}
+              filters={{
+                period: true,
+                searchFieldOptions,
+                sortedFieldOptions,
+              }}
+              hasPermissions={{
+                read: true,
+                create: true,
+                update: true,
+                delete: true,
+              }}
+              crudApiTable={{
+                getAllQuery: predictionRunsQuery,
+                limit: 15,
+                entityId: Number(id),
+              }}
+            />
+            <Block
+              title={t("entities.predictionRun.summary.title")}
+              fullWidth
+              style={{ maxWidth: "50%" }}
+            >
+              {!allpredictionRunsData.length ? (
+                <p>{t("entities.predictionRun.summary.noRuns")}</p>
+              ) : !selectedRun ? (
+                <p>{t("entities.predictionRun.summary.selectRun")}</p>
+              ) : selectedRun.status !== "completed" ? (
+                <p>
+                  {t("entities.predictionRun.summary.notCompleted", {
+                    status: selectedRun.status,
+                  })}
+                </p>
+              ) : !summary ? (
+                <p>{t("entities.predictionRun.summary.noSummary")}</p>
+              ) : (
+                <Stack direction="row" gap="xl" justify="stretch" align="flex-end">
+                  <InfoList
+                    oprions={[
+                      {
+                        key: t("entities.predictionRun.summary.maxConfidence"),
+                        value: `${(summary.maxTearConfidence * 100).toFixed(2)}%`,
+                      },
+                      {
+                        key: t("entities.predictionRun.summary.meanConfidence"),
+                        value: `${(summary.meanTearConfidence * 100).toFixed(2)}%`,
+                      },
+                    ]}
+                  />
+
+                  <InfoList
+                    oprions={[
+                      {
+                        key: t("entities.predictionRun.summary.totalImages"),
+                        value: summary.totalImages,
+                      },
+                      {
+                        key: t("entities.predictionRun.summary.imagesWithTear"),
+                        value: summary.imagesWithTear,
+                      },
+                      {
+                        key: t("entities.predictionRun.summary.tearDetections"),
+                        value: summary.tearDetections,
+                      },
+                    ]}
+                  />
+                </Stack>
+              )}
             </Block>
           </Stack>
 

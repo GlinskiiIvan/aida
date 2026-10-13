@@ -4,6 +4,7 @@ import { IsEnum, IsOptional } from "class-validator";
 import { Status } from "src/common/enums";
 import { enums } from "src/common/response";
 import { PredictionRunCodes } from "../contracts";
+import { PredictionSummary } from "../prediction-run.type";
 
 export class UpdatePredictionRunDto extends PartialType(
   OmitType(CreatePredictionRunDto, ["studyId", "createdById"]),
@@ -19,4 +20,12 @@ export class UpdatePredictionRunDto extends PartialType(
   @IsOptional()
   @IsEnum(Status, { context: { code: enums.ValidationCodes.ENUM } })
   readonly status?: Status;
+
+  @ApiProperty({
+    description: "Сводный результат инференса",
+    required: false,
+    nullable: true,
+  })
+  @IsOptional()
+  readonly summary?: PredictionSummary | null;
 }

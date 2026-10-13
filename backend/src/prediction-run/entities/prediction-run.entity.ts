@@ -13,6 +13,7 @@ import { Status } from "src/common/enums";
 import { Prediction } from "src/prediction/entities/prediction.entity";
 import { Study } from "src/study/entities/study.entity";
 import { User } from "src/users/entities/user.entity";
+import { PredictionSummary } from "../prediction-run.type";
 
 interface TableCreationAttrs {
   readonly studyId: number;
@@ -53,6 +54,26 @@ export class PredictionRun extends Model<PredictionRun, TableCreationAttrs> {
   @ApiProperty({ example: "8l", description: "Версия" })
   @Column({ type: DataType.STRING })
   version: string;
+
+  @ApiProperty({
+    description: "Сводный результат инференса по всему исследованию",
+    required: false,
+    nullable: true,
+    example: {
+      totalImages: 120,
+      tearProbability: 0.87,
+      normalProbability: 0.13,
+      imagesWithTear: 18,
+      normalImages: 97,
+      imagesWithoutDetection: 5,
+      unknownImages: 5,
+      tearDetections: 27,
+      maxTearConfidence: 0.94,
+      meanTearConfidence: 0.76,
+    },
+  })
+  @Column({ type: DataType.JSONB, allowNull: true, defaultValue: null })
+  summary: PredictionSummary | null;
 
   @ApiProperty({
     example: Status.Pending,

@@ -80,9 +80,13 @@ export class InferenceService {
     const transaction = await this.sequelize.transaction();
 
     try {
-      await this.predictionRunService.update(data.runId, { status: Status.Completed }, transaction);
+      await this.predictionRunService.update(
+        data.runId,
+        { status: Status.Completed, summary: data.result.summary },
+        transaction,
+      );
 
-      await this.predictionService.bulkCreate(data.predictions, transaction);
+      await this.predictionService.bulkCreate(data.result.predictions, transaction);
 
       await transaction.commit();
     } catch (error) {

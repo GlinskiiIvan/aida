@@ -26,4 +26,4 @@ RUN pnpm install --no-frozen-lockfile
 
 COPY . .
 
-CMD ["pnpm", "run", "dev"]
+CMD ["pnpm", "run", "start"]

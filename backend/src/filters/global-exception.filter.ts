@@ -7,8 +7,6 @@ import { createResponse } from "../common/response";
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  constructor() {}
-
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
@@ -31,6 +29,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       stack: exception instanceof Error ? exception.stack : undefined,
     });
 
+    // Нельзя отправлять второй ответ, если заголовки уже отправлены.
+    if (response.headersSent) {
+      return;
+    }
+
     if (exception instanceof AppException) {
       return response
         .status(status)
@@ -40,7 +43,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
 
     if (exception instanceof HttpException) {
-      response.status(status).json(
+      return response.status(status).json(
         createResponse()
           .error(operationCode)
           .errors([

@@ -26,6 +26,7 @@ RUN python -m pip install --no-cache-dir \
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+COPY models/ /models/
 
 ENV PYTHONPATH=/app
 

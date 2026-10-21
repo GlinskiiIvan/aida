@@ -30,11 +30,7 @@ export const studyQueryConfig = new QueryConfig({
 
   "patient.id": fields.numberField("patient.id", [PatientRel]),
   "patient.doctorId": fields.numberField("patient.doctorId", [PatientRel]),
-  "patient.fullName": fields.stringField("patient.fullName", [PatientRel]),
-  "patient.birthDate": fields.datetimeField("patient.birthDate", [PatientRel]),
-  "patient.gender": fields.enumField("patient.gender", [PatientRel]),
-  "patient.phone": fields.stringField("patient.phone", [PatientRel]),
-  "patient.email": fields.stringField("patient.email", [PatientRel]),
+  "patient.code": fields.stringField("patient.code", [PatientRel]),
   "patient.note": fields.stringField("patient.note", [PatientRel]),
   "patient.createdAt": fields.datetimeField("patient.createdAt", [PatientRel]),
   "patient.updatedAt": fields.datetimeField("patient.updatedAt", [PatientRel]),

@@ -1,15 +1,9 @@
 import { buildFindAllParams, type FindAllParams } from "../utils";
-import type { Gender } from "../../common/enums";
 import type { Study } from "./study";
 import { api } from "../api/api";
 import { type ResponseEnvelope, enums } from "../../common/response";
 
 export interface CreatePatientDto {
-  readonly fullName: string;
-  readonly birthDate: string;
-  readonly gender: Gender;
-  readonly phone: string;
-  readonly email?: string;
   readonly note?: string;
 }
 
@@ -21,11 +15,7 @@ export interface UpdatePatientDto extends Partial<CreatePatientDto> {
 export type Patient = {
   id: number;
   isPublic: boolean;
-  fullName: string;
-  birthDate: string;
-  gender: Gender;
-  phone: string;
-  email: string | null;
+  code: string;
   note: string | null;
   createdAt: Date;
   updatedAt: Date;

@@ -76,11 +76,7 @@ const PatientCardPage = () => {
   const patient = response?.status === enums.ResponseStatus.SUCCESS ? response.data : undefined;
 
   const patientInfoList: InfoListOption[] = [
-    { key: t("entities.patient.fields.fullName"), value: patient?.fullName },
-    { key: t("entities.patient.fields.birthDate"), value: patient?.birthDate },
-    { key: t("entities.patient.fields.gender"), value: patient?.gender },
-    { key: t("entities.patient.fields.email"), value: patient?.email },
-    { key: t("entities.patient.fields.phone"), value: patient?.phone },
+    { key: t("entities.patient.fields.code"), value: patient?.code },
     { key: t("entities.patient.fields.note"), value: patient?.note },
   ];
 
@@ -117,27 +113,12 @@ const PatientCardPage = () => {
   const updateModal = useModal("updateModal");
   const removeModal = useModal("removeModal");
 
-  const gendertOptions = [
-    { id: Gender.Male, name: t("enums.gender.male") },
-    { id: Gender.Female, name: t("enums.gender.female") },
-  ];
-
   type RecordData = {
-    fullName: string;
-    birthDate: string;
-    gender: (typeof gendertOptions)[0];
-    phone: string;
-    email: string;
     note: string;
     isPublic: boolean;
   };
 
   const initialRecordData: RecordData = {
-    fullName: "",
-    birthDate: "",
-    gender: gendertOptions[0],
-    phone: "",
-    email: "",
     note: "",
     isPublic: false,
   };
@@ -146,13 +127,9 @@ const PatientCardPage = () => {
 
   const recordData = {
     ...recordFields,
-    gender: recordFields.gender.id,
   };
 
-  const canSubmitRecord =
-    recordFields.fullName.trim() !== "" &&
-    recordFields.birthDate.trim() !== "" &&
-    recordFields.phone.trim() !== "";
+  const canSubmitRecord = true;
   const canSubmitUpdateRecord = id !== undefined && canSubmitRecord;
 
   const clearFieldsRecordHandler = () => {
@@ -177,12 +154,6 @@ const PatientCardPage = () => {
     if (updateModal.show) {
       if (patient && patientIsSuccess) {
         setRecordFields({
-          fullName: patient.fullName,
-          birthDate: patient.birthDate,
-          gender:
-            gendertOptions.find((option) => option.id === patient.gender) || gendertOptions[0],
-          phone: patient.phone,
-          email: patient.email || "",
           note: patient.note || "",
           isPublic: patient.isPublic,
         });
@@ -443,7 +414,7 @@ const PatientCardPage = () => {
         onDismiss={dismissActionNotification}
       />
       <Block
-        title={patient?.fullName}
+        title={patient?.code}
         decorativeIcon="INFO"
         fullWidth
         style={{ maxWidth: "50%" }}
@@ -569,39 +540,6 @@ const PatientCardPage = () => {
                         <Screen type='loading' />
                     )} */}
         <Stack direction="column" gap="md" justify="flex-start" align="stretch">
-          <TextField
-            value={recordFields.fullName}
-            onChangeValue={(val: string) => setRecordFields((prev) => ({ ...prev, fullName: val }))}
-            label={t("entities.patient.fields.fullName")}
-          />
-          <TextField
-            value={recordFields.birthDate}
-            onChangeValue={(val: string) =>
-              setRecordFields((prev) => ({ ...prev, birthDate: val }))
-            }
-            label={t("entities.patient.fields.birthDate")}
-            type="date"
-          />
-          <Select
-            value={recordFields.gender}
-            onChangeValue={(val) =>
-              setRecordFields((prev) => ({ ...prev, gender: val || gendertOptions[0] }))
-            }
-            options={gendertOptions}
-            label={t("entities.patient.fields.gender")}
-            getKey={(item) => item.id}
-            getValue={(item) => item.name}
-          />
-          <TextField
-            value={recordFields.phone}
-            onChangeValue={(val: string) => setRecordFields((prev) => ({ ...prev, phone: val }))}
-            label={t("entities.patient.fields.phone")}
-          />
-          <TextField
-            value={recordFields.email}
-            onChangeValue={(val: string) => setRecordFields((prev) => ({ ...prev, email: val }))}
-            label={t("entities.patient.fields.email")}
-          />
           <TextField
             value={recordFields.note}
             onChangeValue={(val: string) => setRecordFields((prev) => ({ ...prev, note: val }))}

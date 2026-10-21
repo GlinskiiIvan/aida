@@ -12,6 +12,8 @@ import { QueryParams, executeQueryResponse } from "../common/query";
 import { createResponse } from "../common/response";
 import { patientQueryConfig, PatientCodes } from "./contracts";
 
+import { generatePatientCode } from "./patient.utils";
+
 @Injectable()
 export class PatientService {
   constructor(
@@ -22,10 +24,11 @@ export class PatientService {
 
   async create(dto: CreatePatientDto, userId: number) {
     const doctor = await this.doctorService.findOneOrThrowByUserId(userId);
+    const code = await generatePatientCode();
 
     const patient = await this.repository.create({
       ...dto,
-      birthDate: new Date(dto.birthDate),
+      code,
       doctorId: doctor.id,
     });
 
@@ -116,7 +119,6 @@ export class PatientService {
     const [_, updatedRows] = await this.repository.update(
       {
         ...dto,
-        birthDate: dto.birthDate ? new Date(dto.birthDate) : undefined,
       },
       {
         where: { id },

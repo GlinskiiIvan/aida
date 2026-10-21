@@ -2,7 +2,6 @@ import React from "react";
 import {
   ManagedTable,
   Page,
-  Select,
   Stack,
   TextField,
   ActionNotifications,
@@ -10,7 +9,6 @@ import {
   type ColumnTable,
   type SelectItem,
 } from "../ui/copmonents";
-import { Gender } from "../common/enums";
 import { ResponseStatus } from "../common/response/enums";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -34,13 +32,7 @@ const PatientPage = () => {
 
   const columns: ColumnTable<(typeof allData)[number]>[] = [
     { key: "id", label: "ID", sortable: false },
-    { key: "fullName", label: t("entities.patient.fields.fullName"), sortable: false },
-    {
-      key: "gender",
-      label: t("entities.patient.fields.gender"),
-      sortable: false,
-      render: (item) => (item.gender === Gender.Male ? "Мужской" : "Женский"),
-    },
+    { key: "code", label: t("entities.patient.fields.code"), sortable: true },
     { key: "note", label: t("entities.patient.fields.note"), sortable: false },
   ];
 
@@ -51,12 +43,8 @@ const PatientPage = () => {
       value: "id",
     },
     {
-      title: t("entities.patient.fields.fullName"),
-      value: "fullName",
-    },
-    {
-      title: t("entities.patient.fields.gender"),
-      value: "gender",
+      title: t("entities.patient.fields.code"),
+      value: "code",
     },
     {
       title: t("entities.patient.fields.note"),
@@ -68,26 +56,11 @@ const PatientPage = () => {
   // FILTERS END//////////////////////////////////////////////////////////////////////
 
   // ACTIONS START /////////////////////////////////////////////////////////////////
-  const gendertOptions = [
-    { id: Gender.Male, name: t("enums.gender.male") },
-    { id: Gender.Female, name: t("enums.gender.female") },
-  ];
-
   type RecordData = {
-    fullName: string;
-    birthDate: string;
-    gender: (typeof gendertOptions)[0];
-    phone: string;
-    email: string;
     note: string;
   };
 
   const initialRecordData: RecordData = {
-    fullName: "",
-    birthDate: "",
-    gender: gendertOptions[0],
-    phone: "",
-    email: "",
     note: "",
   };
 
@@ -95,22 +68,13 @@ const PatientPage = () => {
 
   const recordData = {
     ...recordFields,
-    gender: recordFields.gender.id,
   };
 
-  const canSubmitRecord =
-    recordFields.fullName.trim() !== "" &&
-    recordFields.birthDate.trim() !== "" &&
-    recordFields.phone.trim() !== "";
+  const canSubmitRecord = true;
 
   const fillFormWithRecordData = () => {
     if (oneData) {
       setRecordFields({
-        fullName: oneData.fullName,
-        birthDate: oneData.birthDate,
-        gender: gendertOptions.find((option) => option.id === oneData.gender) || gendertOptions[0],
-        phone: oneData.phone,
-        email: oneData.email || "",
         note: oneData.note || "",
       });
     }
@@ -258,45 +222,6 @@ const PatientPage = () => {
         record={{
           body: (
             <Stack direction="column" gap="md" justify="flex-start" align="stretch">
-              <TextField
-                value={recordFields.fullName}
-                onChangeValue={(val: string) =>
-                  setRecordFields((prev) => ({ ...prev, fullName: val }))
-                }
-                label={t("entities.patient.fields.fullName")}
-              />
-              <TextField
-                value={recordFields.birthDate}
-                onChangeValue={(val: string) =>
-                  setRecordFields((prev) => ({ ...prev, birthDate: val }))
-                }
-                label={t("entities.patient.fields.birthDate")}
-                type="date"
-              />
-              <Select
-                value={recordFields.gender}
-                onChangeValue={(val) =>
-                  setRecordFields((prev) => ({ ...prev, gender: val || gendertOptions[0] }))
-                }
-                options={gendertOptions}
-                label={t("entities.patient.fields.gender")}
-                getKey={(item) => item.id}
-                getValue={(item) => item.name}
-              />
-              <TextField
-                value={recordFields.phone}
-                onChangeValue={(val: string) =>
-                  setRecordFields((prev) => ({ ...prev, phone: val }))
-                }
-                label={t("entities.patient.fields.phone")}
-              />
-              <TextField
-                value={recordFields.email}
-                onChangeValue={(val: string) =>
-                  setRecordFields((prev) => ({ ...prev, email: val }))
-                }
-                label={t("entities.patient.fields.email")}
-              />
               <TextField
                 value={recordFields.note}
                 onChangeValue={(val: string) => setRecordFields((prev) => ({ ...prev, note: val }))}

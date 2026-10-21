@@ -9,11 +9,7 @@ const DoctorRel = {
 
 export const patientQueryConfig = new QueryConfig({
   id: fields.numberField("id"),
-  fullName: fields.stringField("fullName"),
-  birthDate: fields.datetimeField("birthDate"),
-  gender: fields.enumField("gender"),
-  phone: fields.stringField("phone"),
-  email: fields.stringField("email"),
+  code: fields.stringField("code"),
   note: fields.stringField("note"),
   createdAt: fields.datetimeField("createdAt"),
   updatedAt: fields.datetimeField("updatedAt"),

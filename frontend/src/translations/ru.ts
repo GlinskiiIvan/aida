@@ -266,13 +266,8 @@ export default {
       },
 
       fields: {
-        doctor: "Ведущий врач",
         public: "Публичность",
-        fullName: "ФИО",
-        birthDate: "Дата рождения",
-        gender: "Пол",
-        phone: "Телефон",
-        email: "Email",
+        code: "Уникальный код пациента",
         note: "Примечание",
       },
     },

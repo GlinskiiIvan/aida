@@ -232,11 +232,7 @@ export default {
       fields: {
         doctor: "Емдеуші дәрігер",
         public: "Ашық қолжетімділік",
-        fullName: "Т.А.Ә.",
-        birthDate: "Туған күні",
-        gender: "Жынысы",
-        phone: "Телефон нөмірі",
-        email: "Email",
+        code: "Пациенттің бірегей коды",
         note: "Ескертпе",
       },
     },

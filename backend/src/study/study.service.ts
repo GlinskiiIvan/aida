@@ -20,7 +20,7 @@ import { SeriesService } from "src/series/series.service";
 export class StudyService {
   constructor(
     @InjectModel(Study) private repository: typeof Study,
-    @Inject(forwardRef(() => PatientService)) private patientServise: PatientService,
+    @Inject(forwardRef(() => PatientService)) private patientService: PatientService,
     @Inject(forwardRef(() => PredictionRunService))
     private predictionRunService: PredictionRunService,
     @Inject(forwardRef(() => InstanceImageService))
@@ -34,7 +34,7 @@ export class StudyService {
   };
 
   async create(dto: CreateStudyDto) {
-    await this.patientServise.findOneOrThrow(dto.patientId);
+    await this.patientService.findOneOrThrow(dto.patientId);
 
     const study = await this.repository.create(dto);
 

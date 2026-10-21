@@ -265,11 +265,7 @@ export default {
       fields: {
         doctor: "Doctor",
         public: "Publicity",
-        fullName: "Full name",
-        birthDate: "Date of birth",
-        gender: "Gender",
-        phone: "Phone",
-        email: "Email",
+        code: "Unique patient code",
         note: "Note",
       },
     },

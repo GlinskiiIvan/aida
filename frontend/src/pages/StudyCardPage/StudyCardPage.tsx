@@ -528,7 +528,10 @@ const StudyCardPage = () => {
   }, [predictData?.taskId]);
 
   const socket = React.useMemo(
-    () => new WebSocketClient<TaskMessageInferenceStudy>(`ws://localhost:8002/ws/tasks/${taskId}`),
+    () =>
+      new WebSocketClient<TaskMessageInferenceStudy>(
+        `${import.meta.env.VITE_WS_URI}/tasks/${taskId}`,
+      ),
     [taskId],
   );
 

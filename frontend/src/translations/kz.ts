@@ -149,6 +149,42 @@ export default {
         roles: "Рөлдер",
       },
     },
+    doctor: {
+      singular: "Дәрігер",
+      plural: "Дәрігерлер",
+      gender: "male",
+
+      singularCases: {
+        nominative: "Дәрігер",
+        genitive: "Дәрігердің",
+        dative: "Дәрігерге",
+        accusative: "Дәрігерді",
+        instrumental: "Дәрігермен",
+        prepositional: "Дәрігерде",
+      },
+
+      pluralCases: {
+        nominative: "Дәрігерлер",
+        genitive: "Дәрігерлердің",
+        dative: "Дәрігерлерге",
+        accusative: "Дәрігерлерді",
+        instrumental: "Дәрігерлермен",
+        prepositional: "Дәрігерлерде",
+      },
+
+      fields: {
+        user: "Пайдаланушы",
+        fullName: "Аты-жөні",
+        birthDate: "Туған күні",
+        gender: "Жынысы",
+        phone: "Телефон",
+        contactEmail: "Байланыс email",
+        specialization: "Мамандығы",
+        department: "Бөлімше",
+        licenseNumber: "Лицензия нөмірі",
+        note: "Ескертпе",
+      },
+    },
     role: {
       singular: "Рөл",
       plural: "Рөлдер",

@@ -168,7 +168,10 @@ const StudyPage = () => {
   }, [uploadStudyMutation[1].data]);
 
   const socket = React.useMemo(
-    () => new WebSocketClient<TaskMessageIngestionStudy>(`ws://localhost:8002/ws/tasks/${taskId}`),
+    () =>
+      new WebSocketClient<TaskMessageIngestionStudy>(
+        `${import.meta.env.VITE_WS_URI}/tasks/${taskId}`,
+      ),
     [taskId],
   );
 

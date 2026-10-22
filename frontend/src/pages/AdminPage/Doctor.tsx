@@ -228,7 +228,7 @@ const doctorPage = () => {
             <Stack direction="column" gap="md" justify="flex-start" align="stretch">
               <Select<User>
                 dropdownMode="sticky"
-                label={t("entities.doctor.fields.userId")}
+                label={t("entities.doctor.fields.user")}
                 options={allUserData.data?.data || []}
                 value={recordFields.user}
                 onChangeValue={(value) => setRecordFields({ ...recordFields, user: value })}
